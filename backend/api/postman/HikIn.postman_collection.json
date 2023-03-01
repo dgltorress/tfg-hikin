@@ -1,0 +1,1288 @@
+{
+	"info": {
+		"_postman_id": "ec96e483-8b07-4162-afbf-e3ac0860d07f",
+		"name": "HikIn",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Usuario",
+			"item": [
+				{
+					"name": "usuarios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/?usuario=&nombre=&p=",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								""
+							],
+							"query": [
+								{
+									"key": "usuario",
+									"value": "",
+									"description": "Nombre, o una porción del nombre, del usuario. No se trata del nombre real, sino del nombre de usuario. No tiene en cuenta mayúsculas y minúsculas."
+								},
+								{
+									"key": "nombre",
+									"value": "",
+									"description": "Nombre real, o una porción del nombre real, del usuario. No tiene en cuenta mayúsculas y minúsculas."
+								},
+								{
+									"key": "p",
+									"value": "",
+									"description": "Índice de paginación."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/basico/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/basico/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"basico",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/feed",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"feed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/valoraciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/valoraciones",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"valoraciones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/seguidores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/seguidores",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"seguidores"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/seguidos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/seguidos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"seguidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/seguimiento",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/seguimiento",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"seguimiento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/seguimiento",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/seguimiento",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"seguimiento"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/clubes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/clubes",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"clubes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/salidas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/salidas",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"salidas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/resenas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/resenas",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"resenas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/distintivos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/distintivos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"distintivos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/imagen",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/imagen",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"imagen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "usuarios/:id/imagen",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/usuarios/{{userId}}/imagen",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"usuarios",
+								"{{userId}}",
+								"imagen"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Publicación",
+			"item": [
+				{
+					"name": "publicaciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/publicaciones?texto=&autor=&itinerario=&club=&desde=&hasta=&p",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"publicaciones"
+							],
+							"query": [
+								{
+									"key": "texto",
+									"value": "",
+									"description": "Título o descripción, o una parte del título o descripción, de la publicación. No atiende a mayúsculas."
+								},
+								{
+									"key": "autor",
+									"value": "",
+									"description": "Identificador del autor."
+								},
+								{
+									"key": "itinerario",
+									"value": "",
+									"description": "Identificador del itinerario asociado, si tiene."
+								},
+								{
+									"key": "club",
+									"value": "",
+									"description": "Identificador del club asociado, si tiene."
+								},
+								{
+									"key": "desde",
+									"value": "",
+									"description": "Fecha más antigua desde la que buscar."
+								},
+								{
+									"key": "hasta",
+									"value": "",
+									"description": "Fecha más reciente hasta la que buscar."
+								},
+								{
+									"key": "p",
+									"value": null,
+									"description": "Índice de paginación."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publicaciones",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/publicaciones",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"publicaciones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publicaciones/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/publicaciones/{{pubId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"publicaciones",
+								"{{pubId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publicaciones/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/publicaciones/{{pubId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"publicaciones",
+								"{{pubId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publicaciones/:id/kudos",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/publicaciones/{{pubId}}/kudos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"publicaciones",
+								"{{pubId}}",
+								"kudos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publicaciones/:id/kudos",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/publicaciones/{{pubId}}/kudos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"publicaciones",
+								"{{pubId}}",
+								"kudos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publicaciones/:id/comentarios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/publicaciones/{{pubId}}/comentarios",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"publicaciones",
+								"{{pubId}}",
+								"comentarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publicaciones/:id/comentarios",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/publicaciones/{{pubId}}/comentarios",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"publicaciones",
+								"{{pubId}}",
+								"comentarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publicaciones/:pubId/comentarios/:comId",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/publicaciones/{{pubId}}/comentarios/{{comId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"publicaciones",
+								"{{pubId}}",
+								"comentarios",
+								"{{comId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Itinerario",
+			"item": [
+				{
+					"name": "itinerarios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/itinerarios?cod=&texto=&codauto=&cpro=&dificultad=&dist_min=&dist_max=&desn_min=&desn_max=&tiempo_min=&tiempo_max=&circular=&p",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"itinerarios"
+							],
+							"query": [
+								{
+									"key": "cod",
+									"value": "",
+									"description": "Código, o una parte del código, del itinerario. No atiende a mayúsculas."
+								},
+								{
+									"key": "texto",
+									"value": "",
+									"description": "Denominación o descripción, o una parte de la denominación o descripción, del itinerario. No atiende a mayúsculas."
+								},
+								{
+									"key": "codauto",
+									"value": "",
+									"description": "Identificador de la comunidad autónoma."
+								},
+								{
+									"key": "cpro",
+									"value": "",
+									"description": "Identificador de la provincia."
+								},
+								{
+									"key": "dificultad",
+									"value": "",
+									"description": "Identificador de la dificultad."
+								},
+								{
+									"key": "dist_min",
+									"value": "",
+									"description": "Distancia horizontal mínima en metros."
+								},
+								{
+									"key": "dist_max",
+									"value": "",
+									"description": "Distancia horizontal máxima en metros."
+								},
+								{
+									"key": "desn_min",
+									"value": "",
+									"description": "Desnivel absoluto mínimo en metros."
+								},
+								{
+									"key": "desn_max",
+									"value": "",
+									"description": "Desnivel absoluto máximo en metros."
+								},
+								{
+									"key": "tiempo_min",
+									"value": "",
+									"description": "Tiempo mínimo en segundos."
+								},
+								{
+									"key": "tiempo_max",
+									"value": "",
+									"description": "Tiempo máximo en segundos."
+								},
+								{
+									"key": "circular",
+									"value": "",
+									"description": "Si es circular."
+								},
+								{
+									"key": "p",
+									"value": null,
+									"description": "Índice de paginación."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "itinerarios/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/itinerarios/{{itId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"itinerarios",
+								"{{itId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "itinerarios/:id/resenas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/itinerarios/{{itId}}/resenas",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"itinerarios",
+								"{{itId}}",
+								"resenas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "itinerarios/:id/resenas",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/itinerarios/{{itId}}/resenas",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"itinerarios",
+								"{{itId}}",
+								"resenas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "itinerarios/:pubId/resenas/:userId",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/itinerarios/{{itId}}/resenas/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"itinerarios",
+								"{{itId}}",
+								"resenas",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Club",
+			"item": [
+				{
+					"name": "clubes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes?texto=&propietario=&codauto=&cpro=&privado=&p",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes"
+							],
+							"query": [
+								{
+									"key": "texto",
+									"value": "",
+									"description": "Título o descripción, o una parte del título o descripción, del club. No atiende a mayúsculas."
+								},
+								{
+									"key": "propietario",
+									"value": "",
+									"description": "Identificador del propietario."
+								},
+								{
+									"key": "codauto",
+									"value": "",
+									"description": "Identificador de la comunidad autónoma."
+								},
+								{
+									"key": "cpro",
+									"value": "",
+									"description": "Identificador de la provincia."
+								},
+								{
+									"key": "privado",
+									"value": "",
+									"description": "Si el club es privado."
+								},
+								{
+									"key": "p",
+									"value": null,
+									"description": "Índice de paginación."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "clubes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "clubes/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes/{{clubId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes",
+								"{{clubId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "clubes/:id",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes/{{clubId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes",
+								"{{clubId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "clubes/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes/{{clubId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes",
+								"{{clubId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "clubes/:id/imagen",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes/{{clubId}}/imagen",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes",
+								"{{clubId}}",
+								"imagen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "clubes/:id/imagen",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes/{{clubId}}/imagen",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes",
+								"{{clubId}}",
+								"imagen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "clubes/:id/inscripcion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes/{{clubId}}/inscripcion",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes",
+								"{{clubId}}",
+								"inscripcion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "clubes/:id/inscripcion",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes/{{clubId}}/inscripcion",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes",
+								"{{clubId}}",
+								"inscripcion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "clubes/:clubId/inscripcion/:userId",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes/{{clubId}}/invitacion/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes",
+								"{{clubId}}",
+								"invitacion",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "clubes/:clubId/inscripcion/:userId",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes/{{clubId}}/invitacion/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes",
+								"{{clubId}}",
+								"invitacion",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Salida",
+			"item": [
+				{
+					"name": "salidas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/salidas?texto=&organizador=&itinerario=&club=&desde=&hasta=&codauto=&cpro=&p",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"salidas"
+							],
+							"query": [
+								{
+									"key": "texto",
+									"value": "",
+									"description": "Nombre, o una parte del nombre, de la salida. No atiende a mayúsculas."
+								},
+								{
+									"key": "organizador",
+									"value": "",
+									"description": "Identificador del organizador."
+								},
+								{
+									"key": "itinerario",
+									"value": "",
+									"description": "Identificador del itinerario asociado."
+								},
+								{
+									"key": "club",
+									"value": "",
+									"description": "Identificador del club asociado, si tiene."
+								},
+								{
+									"key": "desde",
+									"value": "",
+									"description": "Fecha (de inicio) más antigua desde la que buscar."
+								},
+								{
+									"key": "hasta",
+									"value": "",
+									"description": "Fecha (de inicio) más reciente hasta la que buscar."
+								},
+								{
+									"key": "codauto",
+									"value": "",
+									"description": "Identificador de la comunidad autónoma."
+								},
+								{
+									"key": "cpro",
+									"value": "",
+									"description": "Identificador de la provincia."
+								},
+								{
+									"key": "p",
+									"value": null,
+									"description": "Índice de paginación."
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "salidas",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/salidas",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"salidas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "salidas/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/salidas/{{salId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"salidas",
+								"{{salId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "salidas/:id",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/salidas/{{salId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"salidas",
+								"{{salId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "salidas/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/salidas/{{salId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"salidas",
+								"{{salId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "salidas/:id/inscripcion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/salidas/{{salId}}/inscripcion",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"salidas",
+								"{{salId}}",
+								"inscripcion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "salidas/:id/inscripcion",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/salidas/{{salId}}/inscripcion",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"salidas",
+								"{{salId}}",
+								"inscripcion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "salidas/:id/valoraciones",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/salidas/{{salId}}/valoraciones",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"salidas",
+								"{{salId}}",
+								"valoraciones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "salidas/:salId/invitacion/:userId",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/salidas/{{salId}}/invitacion/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"salidas",
+								"{{salId}}",
+								"invitacion",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "salidas/:salId/invitacion/:userId",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/salidas/{{salId}}/invitacion/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"salidas",
+								"{{salId}}",
+								"invitacion",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ping",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/ping",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/auth",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{testJWT}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test( 'Status code is OK' , () => {",
+					"    pm.expect( pm.response.code ).to.be.below( 400 );",
+					"} );",
+					"",
+					"pm.test( 'Response time is less than 200 ms' , () => {",
+					"    pm.expect( pm.response.responseTime ).to.be.below( 200 );",
+					"} );"
+				]
+			}
+		}
+	]
+}
