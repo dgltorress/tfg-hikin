@@ -1,7 +1,10 @@
+-- Usar base de datos
+USE hikinbd;
+
 -- Resetear tablas
-DELETE * FROM localidades;
-DELETE * FROM provincias;
-DELETE * FROM autonomias;
+DELETE FROM localidades;
+DELETE FROM provincias;
+DELETE FROM autonomias;
 
 -- Comunidades autónomas
 INSERT INTO autonomias( cod , nombre ) VALUES

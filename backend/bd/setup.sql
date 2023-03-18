@@ -7,7 +7,7 @@ USE hikinbd;
 -- Usuario administrador
 DROP USER IF EXISTS 'hikinadmin'@'localhost'; -- Lo borra si ya estaba
 flush privileges;
-CREATE USER 'hikinadmin'@'localhost' IDENTIFIED WITH mysql_native_password BY 'hikinpass';
+CREATE USER 'hikinadmin'@'localhost' IDENTIFIED BY 'hikinpass';
 GRANT ALL ON hikinbd.* TO 'hikinadmin'@'localhost';
 
 -- TABLAS --
@@ -90,7 +90,7 @@ CREATE TABLE clubes (
   privado     BOOLEAN        NOT NULL ,
   imagen      VARCHAR( 60 )           ,
 
-  PRIVATE KEY ( id ) , 
+  PRIMARY KEY ( id ) ,
   FOREIGN KEY ( localidad )   REFERENCES localidades( id ) ON DELETE CASCADE ,
   FOREIGN KEY ( propietario ) REFERENCES usuarios( id ) ON DELETE CASCADE
 ) ENGINE = InnoDB;
@@ -120,7 +120,7 @@ CREATE TABLE itinerarios (
   latitud      DECIMAL( 8 , 6 )            ,
   longitud     DECIMAL( 9 , 6 )            ,
   promotor     VARCHAR( 60 )               ,
-  url          VARCHAR( 120 )
+  uri          VARCHAR( 120 )              ,
 
   PRIMARY KEY ( id ) ,
   UNIQUE ( cod ) ,
@@ -134,14 +134,14 @@ CREATE TABLE itinerarios_largos (
 
   PRIMARY KEY ( itinerario ) ,
   FOREIGN KEY ( itinerario ) REFERENCES itinerarios( id ) ON DELETE CASCADE
-)
+) ENGINE = InnoDB;
 
 -- Reseñas
 CREATE TABLE resenas (
   usuario       INT UNSIGNED                   ,
   itinerario    INT UNSIGNED                   ,
   valoracion    TINYINT( 1 ) UNSIGNED NOT NULL ,
-  observaciones VARCHAR( 500 )                 ,
+  observaciones VARCHAR( 750 )                 ,
   fecha         DATETIME              NOT NULL ,
 
   PRIMARY KEY ( usuario , itinerario ) ,
@@ -154,7 +154,7 @@ CREATE TABLE publicaciones (
   id          INT UNSIGNED   auto_increment,
   autor       INT UNSIGNED   NOT NULL ,
   titulo      VARCHAR( 50 )  NOT NULL ,
-  descripcion VARCHAR( 200 ) NOT NULL ,
+  descripcion VARCHAR( 250 ) NOT NULL ,
   club        INT UNSIGNED            ,
   itinerario  INT UNSIGNED            ,
   imagen      VARCHAR( 60 )           ,
@@ -172,7 +172,7 @@ CREATE TABLE kudos (
   publicacion INT UNSIGNED ,
 
   PRIMARY KEY ( usuario , publicacion ) ,
-  FOREIGN KEY ( usuario )  REFERENCES usuarios( id ) ON DELETE CASCADE ,
+  FOREIGN KEY ( usuario )     REFERENCES usuarios( id ) ON DELETE CASCADE ,
   FOREIGN KEY ( publicacion ) REFERENCES publicaciones( id ) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
@@ -181,7 +181,7 @@ CREATE TABLE comentarios (
   id          INT UNSIGNED   auto_increment ,
   publicacion INT UNSIGNED            ,
   autor       INT UNSIGNED   NOT NULL ,
-  texto       VARCHAR( 120 ) NOT NULL ,
+  texto       VARCHAR( 150 ) NOT NULL ,
   fecha       DATETIME       NOT NULL ,
 
   PRIMARY KEY ( id , publicacion ) ,
@@ -192,7 +192,7 @@ CREATE TABLE comentarios (
 -- Salidas
 CREATE TABLE salidas (
   id           INT UNSIGNED   auto_increment ,
-  nombre       VARCHAR( 60 )  NOT NULL ,
+  nombre       VARCHAR( 80 )  NOT NULL ,
   descripcion  VARCHAR( 600 ) NOT NULL ,
   organizador  INT UNSIGNED   NOT NULL ,
   club         INT UNSIGNED            ,
@@ -241,7 +241,7 @@ CREATE TABLE valoraciones (
 
   PRIMARY KEY ( id , conjunto ) ,
   FOREIGN KEY ( conjunto ) REFERENCES conjuntos_valoraciones( id ) ON DELETE CASCADE ,
-  FOREIGN KEY ( valorado ) REFERENCES usuarios( id ) ON DELETE CASCADE ,
+  FOREIGN KEY ( valorado ) REFERENCES usuarios( id ) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 -- Distintivos
@@ -270,7 +270,7 @@ CREATE TABLE registros_api (
   usuario INT UNSIGNED               ,
   fecha   DATETIME          NOT NULL ,
   ipv4    INT UNSIGNED      NOT NULL ,
-  url     VARCHAR( 80 )     NOT NULL ,
+  uri     VARCHAR( 80 )     NOT NULL ,
   metodo  TINYINT( 1 )      NOT NULL ,
   funcion VARCHAR( 30 )     NOT NULL ,
   estado  SMALLINT UNSIGNED NOT NULL ,
