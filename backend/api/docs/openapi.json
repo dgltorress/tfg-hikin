@@ -1,0 +1,3274 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "HikIn API 1.0.0",
+    "description": "La API de HikIn permite realizar una diversa serie de operaciones de forma programática.\n\nMuchas de las llamadas precisan autenticación con JSON Web Token y/o contraseña. No incluir la cabecera o un token, formatear la cabecera de forma incorrecta o proveer un token no válido (entendiéndose por ello un token mal formado o expirado) recibirá una respuesta con un código de estado HTTP `401`. Si, habiendo provisto un token válido, se concluye que el usuario identificado no dispone de la autorización necesaria para realizar la operación solicitada, se responderá con un código de estado `403`.\n\nLas llamadas que tengan como objeto la transferencia de un solo recurso responderán con un código de estado `404` si no existe ningún recurso que coincida con los parámetros de búsqueda. Las llamadas que devuelvan múltiples recursos responderán con `200` aunque no encuentren ninguna coincidencia, pero el contenedor principal de su cuerpo estará vacío.\n\nLos cuerpos de todas las peticiones y respuestas tendrán formato JSON. Cualquier respuesta podrá incluir un campo `msg` adicional, que contendrá aclaraciones sobre el resultado de una petición. Este campo será opcional.",
+    "termsOfService": "http://hikin.com/terms-and-conditions",
+    "contact": {
+      "email": "hikin@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Descubre más sobre HikIn",
+    "url": "http://hikin.com"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:3000/api"
+    }
+  ],
+  "tags": [
+    {
+      "name": "usuario",
+      "description": "Operaciones en cuentas registradas"
+    },
+    {
+      "name": "publicación",
+      "description": "Operaciones en publicaciones"
+    },
+    {
+      "name": "itinerario",
+      "description": "Operaciones en itinerarios"
+    },
+    {
+      "name": "club",
+      "description": "Operaciones en clubes"
+    },
+    {
+      "name": "salida",
+      "description": "Operaciones en salidas"
+    },
+    {
+      "name": "misc",
+      "description": "Operaciones misceláneas"
+    }
+  ],
+  "paths": {
+    "/usuarios": {
+      "get": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Devuelve usuarios (básicos)",
+        "description": "Devuelve la información básica de una serie de usuarios en base a unos parámetros de búsqueda.",
+        "operationId": "getUsuarios",
+        "parameters": [
+          {
+            "name": "usuario",
+            "in": "query",
+            "description": "Nombre, o una porción del nombre, del usuario. No se trata del nombre real, sino del nombre de usuario. No tiene en cuenta mayúsculas y minúsculas.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nombre",
+            "in": "query",
+            "description": "Nombre real, o una porción del nombre real, del usuario. No tiene en cuenta mayúsculas y minúsculas.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de usuario básicos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UsuarioBasico"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Crea una nueva cuenta",
+        "operationId": "postUsuario",
+        "requestBody": {
+          "description": "Objeto de usuario parcial.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Usuario"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Objeto del usuario creado junto con un JWT para efectuar el primer acceso.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "example": "https://hikin.com/usuarios/{id}"
+                },
+                "description": "URI del usuario recién creado."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "usuario": {
+                      "$ref": "#/components/schemas/Usuario"
+                    },
+                    "token": {
+                      "$ref": "#/components/schemas/JWT"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usuarios/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Devuelve un usuario (completo)",
+        "description": "Devuelve la información detallada de un usuario.",
+        "operationId": "getUsuario",
+        "responses": {
+          "200": {
+            "description": "Objeto de usuario completo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Actualiza la información de un usuario",
+        "operationId": "putUsuario",
+        "requestBody": {
+          "description": "Objeto de usuario parcial.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Usuario"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Objeto de usuario actualizado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Elimina un usuario",
+        "description": "Elimina un usuario del sistema. Esta acción sólo puede ser realizada por el propio usuario o un administrador.",
+        "operationId": "deleteUsuario",
+        "responses": {
+          "200": {
+            "description": "Objeto de usuario completo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usuario"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/usuarios/basico/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Devuelve un usuario (básico)",
+        "description": "Devuelve la información básica de un usuario.",
+        "operationId": "getUsuarioBasico",
+        "responses": {
+          "200": {
+            "description": "Objeto de usuario básico.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsuarioBasico"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{id}/feed": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Devuelve el contenido personalizado de un usuario",
+        "description": "Devuelve el contenido personalizado de un usuario. Sirve para componer la página de inicio.",
+        "operationId": "getUsuarioFeed",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de publicación, salida, reseña, etc.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{id}/valoraciones": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Devuelve las valoraciones que ha recibido un usuario",
+        "description": "Devuelve las valoraciones que ha recibido un usuario por su participación (o no) en salidas.",
+        "operationId": "getUsuarioValoraciones",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de valoración.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Valoracion"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{id}/seguidores": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Devuelve los seguidores de un usuario (básico)",
+        "description": "Devuelve la información básica de los seguidores de un usuario.",
+        "operationId": "getUsuarioSeguidores",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de usuario básicos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UsuarioBasico"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{id}/seguidos": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Devuelve los usuarios a los que sigue un usuario (básico)",
+        "description": "Devuelve la información básica de los seguidores de un usuario.",
+        "operationId": "getUsuarioSeguidos",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de usuario básicos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UsuarioBasico"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{id}/seguimiento": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Sigue a un usuario",
+        "description": "Sigue a un usuario.",
+        "operationId": "postUsuarioSeguir",
+        "responses": {
+          "204": {
+            "description": "Usuario seguido con éxito."
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Deja de seguir a un usuario",
+        "description": "Deja de seguir a un usuario.",
+        "operationId": "deleteUsuarioSeguir",
+        "responses": {
+          "204": {
+            "description": "Usuario dejado de seguir con éxito."
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{id}/clubes": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Devuelve los clubes a los que pertenece un usuario (básico)",
+        "description": "Devuelve la información básica de los clubes a los que pertenece un usuario.",
+        "operationId": "getUsuarioClubes",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de club básicos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClubBasico"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{id}/salidas": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Devuelve las salidas a las que el usuario se ha inscrito y si ha acudido",
+        "description": "Devuelve las salidas a las que el usuario se ha inscrito y si ha acudido.",
+        "operationId": "getUsuarioSalidas",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de salida básicos y si el usuario ha acudido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/SalidaBasico"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "acude": {
+                            "type": "integer",
+                            "enum": [
+                              -1,
+                              0,
+                              1
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{id}/resenas": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Devuelve las reseñas del usuario",
+        "description": "Devuelve las reseñas del usuario.",
+        "operationId": "getUsuarioResenas",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de reseña.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Resena"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{id}/distintivos": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Devuelve los distintivos de un usuario",
+        "description": "Devuelve aquellos distintivos que el usuario haya conseguido, junto con la fecha de obtención.",
+        "operationId": "getUsuarioDistintivos",
+        "responses": {
+          "200": {
+            "description": "Array de objetos de distintivo con la fecha de obtención.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/Distintivo"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "fecha": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/usuarios/{id}/imagen": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Sube una imagen de perfil",
+        "operationId": "postUsuarioImagen",
+        "requestBody": {
+          "description": "Formulario con la nueva imagen.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "imagen": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "La operación ha ido bien"
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "usuario"
+        ],
+        "summary": "Elimina una imagen de perfil",
+        "operationId": "deleteUsuarioImagen",
+        "responses": {
+          "204": {
+            "description": "La operación ha ido bien"
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/publicaciones": {
+      "get": {
+        "tags": [
+          "publicación"
+        ],
+        "summary": "Devuelve publicaciones",
+        "description": "Devuelve publicaciones en base a unos parámetros de búsqueda.",
+        "operationId": "getPublicaciones",
+        "parameters": [
+          {
+            "name": "texto",
+            "in": "query",
+            "description": "Título o descripción, o una parte del título o descripción, de la publicación. No atiende a mayúsculas.",
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 50
+            }
+          },
+          {
+            "name": "autor",
+            "in": "query",
+            "description": "Identificador del autor.",
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "itinerario",
+            "in": "query",
+            "description": "Identificador del itinerario asociado, si tiene.",
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "club",
+            "in": "query",
+            "description": "Identificador del club asociado, si tiene.",
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "description": "Fecha más antigua desde la que buscar.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "description": "Fecha más reciente hasta la que buscar.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de publicación.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Publicacion"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "publicación"
+        ],
+        "summary": "Sube una publicación",
+        "operationId": "postPublicacion",
+        "requestBody": {
+          "description": "Formulario con la información necesaria.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Publicacion"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "idItinerario": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                      },
+                      "idClub": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                      },
+                      "imagenes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "format": "binary"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Objeto de la publicación creada",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "example": "https://hikin.com/posts/{id}"
+                },
+                "description": "URI de la publicación creada"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Publicacion"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/publicaciones/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador de la publicación",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "publicación"
+        ],
+        "summary": "Devuelve una publicación",
+        "description": "Devuelve una publicación.",
+        "operationId": "getPublicacion",
+        "responses": {
+          "200": {
+            "description": "Objeto de publicación.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Publicacion"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "publicación"
+        ],
+        "summary": "Elimina una publicación",
+        "operationId": "deletePublicacion",
+        "responses": {
+          "200": {
+            "description": "Objeto de la publicación eliminada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Publicacion"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/publicaciones/{id}/kudos": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador de la publicación",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "publicación"
+        ],
+        "summary": "Da kudos a una publicación",
+        "operationId": "postPublicacionKudos",
+        "responses": {
+          "204": {
+            "description": "Kudos otorgado con éxito."
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "publicación"
+        ],
+        "summary": "Quita kudos a una publicación",
+        "operationId": "deletePublicacionKudos",
+        "responses": {
+          "204": {
+            "description": "Kudos quitado con éxito."
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/publicaciones/{id}/comentarios": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador de la publicación",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "publicación"
+        ],
+        "summary": "Devuelve los comentarios de una publicación",
+        "description": "Devuelve los comentarios de una publicación.",
+        "operationId": "getPublicacionComentarios",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de comentario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Comentario"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "publicación"
+        ],
+        "summary": "Comenta en una publicación",
+        "operationId": "postPublicacionComentario",
+        "requestBody": {
+          "description": "Objeto de comentario parcial",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Comentario"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Objeto del comentario publicado",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "example": "https://hikin.com/posts/{pubId}/comentarios/{comId}"
+                },
+                "description": "URI del comentario publicado"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comentario"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/publicaciones/{pubId}/comentarios/{comId}": {
+      "parameters": [
+        {
+          "name": "pubId",
+          "in": "path",
+          "description": "Identificador de la publicación",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        },
+        {
+          "name": "comId",
+          "in": "path",
+          "description": "Identificador del comentario en la publicación",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "delete": {
+        "tags": [
+          "publicación"
+        ],
+        "summary": "Elimina un comentario",
+        "operationId": "deletePublicacionComentario",
+        "responses": {
+          "201": {
+            "description": "Objeto del comentario eliminado",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "example": "https://hikin.com/posts/{id}"
+                },
+                "description": "URI de la publicación creada"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Publicacion"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/itinerarios": {
+      "get": {
+        "tags": [
+          "itinerario"
+        ],
+        "summary": "Devuelve itinerarios (básico)",
+        "description": "Devuelve la información básica de itinerarios en base a unos parámetros de búsqueda.",
+        "operationId": "getItinerarios",
+        "parameters": [
+          {
+            "name": "cod",
+            "in": "query",
+            "description": "Código, o una parte del código, del itinerario. No atiende a mayúsculas.",
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 50
+            }
+          },
+          {
+            "name": "texto",
+            "in": "query",
+            "description": "Denominación o descripción, o una parte de la denominación o descripción, del itinerario. No atiende a mayúsculas.",
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 50
+            }
+          },
+          {
+            "name": "codauto",
+            "in": "query",
+            "description": "Identificador de la comunidad autónoma.",
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "cpro",
+            "in": "query",
+            "description": "Identificador de la provincia.",
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "dificultad",
+            "in": "query",
+            "description": "Identificador de la dificultad.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "dist_min",
+            "in": "query",
+            "description": "Distancia mínima en metros.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "dist_max",
+            "in": "query",
+            "description": "Distancia máxima en metros.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "desn_min",
+            "in": "query",
+            "description": "Desnivel absoluto mínimo en metros.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "desn_max",
+            "in": "query",
+            "description": "Desnivel absoluto máximo en metros.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "tiempo_min",
+            "in": "query",
+            "description": "Tiempo mínimo en segundos.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "tiempo_max",
+            "in": "query",
+            "description": "Tiempo máximo en segundos.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "circular",
+            "in": "query",
+            "description": "Si es circular.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de itinerario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ItinerarioBasico"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/itinerarios/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del itinerario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "itinerario"
+        ],
+        "summary": "Devuelve la información detallada de un itinerario",
+        "description": "Devuelve la información detallada de un itinerario.",
+        "operationId": "getItinerario",
+        "responses": {
+          "200": {
+            "description": "Objeto de itinerario.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Itinerario"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/itinerarios/{id}/resenas": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del itinerario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "itinerario"
+        ],
+        "summary": "Devuelve las reseñas de un itinerario",
+        "description": "Devuelve las reseñas de un itinerario.",
+        "operationId": "getItinerarioResenas",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de reseña.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Resena"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "itinerario"
+        ],
+        "summary": "Reseña un itinerario",
+        "operationId": "postItinerarioResena",
+        "requestBody": {
+          "description": "Objeto de reseña parcial",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resena"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Objeto de la reseña publicada.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "example": "https://hikin.com/itinerarios/{ItId}/resenas/{uId}"
+                },
+                "description": "URI del comentario publicado"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resena"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/itinerarios/{itId}/resenas/{uId}": {
+      "parameters": [
+        {
+          "name": "itId",
+          "in": "path",
+          "description": "Identificador del itinerario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        },
+        {
+          "name": "uId",
+          "in": "path",
+          "description": "Identificador del autor de la reseña",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "delete": {
+        "tags": [
+          "itinerario"
+        ],
+        "summary": "Elimina una reseña de un itinerario",
+        "description": "Elimina una reseña de un itinerario.",
+        "operationId": "deleteItinerarioResena",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Objeto de la reseña eliminada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Resena"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/clubes": {
+      "get": {
+        "tags": [
+          "club"
+        ],
+        "summary": "Devuelve clubes (básico)",
+        "description": "Devuelve información básica de clubes en base a unos parámetros de búsqueda.",
+        "operationId": "getClubes",
+        "parameters": [
+          {
+            "name": "texto",
+            "in": "query",
+            "description": "Nombre o descripción, o una parte del nombre o descripción, del club. No atiende a mayúsculas.",
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 50
+            }
+          },
+          {
+            "name": "propietario",
+            "in": "query",
+            "description": "Identificador del propietario.",
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "codauto",
+            "in": "query",
+            "description": "Identificador de la comunidad autónoma.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "cpro",
+            "in": "query",
+            "description": "Identificador de la provincia.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "privado",
+            "in": "query",
+            "description": "Si el club es privado.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de club.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClubBasico"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "club"
+        ],
+        "summary": "Crea un club",
+        "operationId": "postClub",
+        "requestBody": {
+          "description": "Objeto de club parcial.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Club"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "codauto": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                      },
+                      "cpro": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Objeto del club creado.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "example": "https://hikin.com/clubes/{id}"
+                },
+                "description": "URI del club creado"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Club"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/clubes/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del club",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "club"
+        ],
+        "summary": "Devuelve un club",
+        "description": "Devuelve un club.",
+        "operationId": "getClub",
+        "responses": {
+          "200": {
+            "description": "Objeto de club completo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Club"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "club"
+        ],
+        "summary": "Actualiza un club",
+        "operationId": "patchClub",
+        "requestBody": {
+          "description": "Objeto de club parcial.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Club"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "codauto": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                      },
+                      "cpro": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Objeto del club actualizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Club"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "club"
+        ],
+        "summary": "Elimina un club",
+        "description": "Elimina un club.",
+        "operationId": "deleteClub",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Objeto del club eliminado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Club"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/clubes/{id}/imagen": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del club",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "club"
+        ],
+        "summary": "Sube una imagen de club",
+        "operationId": "postClubImagen",
+        "requestBody": {
+          "description": "Formulario con la nueva imagen.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "imagen": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "La operación ha ido bien"
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "club"
+        ],
+        "summary": "Elimina una imagen de club",
+        "operationId": "deleteClubImagen",
+        "responses": {
+          "204": {
+            "description": "La operación ha ido bien"
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/clubes/{id}/inscripcion": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del club",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "club"
+        ],
+        "summary": "Se inscribe en un club",
+        "operationId": "postClubInscribirse",
+        "responses": {
+          "204": {
+            "description": "La operación ha ido bien"
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "club"
+        ],
+        "summary": "Se desinscribe de un club",
+        "operationId": "deleteClubInscribirse",
+        "responses": {
+          "204": {
+            "description": "La operación ha ido bien"
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/clubes/{clubId}/invitacion/{uId}": {
+      "parameters": [
+        {
+          "name": "clubId",
+          "in": "path",
+          "description": "Identificador del club",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        },
+        {
+          "name": "uId",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "club"
+        ],
+        "summary": "Invita un usuario a un club",
+        "description": "Invita un usuario a un club.",
+        "operationId": "postClubInvitar",
+        "responses": {
+          "204": {
+            "description": "Usuario invitado al club con éxito."
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "club"
+        ],
+        "summary": "Expulsa a un usuario de un club",
+        "description": "Expulsa a un usuario de un club.",
+        "operationId": "deleteClubInvitar",
+        "responses": {
+          "204": {
+            "description": "Usuario expulsado del club con éxito."
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/salidas": {
+      "get": {
+        "tags": [
+          "salida"
+        ],
+        "summary": "Devuelve salidas (básico)",
+        "description": "Devuelve información básica de salidas en base a unos parámetros de búsqueda.",
+        "operationId": "getSalidas",
+        "parameters": [
+          {
+            "name": "texto",
+            "in": "query",
+            "description": "Nombre, o una parte del nombre, de la salida. No atiende a mayúsculas.",
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 50
+            }
+          },
+          {
+            "name": "organizador",
+            "in": "query",
+            "description": "Identificador del autor.",
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "itinerario",
+            "in": "query",
+            "description": "Identificador del itinerario asociado, si tiene.",
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "club",
+            "in": "query",
+            "description": "Identificador del club asociado, si tiene.",
+            "schema": {
+              "$ref": "#/components/schemas/Id"
+            }
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "description": "Fecha (de inicio) más antigua desde la que buscar.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "description": "Fecha (de inicio) más reciente hasta la que buscar.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "codauto",
+            "in": "query",
+            "description": "Identificador de la comunidad autónoma.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "cpro",
+            "in": "query",
+            "description": "Identificador de la provincia.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array de objetos de salida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SalidaBasico"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "salida"
+        ],
+        "summary": "Crea una salida",
+        "operationId": "postSalida",
+        "requestBody": {
+          "description": "Objeto de salida parcial.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Salida"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "itinerarioId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                      },
+                      "clubId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Objeto del club creado.",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "example": "https://hikin.com/salidas/{id}"
+                },
+                "description": "URI del club creado"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Club"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/salidas/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador del club",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "salida"
+        ],
+        "summary": "Devuelve una salida",
+        "description": "Devuelve una salida.",
+        "operationId": "getSalida",
+        "responses": {
+          "200": {
+            "description": "Objeto de salida completo.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Salida"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "salida"
+        ],
+        "summary": "Actualiza una salida",
+        "description": "Actualiza una salida. Accesible por el organizador.",
+        "operationId": "patchSalida",
+        "requestBody": {
+          "description": "Objeto de salida parcial.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Salida"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "clubId": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Objeto del club actualizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Club"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "salida"
+        ],
+        "summary": "Elimina una salida",
+        "description": "Elimina una salida. Accesible sólo por los administradores, ya que existe un campo para indicar que una salida se ha cancelado.",
+        "operationId": "deleteSalida",
+        "parameters": [
+          {
+            "name": "p",
+            "in": "query",
+            "description": "Índice de paginación.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Objeto del club eliminado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Club"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/salidas/{id}/inscripcion": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador de la salida",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "salida"
+        ],
+        "summary": "Se inscribe en una salida",
+        "operationId": "postSalidaInscribirse",
+        "responses": {
+          "204": {
+            "description": "La operación ha ido bien"
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "salida"
+        ],
+        "summary": "Se desinscribe de una salida",
+        "operationId": "deleteSalidaInscribirse",
+        "responses": {
+          "204": {
+            "description": "La operación ha ido bien"
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/salidas/{id}/valoraciones": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Identificador de la salida",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "salida"
+        ],
+        "summary": "Sube valoraciones de otros usuarios para una salida",
+        "operationId": "postSalidaValoraciones",
+        "requestBody": {
+          "description": "Array de objetos de valoración parciales.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "uId": {
+                          "type": "integer",
+                          "format": "int32",
+                          "minimum": 1
+                        }
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/Valoracion"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Valoraciones subidas con éxito.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Valoracion"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/salidas/{salId}/invitacion/{uId}": {
+      "parameters": [
+        {
+          "name": "salId",
+          "in": "path",
+          "description": "Identificador de la salida",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        },
+        {
+          "name": "uId",
+          "in": "path",
+          "description": "Identificador del usuario",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/Id"
+          }
+        }
+      ],
+      "post": {
+        "tags": [
+          "salida"
+        ],
+        "summary": "Invita un usuario a una salida",
+        "description": "Invita un usuario a una salida.",
+        "operationId": "postSalidaInvitar",
+        "responses": {
+          "204": {
+            "description": "Usuario invitado a la salida con éxito."
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "salida"
+        ],
+        "summary": "Expulsa a un usuario de una salida",
+        "description": "Expulsa a un usuario de una salida.",
+        "operationId": "deleteSalidaInvitar",
+        "responses": {
+          "204": {
+            "description": "Usuario expulsado de la salida con éxito."
+          }
+        },
+        "security": [
+          {
+            "hikinJWT": []
+          }
+        ]
+      }
+    },
+    "/ping": {
+      "get": {
+        "tags": [
+          "misc"
+        ],
+        "summary": "pong",
+        "description": "Prueba si el servidor está operativo.",
+        "operationId": "pingPong",
+        "responses": {
+          "200": {
+            "description": "El servidor está operativo.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "pong"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth": {
+      "post": {
+        "tags": [
+          "misc"
+        ],
+        "summary": "Autentica a un usuario en el sistema",
+        "description": "**Se recomienda *encarecidamente* el uso del protocolo HTTPS para realizar esta llamada**.",
+        "operationId": "authenticate",
+        "requestBody": {
+          "description": "Par email/contraseña.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "johndoe@gmail.com"
+                  },
+                  "contrasena": {
+                    "type": "string",
+                    "example": "JohnDoe"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "JWT y validez del token en milisegundos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JWT"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RespuestaGenerica": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "$ref": "#/components/schemas/MensajeOpcional"
+          }
+        }
+      },
+      "UsuarioBasico": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "usuario": {
+            "type": "string",
+            "format": "email",
+            "minLength": 3,
+            "maxLength": 60,
+            "example": "johndoe",
+            "description": "Nombre de usuario en el sistema. Debe ser único."
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 40,
+            "example": "John"
+          },
+          "imagen": {
+            "$ref": "#/components/schemas/URLImagen"
+          }
+        },
+        "required": [
+          "id",
+          "usuario"
+        ]
+      },
+      "Usuario": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/UsuarioBasico"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "johndoe@gmail.com"
+              },
+              "contrasena": {
+                "type": "string",
+                "format": "password",
+                "minLength": 3,
+                "maxLength": 80,
+                "example": "JohnDoe",
+                "writeOnly": true
+              },
+              "bio": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120,
+                "example": "Mi nombre es John Doe y me gusta el senderismo"
+              },
+              "sexo": {
+                "type": "integer",
+                "enum": [
+                  0,
+                  1,
+                  2,
+                  9
+                ],
+                "description": "Puede adoptar los siguientes valores (ISO/IEC 5218):\n* 0: Desconocido\n* 1: Varón\n* 2: Mujer\n* 9: No aplicable"
+              },
+              "fecha_nac": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "fecha_reg": {
+                "type": "string",
+                "format": "date-time",
+                "readOnly": true
+              },
+              "ultimo_acceso": {
+                "type": "string",
+                "format": "date-time",
+                "readOnly": true
+              },
+              "premium": {
+                "type": "boolean",
+                "default": false,
+                "readOnly": true
+              },
+              "is_siguiendo": {
+                "type": "boolean",
+                "default": false,
+                "readOnly": true
+              },
+              "n_seguidores": {
+                "type": "integer",
+                "minimum": 0,
+                "readOnly": true
+              }
+            }
+          }
+        ]
+      },
+      "ClubBasico": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 40,
+            "example": "Club de senderismo"
+          },
+          "imagen": {
+            "$ref": "#/components/schemas/URLImagen"
+          },
+          "privado": {
+            "type": "boolean",
+            "default": false
+          },
+          "n_miembros": {
+            "type": "integer",
+            "minimum": 0,
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "Club": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ClubBasico"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "propietario": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UsuarioBasico"
+                  },
+                  {
+                    "readOnly": true
+                  }
+                ]
+              },
+              "descripcion": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120,
+                "example": "Este club organiza salidas a la naturaleza"
+              },
+              "localidad": {
+                "$ref": "#/components/schemas/Localidad"
+              }
+            }
+          }
+        ]
+      },
+      "ItinerarioBasico": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "cod": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10,
+            "description": "Código oficial del itinerario.",
+            "example": "PR-S 61",
+            "readOnly": true
+          },
+          "localidad": {
+            "$ref": "#/components/schemas/Localidad"
+          },
+          "denominacion": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 60,
+            "example": "Ruta de los Menhires de Valdeolea",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "cod"
+        ]
+      },
+      "Itinerario": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ItinerarioBasico"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "descripcion": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 250,
+                "example": "La comarca cántabra de Campo-Los Valles para realizar goza de esta ruta cargada de historia, o de prehistoria para ser más exactos."
+              },
+              "dificultad": {
+                "$ref": "#/components/schemas/Dificultad"
+              },
+              "distancia": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Distancia horizontal total del itinerario en metros.",
+                "example": 19840
+              },
+              "desnivel": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Desnivel absoluto del itinerario en metros.",
+                "example": 433
+              },
+              "tiempo": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Tiempo para completar el recorrido en segundos."
+              },
+              "circular": {
+                "type": "boolean",
+                "default": false,
+                "description": "Si el itinerario termina en el punto de partida.",
+                "example": true
+              },
+              "latitud": {
+                "type": "number",
+                "format": "float"
+              },
+              "longitud": {
+                "type": "number",
+                "format": "float"
+              },
+              "promotor": {
+                "type": "string",
+                "description": "Nombre de la entidad promotora del itinerario.",
+                "example": "Diputación de Inventada"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "example": "https://www.fcdme.es/sendero/prr-s-61-ruta-menhires",
+                "description": "Enlace a un sitio web oficial con información sobre el itinerario",
+                "readOnly": true
+              },
+              "pernoctaciones": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Sólo se incluirá para itinerarios largos."
+              }
+            }
+          }
+        ]
+      },
+      "Resena": {
+        "type": "object",
+        "properties": {
+          "autor": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UsuarioBasico"
+              },
+              {
+                "readOnly": true
+              }
+            ]
+          },
+          "valoracion": {
+            "$ref": "#/components/schemas/ValoracionCampo"
+          },
+          "observaciones": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 250,
+            "example": "Ruta muy bien señalizada y cómoda."
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "autor",
+          "valoracion"
+        ]
+      },
+      "Publicacion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "autor": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UsuarioBasico"
+              },
+              {
+                "readOnly": true
+              }
+            ]
+          },
+          "titulo": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "example": "PUBLICACIÓN SIN TÍTULO"
+          },
+          "descripcion": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 120,
+            "example": "SIN DESCRIPCIÓN"
+          },
+          "imagen": {
+            "$ref": "#/components/schemas/URLImagen"
+          },
+          "club": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ClubBasico"
+              },
+              {
+                "readOnly": true
+              }
+            ]
+          },
+          "itinerario": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ItinerarioBasico"
+              },
+              {
+                "readOnly": true
+              }
+            ]
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "is_kudos": {
+            "type": "boolean",
+            "default": false,
+            "description": "Si el usuario que hace la llamada ha dado kudos a la publicación.",
+            "readOnly": true
+          },
+          "n_kudos": {
+            "type": "integer",
+            "minimum": 0,
+            "readOnly": true
+          },
+          "n_comentarios": {
+            "type": "integer",
+            "minimum": 0,
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "autor",
+          "titulo",
+          "descripcion",
+          "fecha"
+        ]
+      },
+      "Comentario": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "autor": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UsuarioBasico"
+              },
+              {
+                "readOnly": true
+              }
+            ]
+          },
+          "texto": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 120,
+            "example": "SIN COMENTARIO"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "autor",
+          "texto",
+          "fecha"
+        ]
+      },
+      "SalidaBasico": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 60,
+            "example": "Excursión a una remota zona de Cantabria"
+          },
+          "itinerario": {
+            "$ref": "#/components/schemas/ItinerarioBasico"
+          },
+          "fecha_inicio": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "Salida": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SalidaBasico"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "descripcion": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 600,
+                "example": "Este sábado por la mañana saldremos a realizar una de las rutas circulares más   conocidas   de la provincia. Pararemos en el humedal para realizar un descanso y después   reemprenderemos la   marcha a través de los maravillosos yacimientos arqueológicos esparcidos   por el itinerario."
+              },
+              "organizador": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UsuarioBasico"
+                  },
+                  {
+                    "readOnly": true
+                  }
+                ]
+              },
+              "club": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ClubBasico"
+                  },
+                  {
+                    "readOnly": true
+                  }
+                ]
+              },
+              "fecha_fin": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "privada": {
+                "type": "boolean",
+                "default": false
+              },
+              "cancelada": {
+                "type": "boolean",
+                "default": false
+              },
+              "n_participantes": {
+                "type": "integer",
+                "minimum": 1,
+                "readOnly": true
+              }
+            }
+          }
+        ]
+      },
+      "Valoracion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "valorado": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UsuarioBasico"
+              },
+              {
+                "readOnly": true
+              }
+            ]
+          },
+          "salida": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SalidaBasico"
+              },
+              {
+                "readOnly": true
+              }
+            ]
+          },
+          "valoracion": {
+            "$ref": "#/components/schemas/ValoracionCampo"
+          },
+          "observaciones": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 250,
+            "example": "Ha sido un buen compañero de ruta. Volvería a participar en una salida con él."
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "id",
+          "valorado"
+        ]
+      },
+      "Distintivo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "nombre": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50,
+            "example": "Tomando la iniciativa"
+          },
+          "descripcion": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 100,
+            "example": "Organiza y acude a una salida."
+          },
+          "imagen": {
+            "$ref": "#/components/schemas/URLImagen"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "Id": {
+        "type": "integer",
+        "format": "int32",
+        "minimum": 1,
+        "description": "Identificador del recurso.",
+        "readOnly": true
+      },
+      "URLImagen": {
+        "type": "string",
+        "format": "uri",
+        "example": "http://127.0.0.1:3000/data/img/johndoe.jpg",
+        "description": "URI de la imagen.",
+        "readOnly": true
+      },
+      "Localidad": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/Id"
+          },
+          "codauto": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "example": 10
+              }
+            ]
+          },
+          "cpro": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "example": 3
+              }
+            ]
+          },
+          "nom_auto": {
+            "type": "string",
+            "example": "Comunidad Valenciana"
+          },
+          "nom_pro": {
+            "type": "string",
+            "example": "Alicante"
+          }
+        },
+        "readOnly": true
+      },
+      "Dificultad": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Id"
+              },
+              {
+                "example": 1
+              }
+            ]
+          },
+          "nombre": {
+            "type": "string",
+            "example": "Normal"
+          }
+        }
+      },
+      "ValoracionCampo": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 5,
+        "multipleOf": 0.5,
+        "example": 4.5
+      },
+      "MensajeOpcional": {
+        "type": "string",
+        "description": "Aclaración sobre el resultado de la operación.",
+        "example": "Algo ha ido bien."
+      },
+      "JWT": {
+        "type": "object",
+        "properties": {
+          "jwt": {
+            "type": "string",
+            "example": "xxxxx.yyyyy.zzzzz"
+          },
+          "expires": {
+            "type": "integer",
+            "example": 86400000
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "hikinJWT": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "hikinOAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "URL_DE_AUTORIZACION_DE_HIKIN",
+            "scopes": {
+              "read:users": "read account details",
+              "write:users": "modify account details"
+            }
+          }
+        }
+      }
+    }
+  }
+}
