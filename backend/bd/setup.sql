@@ -20,7 +20,7 @@ CREATE TABLE usuarios (
   nombre        VARCHAR( 40 )         NOT NULL ,
   bio           VARCHAR( 120 )                 ,
   sexo          TINYINT( 1 ) UNSIGNED NOT NULL ,
-  fecha_nac     DATE                  NOT NULL ,
+  fecha_nac     DATE                           ,
   privado       BOOLEAN               NOT NULL ,
   premium       BOOLEAN               NOT NULL ,
   fecha_reg     DATETIME              NOT NULL ,
