@@ -129,17 +129,22 @@ const toUniversalPath = ( weirdPath ) => {
 }
 
 /**
- * Muestra por pantalla el nombre de quien haya llamado a una función.
+ * Muestra por pantalla/devuelve el nombre de quien haya llamado a una función.
  * 
  * @param {number} stackDepth Profundidad del stack.
  */
 const getCaller = ( stackDepth ) => {
-    console.log( "DEBUG", (new Error().stack.split("at ")[++stackDepth]).trim() );
+    try{
+        return new Error().stack.split("at ")[++stackDepth].split(" ")[ 0 ].trim();
+    } catch( err ){
+        console.error( err );
+        return null;
+    }
 }
 
 
 
 // Marcar los metodos para exportar
 module.exports = { getIp , filterQueries , generateMongooseDateFilter ,
-    joinSwaggerDocs , getRandomInt , getRandomIntInclusive , stringByteSize ,
+    getRandomInt , getRandomIntInclusive , stringByteSize ,
     universalPathSeparator , toUniversalPath , getCaller };

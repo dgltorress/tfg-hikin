@@ -8,12 +8,12 @@ const ms        = require( 'ms' );
 const { COLOR } = require( './constantes.js' );
 
 // Parsea las variables de entorno.
-const JWTSecret = ( process.env.JWTSECRET &&
-                    process.env.JWTSECRET.length > 0 ) ? process.env.JWTSECRET : '' ; // Secreto JWT.
+const JWTSecret = ( process.env.JWT_SECRET &&
+                    process.env.JWT_SECRET.length > 0 ) ? process.env.JWT_SECRET : '' ; // Secreto JWT.
 
-const JWTExpire = ( process.env.JWTEXPIRE &&
-                    process.env.JWTEXPIRE.length > 0 &&
-                    ms( process.env.JWTEXPIRE ) ) ? ms( process.env.JWTEXPIRE ) : ms( '24h' ) ; // Tiempo para expirar. Por defecto 24h.
+const JWTExpire = ( process.env.JWT_EXPIRE &&
+                    process.env.JWT_EXPIRE.length > 0 &&
+                    ms( process.env.JWT_EXPIRE ) ) ? ms( process.env.JWT_EXPIRE ) : ms( '24h' ) ; // Tiempo para expirar. Por defecto 24h.
 
 // Notifica de si se ha activado algún registro permanente.
 if( ( JWTSecret !== '' ) && ( JWTExpire !== '' ) ){

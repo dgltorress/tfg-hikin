@@ -8,8 +8,8 @@
 const jwt = require( 'jsonwebtoken' ); // JSON Web Token
 
 // Propio
-const { HTTP } = require( '../constantes.js' ); // Codigos de estado HTTP
-const { logRequest } = require( '../controllers/log.js' ); // Registro
+const { HTTP } = require( '../helpers/constantes.js' ); // Codigos de estado HTTP
+const { logRequest } = require( '../helpers/log.js' );  // Registro
 
 // ----------------
 
@@ -21,15 +21,15 @@ const { logRequest } = require( '../controllers/log.js' ); // Registro
  * @param {*} res Respuesta del servidor.
  * @param {*} next Siguiente metodo a ejecutar.
  */
-const validateJWT = (req, res, next) => {
+const validateJWT = ( req , res , next ) => {
     // Obtiene la cabecera de autenticacion.
     let authHeader = req.headers.authorization;
 
     // Si no existe, se notifica y termina.
     if ( !authHeader ) {
-        res.status( HTTP.error_client.unauthorized ).json({
+        res.status( HTTP.error_client.unauthorized ).json( {
             msg: 'Falta cabecera de autenticacion'
-        });
+        } );
         logRequest( req , 'validateJWT' , HTTP.error_client.unauthorized , 'Falta cabecera de autenticacion' );
     }
     // Si existe,
@@ -41,26 +41,37 @@ const validateJWT = (req, res, next) => {
         if( token ){
             try {
                 // Se extrae el UID del usuario que ha realizado la peticion a partir del JWT.
-                const { uid, role } = jwt.verify( token, process.env.JWTSECRET );
+                const verifiedToken = jwt.verify( token, process.env.JWTSECRET );
 
-                // Se guarda el UID en el objeto peticion, "req". "req" es accesible desde cualquier parte.
-                req.uid  = uid;
-                req.role = role;
+                // Verifica los campos del token
+                if( verifiedToken.user &&
+                    verifiedToken.user.id &&
+                    verifiedToken.user.isAdmin ){
+                    // Guarda la información en el objeto petición, `req`. `req` es accesible desde cualquier parte.
+                    req.user = verifiedToken.user;
 
-                // Pasa al siguiente metodo.
-                next();
-            } catch (err) {
-                res.status( HTTP.error_client.unauthorized ).json({
+                    // Pasa al siguiente método.
+                    next();
+                }
+                else{
+                    res.status( HTTP.error_server.internal ).json( {
+                        msg: 'Error al autenticar'
+                    } );
+                    logRequest( req , 'validateJWT' , HTTP.error_client.unauthorized , 'Los campos del token descifrado no son los esperados' );
+                }
+            } catch( err ){
+                console.error( err );
+                res.status( HTTP.error_client.unauthorized ).json( {
                     msg: 'Token no valido'
-                });
+                } );
                 logRequest( req , 'validateJWT' , HTTP.error_client.unauthorized , 'Token no valido' );
             }
         }
         // Si el token no consigue extraerse, se notifica y termina.
         else{
-            res.status( HTTP.error_client.unauthorized ).json({
+            res.status( HTTP.error_client.unauthorized ).json( {
                 msg: 'Token no encontrado (Estilo cabecera > Authorization: Bearer [JWT])'
-            });
+            } );
             logRequest( req , 'validateJWT' , HTTP.error_client.unauthorized , 'Token no encontrado' );
         }
     }
@@ -75,7 +86,7 @@ const validateJWT = (req, res, next) => {
  * @param {*} res Respuesta del servidor.
  * @param {*} next Siguiente metodo a ejecutar.
  */
- const validateJWTIfExists = (req, res, next) => {
+ const validateJWTIfExists = ( req , res , next ) => {
     // Obtiene la cabecera de autenticacion.
     let authHeader = req.headers.authorization;
 
@@ -92,19 +103,30 @@ const validateJWT = (req, res, next) => {
         if( token ){
             try {
                 // Se extrae el UID del usuario que ha realizado la peticion a partir del JWT.
-                const { uid, role } = jwt.verify( token, process.env.JWTSECRET );
+                const verifiedToken = jwt.verify( token, process.env.JWTSECRET );
 
-                // Se guarda el UID en el objeto peticion, "req". "req" es accesible desde cualquier parte.
-                req.uid  = uid;
-                req.role = role;
+                // Verifica los campos del token
+                if( verifiedToken.user &&
+                    verifiedToken.user.id &&
+                    verifiedToken.user.isAdmin ){
+                    // Guarda la información en el objeto petición, `req`. `req` es accesible desde cualquier parte.
+                    req.user = verifiedToken.user;
 
-                // Pasa al siguiente metodo.
-                next();
-            } catch (err) {
-                res.status( HTTP.error_client.unauthorized ).json({
+                    // Pasa al siguiente método.
+                    next();
+                }
+                else{
+                    res.status( HTTP.error_server.internal ).json( {
+                        msg: 'Error al autenticar'
+                    } );
+                    logRequest( req , 'validateJWTIfExists' , HTTP.error_client.unauthorized , 'Los campos del token descifrado no son los esperados' );
+                }
+            } catch( err ){
+                console.error( err );
+                res.status( HTTP.error_client.unauthorized ).json( {
                     msg: 'Token no valido'
-                });
-                logRequest( req , 'validateJWT' , HTTP.error_client.unauthorized , 'Token no valido' );
+                } );
+                logRequest( req , 'validateJWTIfExists' , HTTP.error_client.unauthorized , 'Token no valido' );
             }
         }
         // Si el token no consigue extraerse, pasa a la siguiente funcion.
@@ -122,7 +144,7 @@ const validateJWT = (req, res, next) => {
  * 
  * @param {*} authHeader Cabecera de autenticacion.
  */
- const extractBearerToken = ( authHeader ) => {
+const extractBearerToken = ( authHeader ) => {
     // Se comprueba que sea un string.
     if( typeof ( authHeader ) === 'string' ){
         // Se separa por el espacio.

@@ -11,6 +11,7 @@ const { EOL }     = require( 'os' );   // Fin de linea para portabilidad entre s
 
 // Propio
 const { COLOR , PETICIONES } = require( './constantes.js' ); // Constantes complejas
+const { getCaller }          = require( './metodos.js' );    // Métodos generales
 
 // ----------------
 

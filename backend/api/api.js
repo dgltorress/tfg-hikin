@@ -19,17 +19,14 @@ const express   = require( 'express' );            // Express
 const swaggerUI = require( 'swagger-ui-express' ); // Interfaz de usuario de Swagger para Express
 
 // Propias
-const { dbConnection }    = require( './services/database.js' );    // Importa el modulo para la conexion con la base de datos
-const { logRequest }      = require( './helpers/log.js' ); // Registros
-const { HTTP , COLOR }    = require( './helpers/constantes.js' );      // Abstraccion de constantes varias (colores de terminal, respuestas HTTP, etc)
+require( './services/database.js' );                              // Conexión con la base de datos
+const { logRequest }      = require( './helpers/log.js' );        // Registros
+const { HTTP , COLOR }    = require( './helpers/constantes.js' ); // Abstraccion de constantes varias (colores de terminal, respuestas HTTP, etc)
 const { RUTA , PUERTO , END_DOCS , PROTOCOLO } = require( './helpers/rutas.js' ); // Rutas parseadas
 
 // -----------------
 
 // === INICIALIZAR
-
-// BASE DE DATOS
-//dbConnection();
 
 // EXPRESS
 const app = express();

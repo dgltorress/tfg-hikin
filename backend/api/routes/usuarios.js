@@ -11,7 +11,7 @@ const { Router } = require('express'); // Router de Express
 
 // Propio
 //const { validateJWT } = require('../middleware/jwt'); // Validador de JSON Web Token
-//const {  } = require('../controllers/user'); // Controller User
+const { getUsuarios } = require('../controllers/usuarios.js'); // Controller User
 //const {  } = require('../middleware/files');
 
 // ----------------
@@ -26,6 +26,11 @@ const router = Router();
 
 
 // === LLAMADAS ===
+
+router.route( '/' )
+    .get(
+        getUsuarios
+    );
 
 // ----------------
 
