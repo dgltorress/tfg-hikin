@@ -24,8 +24,9 @@ DELETE FROM registros_api;
 -- Insertar datos --
 -- Usuarios
 INSERT INTO usuarios(
-  id, usuario, email, contrasena, nombre,
-  bio,
+  id, usuario, email,
+  contrasena,
+  nombre, bio,
   sexo, fecha_nac, privado, premium,
   fecha_reg,
   ultimo_acceso,
@@ -37,7 +38,7 @@ INSERT INTO usuarios(
   1, STR_TO_DATE( "1994-10-07" , "%Y-%m-%d" ), false, false,
   STR_TO_DATE( "2023-01-04 18:41" , "%Y-%m-%d %H:%i" ),
   STR_TO_DATE( "2023-03-17 19:20" , "%Y-%m-%d %H:%i" ),
-  3310194375 , "../assets/img/pfp/2023/03/01/johndoe.jpg"
+  3310194375 , "../assets/img/pfp/2023/3/1/johndoe.jpg"
 ), (
   2, "janedoe", "janedoe@mail.com",
   "$2a$12$sPEZ6fbrHdZp7CIbQjjbH.KKpfWuDzkS772Q/KceyiwglaHwyS8ou",
@@ -45,7 +46,7 @@ INSERT INTO usuarios(
   2, STR_TO_DATE( "1998-05-17" , "%Y-%m-%d" ), false, false,
   STR_TO_DATE( "2022-11-09 10:11" , "%Y-%m-%d %H:%i" ),
   STR_TO_DATE( "2023-01-10 19:20" , "%Y-%m-%d %H:%i" ),
-  2283231080 , "../assets/img/pfp/2023/03/01/janedoe.jpg"
+  2283231080 , "../assets/img/pfp/2023/3/1/janedoe.jpg"
 ), (
   3, "joeblow", "joeblow@mail.com",
   "$2a$12$TL0yKkFx/hJFkJuwnuCUx.TPLcm2TYpBetEReX5dS1kKXgh1o.e96",
@@ -53,7 +54,7 @@ INSERT INTO usuarios(
   1, STR_TO_DATE( "2001-02-22" , "%Y-%m-%d" ), false, true,
   STR_TO_DATE( "2023-01-12 09:31" , "%Y-%m-%d %H:%i" ),
   STR_TO_DATE( "2023-03-19 19:20" , "%Y-%m-%d %H:%i" ),
-  820021400 , "../assets/img/pfp/2023/03/01/joeblow.jpg"
+  820021400 , "../assets/img/pfp/2023/3/1/joeblow.jpg"
 ), (
   4, "janesmith", "janesmith@mail.com",
   "$2a$12$Z7EwjDxRk.jGAFmBs6CMCuikntxo6D.NLSI3q5s/jQLR41vQZb7mi",
@@ -61,7 +62,7 @@ INSERT INTO usuarios(
   2, STR_TO_DATE( "1996-08-09" , "%Y-%m-%d" ), true, false,
   STR_TO_DATE( "2023-02-05 18:41" , "%Y-%m-%d %H:%i" ),
   STR_TO_DATE( "2023-03-17 19:20" , "%Y-%m-%d %H:%i" ),
-  1387731500 , "../assets/img/pfp/2023/03/01/janesmith.jpg"
+  1387731500 , "../assets/img/pfp/2023/3/1/janesmith.jpg"
 ), (
   5, "dickroe", "dickroe@mail.com",
   "$2a$12$r2qPkxUO6O1OYPSt8SIH.eVBTkSnZ/OUbZQfyqUlzenR.BOpwHYhK",
@@ -69,7 +70,7 @@ INSERT INTO usuarios(
   0, STR_TO_DATE( "1990-12-01" , "%Y-%m-%d" ), true, true,
   STR_TO_DATE( "2023-01-04 18:41" , "%Y-%m-%d %H:%i" ),
   STR_TO_DATE( "2023-03-17 19:20" , "%Y-%m-%d %H:%i" ),
-  1875640622 , "../assets/img/pfp/2023/03/01/dickroe.jpg"
+  1875640622 , "../assets/img/pfp/2023/3/1/dickroe.jpg"
 );
 
 -- Seguimientos entre usuarios

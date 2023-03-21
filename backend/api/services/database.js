@@ -11,17 +11,29 @@ const { COLOR } = require( '../helpers/constantes.js' ); // Constantes complejas
 
 // ----------------
 
+// Conector MariaDB
 const mariadb = require( 'mariadb/callback' );
 
-// Conexiones
+// Variables de conexión
+const dbHost = process.env.DB_HOST || '127.0.0.1';
+const dbPort = process.env.DB_PORT || '3306';
+const dbUser = process.env.DB_USER;
+const dbPwd = process.env.DB_PWD;
+const dbName = process.env.DB_NAME;
+
+// Crear conexiones
 const adminConnection = mariadb.createConnection( {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PWD,
-    database: process.env.DB_NAME
+    host: dbHost,
+    port: dbPort,
+    user: dbUser,
+    password: dbPwd,
+    database: dbName
 } );
 adminConnection.connect( ( err ) => {
+    console.log( `
+Iniciando conexión de administrador con la base de datos en: ${COLOR.texto.cian}mariadb://${dbHost}:${dbPort}/${dbName}${COLOR.reset}
+con usuario "${COLOR.texto.cian}${dbUser}${COLOR.reset}"...
+` );
     if( err ){
         console.error( `${COLOR.texto.rojo}ERROR al conectar con la base de datos${COLOR.reset}` );
         console.error( err );

@@ -20,9 +20,9 @@ const universalPathSeparator = '/';
 
 
 /**
- * Obtiene la IP del cliente.
+ * Obtiene la IP del cliente como entero.
  * 
- * @param {*} req Peticion del cliente.
+ * @param {*} req Petición del cliente.
  */
 const getIp = function( req ){
     // Devuelve la IP resuelta por Express
@@ -57,6 +57,25 @@ const filterQueries = ( queries , accepted = [] ) => {
     return null;
 }
 
+/**
+ * Quita campos de un recurso que no conviene enviar al cliente.
+ * 
+ * @param {object | object[]} resources Array con los recursos.
+ * @param {string[]} fields Campos por eliminar.
+ */
+ const pullFields = ( resources , fields = [] ) => {
+    if( typeof resources === 'array' ){
+        for( let i = 0 ; i < resources.length ; ++i ){
+            for( let j = 0 ; j < fields.length ; ++j ){
+                delete resources[ i ][ fields[ j ] ];
+            }
+        }
+    } else {
+        for( let j = 0 ; j < fields.length ; ++j ){
+            delete resources[ fields[ j ] ];
+        }
+    }
+}
 
 /**
  * Genera un objeto con propiedades $gte y $lt para filtrar por fecha en mongoose.
@@ -129,6 +148,25 @@ const toUniversalPath = ( weirdPath ) => {
 }
 
 /**
+ * Resuelve la URL a un recurso en base a una URL.
+ * 
+ * @param {string} path Ruta relativa o absoluta al recurso local.
+ * @param {string} maskBaseURL URL máscara base del servidor. NO debe contener separadores en los extremos.
+ * @param {string} maskURL URL máscara base del directorio de recursos. NO debe contener separadores en los extremos.
+ * @param {number} keepElementCount (Opcional) Cuántos elementos de la URL original se deben conservar expresado como entero negativo.
+ * Útil para mantener directorios basados en fecha (p. ej. "YYYY/MM/DD/archivo.jpg" en lugar de "archivo.jpg"). Por defecto sólo el propio archivo.
+ * 
+ * @return {string}
+ */
+ const resolveURL = ( path , maskBaseURL , maskURL , keepElementCount = -1 ) => {
+    // Normaliza el filtro.
+    if( keepElementCount > -1 ) keepElementCount = -1;
+
+    // Ej: { http://127.0.0.1:3000 }{ / }{ assets/img/posts }{ / }{ 2023/2/17/image.jpg }
+    return `${maskBaseURL}${universalPathSeparator}${maskURL}${universalPathSeparator}${path.split( universalPathSeparator ).slice( keepElementCount ).join( universalPathSeparator ) }`;
+}
+
+/**
  * Muestra por pantalla/devuelve el nombre de quien haya llamado a una función.
  * 
  * @param {number} stackDepth Profundidad del stack.
@@ -145,6 +183,6 @@ const getCaller = ( stackDepth ) => {
 
 
 // Marcar los metodos para exportar
-module.exports = { getIp , filterQueries , generateMongooseDateFilter ,
+module.exports = { getIp , filterQueries , pullFields, generateMongooseDateFilter ,
     getRandomInt , getRandomIntInclusive , stringByteSize ,
-    universalPathSeparator , toUniversalPath , getCaller };
+    universalPathSeparator , toUniversalPath , getCaller , resolveURL };

@@ -7,22 +7,22 @@
 // Librerias
 const { resolve } = require( 'path' ); // Transformar rutas de archivo relativas
 const fs          = require( 'fs' );   // FileSystem para operar con archivos
-const { EOL }     = require( 'os' );   // Fin de linea para portabilidad entre sistemas operativos
+const { EOL }     = require( 'os' );   // Fin de línea para portabilidad entre sistemas operativos
 
 // Propio
 const { COLOR , PETICIONES } = require( './constantes.js' ); // Constantes complejas
-const { getCaller }          = require( './metodos.js' );    // Métodos generales
+const { adminConnection } = require( '../services/database.js' ); // Base de datos
 
 // ----------------
 
 // === INICIALIZAR
 
 // Parsea las variables de entorno.
-const logFilePath         = ( process.env.LOG_FILE_RELATIVE_PATH &&
-                              process.env.LOG_FILE_RELATIVE_PATH.length > 0 ) ? resolve( process.env.LOG_FILE_RELATIVE_PATH ) : ''; // Ruta completa al archivo de registros.
+const logFilePath = ( process.env.LOG_FILE_RELATIVE_PATH &&
+                      process.env.LOG_FILE_RELATIVE_PATH.length > 0 ) ? resolve( process.env.LOG_FILE_RELATIVE_PATH ) : ''; // Ruta completa al archivo de registros.
 
-const logCollectionName   = ( process.env.LOG_COLLECTION_NAME &&
-                              process.env.LOG_COLLECTION_NAME.length > 0 ) ? process.env.LOG_COLLECTION_NAME : ''; // Nombre de la coleccion de registros en MongoDB.
+const logTableName = ( process.env.LOG_TABLE_NAME &&
+                       process.env.LOG_TABLE_NAME.length > 0 ) ? process.env.LOG_TABLE_NAME : ''; // Nombre de la tabla de registros en SQL.
 
 const logConsoleIsEnabled = ( process.env.LOG_CONSOLE_ENABLED !== 'false' ) ? true : false ; // Si registrar acciones en la terminal. Por defecto true.
 
@@ -37,12 +37,12 @@ Ruta completa del archivo: ${COLOR.texto.cian}${logFilePath}
 ${COLOR.texto.magenta}----------------------------------${COLOR.reset}
 ` );
 }
-if( logCollectionName !== '' ){
+if( logTableName !== '' ){
     console.log( `
 ${COLOR.texto.magenta}----------------------------------
 
 Registro en ${COLOR.texto.cian}base de datos${COLOR.texto.magenta} ACTIVADO (desde ${COLOR.texto.cian}.env${COLOR.texto.magenta}).
-Nombre de la coleccion: ${COLOR.texto.cian}${logCollectionName}
+Nombre de la tabla: ${COLOR.texto.cian}${logTableName}
 
 ${COLOR.texto.magenta}----------------------------------${COLOR.reset}
 ` );
@@ -89,8 +89,11 @@ const logRequest = async( req , functionName , status , msg = '' ) => {
         };
 
         // Anade propiedades opcionales
-        if( req.uid )    log[ 'uid' ]  = req.uid;  // UID del solicitante.
-        if( req.role )   log[ 'role' ] = req.role; // Rol del solicitante.
+        if( req.user ){
+            if( req.user.id )      log[ 'id' ]      = req.user.id;      // ID del solicitante.
+            if( req.user.isAdmin ) log[ 'isAdmin' ] = req.user.isAdmin; // Si el solicitante es administrador.
+        }
+        
         if( msg !== '' ) log[ 'msg' ]  = msg;      // Mensaje adicional.
 
         // -----------------------------------------------------------
@@ -102,10 +105,10 @@ const logRequest = async( req , functionName , status , msg = '' ) => {
         if( logConsoleIsEnabled === true ) console.log( line );
 
         // Realiza registros permanentes, si asi se ha indicado en .env.
-        if( logFilePath       !== '' ) logRequestIntoFile( log );
-        //if( logCollectionName !== '' ) logRequestIntoDB( log );
+        if( logFilePath  !== '' ) logRequestIntoFile( log );
+        if( logTableName !== '' ) logRequestIntoDB( log );
     }
-    else console.warn( `Parametros de llamada a la funcion logRequest() erroneos (metodo: ${functionName} | status: ${status} | msg: ${msg})` );
+    else console.warn( `${COLOR.texto.amarillo}Parámetros de llamada a la función logRequest() erróneos (metodo: ${functionName} | status: ${status} | msg: ${msg})${COLOR.reset}` );
 }
 
 
@@ -113,8 +116,6 @@ const logRequest = async( req , functionName , status , msg = '' ) => {
  * Guarda el registro de una peticion en un archivo como una sola linea.
  * 
  * @param {object} log Objeto de registro de actividad.
- * 
- * @returns {boolean} true si se escribe correctamente en el archivo. false si sucede algun error.
  */
 const logRequestIntoFile = async( log ) => {
     // Se convierte el objeto del registro a un string de una sola linea sin colores de terminal.
@@ -123,10 +124,34 @@ const logRequestIntoFile = async( log ) => {
     // Se escribe la linea en el archivo de registros indicado.
     fs.appendFile( logFilePath , line , err => {
         if( err ){
-            console.error( 'ERROR al guardar registro en el archivo' );
-            console.error( err );
+            console.warn( `${COLOR.texto.amarillo}ERROR al guardar registro en el archivo${COLOR.reset}` );
+            console.warn( err );
         }
     });
+}
+
+/**
+ * Guarda el registro de una peticion en una tabla de base de datos SQL.
+ * 
+ * @param {object} log Objeto de registro de actividad.
+ */
+const logRequestIntoDB = async( log ) => {
+    // Hace la consulta a la base de datos
+    adminConnection.query(
+`INSERT INTO registros_api (
+    usuario, fecha, ipv4, uri, metodo, funcion, estado, msg
+  ) VALUES (
+    ?, ?, ?, ?, ?, ?, ?, ?, ?
+  );` , [
+    log.id, new Date(), log.ip, log.url, log.method, log.functionName, log.status, log.msg
+] ,
+        ( err ) => {
+            if( err ){
+                console.warn( `${COLOR.texto.amarillo}ERROR al guardar registro en la base de datos${COLOR.reset}` );
+                console.warn( err );
+            }
+        }
+    );
 }
 
 
@@ -134,19 +159,19 @@ const logRequestIntoFile = async( log ) => {
  * Convierte un objeto de registro de actividad en un string de una linea.
  * 
  * @param {object} log Objeto de registro de actividad.
- * @param {boolean} color (Opcional) Si colorear con codigos de escape ANSI. Por defecto false.
+ * @param {boolean} color (Opcional) Si colorear con codigos de escape ANSI. Por defecto `false`.
  */
 const logToString = ( log , color = false ) => {
     // Separa la fecha en partes.
     let date = log.date.split( 'T' );
 
     // Parsea los campos opcionales para que se puedan integrar facilmente al resto si existen.
-    const uid  = ( log.uid )  ? ` | UID: ${log.uid}` : '';
-    const role = ( log.role ) ? ` (${log.role})` : '';
-    const msg  = ( log.msg )  ? ` - ${log.msg}` : '' ;
+    const id      = ( log.id )               ? ` | UID: ${log.id}` : '';
+    const isAdmin = ( log.isAdmin === true ) ? ` (admin)`          : '';
+    const msg     = ( log.msg )              ? ` - ${log.msg}`     : '' ;
 
     // Se crea la cadena a mostrar. Empieza con la fecha y la hora.
-    let line = `${date[0]} ${date[1].slice( 0 , 8 )} | ${log.ip}${uid}${role} | `;
+    let line = `${date[0]} ${date[1].slice( 0 , 8 )} | ${log.ip}${id}${isAdmin} | `;
     
     // Dependiendo de la operacion, se estiliza el mensaje de una forma u otra.
     let methodProperties = PETICIONES[ log.method ];

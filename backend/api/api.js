@@ -19,9 +19,9 @@ const express   = require( 'express' );            // Express
 const swaggerUI = require( 'swagger-ui-express' ); // Interfaz de usuario de Swagger para Express
 
 // Propias
-require( './services/database.js' );                              // Conexión con la base de datos
-const { logRequest }      = require( './helpers/log.js' );        // Registros
-const { HTTP , COLOR }    = require( './helpers/constantes.js' ); // Abstraccion de constantes varias (colores de terminal, respuestas HTTP, etc)
+require( './services/database.js' );                           // Conexión con la base de datos
+const { logRequest }   = require( './helpers/log.js' );        // Registros
+const { HTTP , COLOR } = require( './helpers/constantes.js' ); // Abstraccion de constantes varias (colores de terminal, respuestas HTTP, etc)
 const { RUTA , PUERTO , END_DOCS , PROTOCOLO } = require( './helpers/rutas.js' ); // Rutas parseadas
 
 // -----------------
@@ -31,10 +31,11 @@ const { RUTA , PUERTO , END_DOCS , PROTOCOLO } = require( './helpers/rutas.js' )
 // EXPRESS
 const app = express();
 app.use( express.json() );                           // Soporte para cuerpos codificados en JSON
-app.use( express.urlencoded( { extended: true } ) ); // Soporte extendido para cuerpos codificados
+app.use( express.urlencoded( { extended: true } ) ); // Soporte extendido para cuerpos codificados <---------------------------------------- REVISAR SI SE PUEDE QUITAR
 
 // RUTAS
 app.use( '/api/usuarios' , require( './routes/usuarios.js' ) );
+app.use( '/api/auth' , require( './routes/auth.js' ) );
 
 // INTERFAZ DE SWAGGER
 app.use( END_DOCS , swaggerUI.serve , swaggerUI.setup( './docs/openapi.json' ) );
@@ -44,6 +45,19 @@ app.use( END_DOCS , swaggerUI.serve , swaggerUI.setup( './docs/openapi.json' ) )
 
 
 // ===== SERVIDOR =====
+
+// Establecer cabeceras en todas las peticiones como middleware
+app.use( ( req , res , next ) => {
+    // Aceptar peticiones de otro origen. Evita problemas con carga de recursos.
+    res.header( 'Access-Control-Allow-Origin' , '*' );
+    // Aceptar cabeceras adicionales
+    res.header( 'Access-Control-Allow-Headers' ,
+        'Authorization, Content-Type, Accept, Origin, X-Requested-With' );
+    // Lista blanca de métodos HTTP aceptados
+    res.header( 'Access-Control-Allow-Methods' , 'GET, POST, PUT, PATCH, DELETE' );
+
+    next();
+});
 
 // Poner en escucha
 app.listen( PUERTO , RUTA , () => {
@@ -63,7 +77,7 @@ ${COLOR.fondo.blanco}                                                           
 
 ${COLOR.texto.verde}API escuchando en:${COLOR.reset} ${COLOR.texto.cian}${PROTOCOLO}://${RUTA}:${PUERTO}${COLOR.reset}
 
-ESPECIFICACION de la API: ${COLOR.texto.cian}${PROTOCOLO}://${RUTA}:${PUERTO}${END_DOCS}${COLOR.reset}
+ESPECIFICACIÓN de la API: ${COLOR.texto.cian}${PROTOCOLO}://${RUTA}:${PUERTO}${END_DOCS}${COLOR.reset}
 
 
 ` );
@@ -73,11 +87,9 @@ ESPECIFICACION de la API: ${COLOR.texto.cian}${PROTOCOLO}://${RUTA}:${PUERTO}${E
  * Endpoint de prueba.
  */
 app.get( '/api/ping' , ( req , res ) => {
-    // Cabecera Content-type: text/plain
-    res.type( 'text/plain' );
     // Enviar la respuesta con estado OK
-    res.status( HTTP.success.ok ).send( 'pong' );
-    // Registrar la acción.
+    res.status( HTTP.success.ok ).type( 'text/plain' ).send( 'pong' );
+    // Registrar la acción
     logRequest( req , 'ping' , HTTP.success.ok , 'pong' );
 });
 

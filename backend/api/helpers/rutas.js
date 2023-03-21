@@ -12,7 +12,7 @@ const PROTOCOLO = ( process.env.HTTPS_ENABLED && ( parseInt( process.env.HTTPS_E
 const RUTAFULL = `${PROTOCOLO}://${RUTA}:${PUERTO}`;
 const RUTAAPI = `${RUTAFULL}/api`;
 
-const RUTAMASK = ( process.env.URL_MASK && process.env.URL_MASK !== '' ) ? process.env.URL_MASK : '127.0.0.1:3000';
+const RUTAMASK = ( process.env.URL_MASK && process.env.URL_MASK !== '' ) ? process.env.URL_MASK : 'localhost';
 const RUTAMASKFULL = `${PROTOCOLO}://${RUTAMASK}`;
 const RUTAAPIMASK = `${RUTAMASK}/api`;
 

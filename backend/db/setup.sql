@@ -19,17 +19,17 @@ CREATE TABLE usuarios (
   contrasena    VARCHAR( 80 )         NOT NULL ,
   nombre        VARCHAR( 40 )         NOT NULL ,
   bio           VARCHAR( 120 )                 ,
-  sexo          TINYINT( 1 ) UNSIGNED NOT NULL ,
+  sexo          TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT 0     ,
   fecha_nac     DATE                           ,
-  privado       BOOLEAN               NOT NULL ,
-  premium       BOOLEAN               NOT NULL ,
+  privado       BOOLEAN               NOT NULL DEFAULT false ,
+  premium       BOOLEAN               NOT NULL DEFAULT false ,
   fecha_reg     DATETIME              NOT NULL ,
   ultimo_acceso DATETIME                       ,
   ipv4          INT UNSIGNED          NOT NULL ,
   imagen        VARCHAR( 60 )                  ,
 
   PRIMARY KEY ( id ) ,
-  UNIQUE ( usuario )
+  UNIQUE ( email )
 
 ) ENGINE = InnoDB;
 
@@ -87,7 +87,7 @@ CREATE TABLE clubes (
   descripcion VARCHAR( 200 )          ,
   localidad   INT UNSIGNED   NOT NULL ,
   propietario INT UNSIGNED   NOT NULL ,
-  privado     BOOLEAN        NOT NULL ,
+  privado     BOOLEAN        NOT NULL DEFAULT false ,
   imagen      VARCHAR( 60 )           ,
 
   PRIMARY KEY ( id ) ,
@@ -113,7 +113,7 @@ CREATE TABLE itinerarios (
   denominacion VARCHAR( 60 )      NOT NULL ,
   descripcion  VARCHAR( 750 )              ,
   distancia    INT UNSIGNED       NOT NULL ,
-  dificultad   TINYINT( 1 )       NOT NULL ,
+  dificultad   TINYINT( 1 )       NOT NULL DEFAULT 0 ,
   desnivel     INT UNSIGNED                ,
   tiempo       INT UNSIGNED                ,
   circular     BOOLEAN                     ,
@@ -199,8 +199,8 @@ CREATE TABLE salidas (
   itinerario   INT UNSIGNED   NOT NULL ,
   fecha_inicio DATETIME       NOT NULL ,
   fecha_fin    DATETIME       NOT NULL ,
-  privada      BOOLEAN        NOT NULL ,
-  cancelada    BOOLEAN        NOT NULL ,
+  privada      BOOLEAN        NOT NULL DEFAULT false ,
+  cancelada    BOOLEAN        NOT NULL DEFAULT false ,
 
   PRIMARY KEY ( id ) ,
   FOREIGN KEY ( organizador ) REFERENCES usuarios( id ) ON DELETE CASCADE ,
@@ -271,7 +271,7 @@ CREATE TABLE registros_api (
   fecha   DATETIME          NOT NULL ,
   ipv4    INT UNSIGNED      NOT NULL ,
   uri     VARCHAR( 80 )     NOT NULL ,
-  metodo  TINYINT( 1 )      NOT NULL ,
+  metodo  TINYINT( 1 )      NOT NULL DEFAULT 0 ,
   funcion VARCHAR( 30 )     NOT NULL ,
   estado  SMALLINT UNSIGNED NOT NULL ,
   msg     VARCHAR( 80 )              ,
