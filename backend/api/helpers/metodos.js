@@ -5,11 +5,9 @@
 // === IMPORTAR ===
 
 // Librerias
-const { Blob } = require( 'buffer' );           // Objetos binarios de gran tamano
-const path = require( 'path' );                 // Rutas
+const path = require( 'path' ); // Rutas
 
 // Propio
-
 
 // ----------------
 
@@ -17,18 +15,6 @@ const path = require( 'path' );                 // Rutas
 // POSIX utiliza "/", Windows utiliza "\\" y "/"
 const universalPathSeparator = '/';
 
-
-
-/**
- * Obtiene la IP del cliente como entero.
- * 
- * @param {*} req Petición del cliente.
- */
-const getIp = function( req ){
-    // Devuelve la IP resuelta por Express
-    // o la IP del ultimo cliente que envio la peticion (que bien podria ser un proxy relegandola)
-    return ( req.ip || req.connection.remoteAddress );
-}
 
 
 /**
@@ -61,40 +47,48 @@ const filterQueries = ( queries , accepted = [] ) => {
  * Quita campos de un recurso que no conviene enviar al cliente.
  * 
  * @param {object | object[]} resources Array con los recursos.
- * @param {string[]} fields Campos por eliminar.
+ * @param {string[]} blacklistedFields Campos por eliminar.
  */
- const pullFields = ( resources , fields = [] ) => {
+const pullFields = ( resources , blacklistedFields = [] ) => {
     if( typeof resources === 'array' ){
         for( let i = 0 ; i < resources.length ; ++i ){
-            for( let j = 0 ; j < fields.length ; ++j ){
-                delete resources[ i ][ fields[ j ] ];
+            for( let j = 0 ; j < blacklistedFields.length ; ++j ){
+                delete resources[ i ][ blacklistedFields[ j ] ];
             }
         }
     } else {
-        for( let j = 0 ; j < fields.length ; ++j ){
-            delete resources[ fields[ j ] ];
+        for( let j = 0 ; j < blacklistedFields.length ; ++j ){
+            delete resources[ blacklistedFields[ j ] ];
         }
     }
 }
 
 /**
- * Genera un objeto con propiedades $gte y $lt para filtrar por fecha en mongoose.
+ * Quita campos de un recurso que no conviene enviar al cliente.
  * 
- * @param {*} start Fecha minima
- * @param {*} end Fecha maxima
+ * @param {object | object[]} resources Array con los recursos.
+ * @param {string[]} whitelistedFields Campos por mantener.ç
  */
-const generateMongooseDateFilter = ( start , end ) => {
-    // Crea un objeto al que asignar propiedades.
-    dateFilter = {};
+ const keepFields = ( resources , whitelistedFields = [] ) => {
+    if( Array.isArray( resources ) === true ){
+        for( let i = 0 ; i < resources.length ; ++i ){
+            const filteredResource = {};
 
-    // Comprueba y anade las fechas.
-    if( !isNaN( Date.parse( start ) ) ) dateFilter.$gte = start;
-    if( !isNaN( Date.parse( end   ) ) ) dateFilter.$lte = end;
-    
-    // Si el objeto final no tiene propiedades, a efectos practicos no existe.
-    if( Object.keys( dateFilter ).length === 0 ) dateFilter = undefined;
+            for( let j = 0 ; j < whitelistedFields.length ; ++j ){
+                filteredResource[ whitelistedFields[ j ] ] = resources[ i ][ whitelistedFields[ j ] ];
+            }
 
-    return dateFilter;
+            resources[ i ] = filteredResource;
+        }
+    } else {
+        const filteredResource = {};
+
+        for( let j = 0 ; j < whitelistedFields.length ; ++j ){
+            filteredResource[ whitelistedFields[ j ] ] = resources[ whitelistedFields[ j ] ];
+        }
+
+        resources = filteredResource;
+    }
 }
 
 
@@ -128,14 +122,6 @@ function getRandomIntInclusive( min , max ) {
 
     return Math.floor( Math.random() * ( max - min + 1 ) + min );
 }
-
-/**
- * Devuelve el tamano de un string en bytes.
- * Obtenido de https://dev.to/rajnishkatharotiya/get-byte-size-of-the-string-in-javascript-20jm
- * 
- * @param {string} str String a evaluar.
- */
-const stringByteSize = str => new Blob( [ str ] ).size;
 
 /**
  * Convierte una ruta en universal.
@@ -182,6 +168,6 @@ const getCaller = ( stackDepth ) => {
 
 
 // Marcar los metodos para exportar
-module.exports = { getIp , filterQueries , pullFields, generateMongooseDateFilter ,
-    getRandomInt , getRandomIntInclusive , stringByteSize ,
+module.exports = { filterQueries , pullFields, keepFields,
+    getRandomInt , getRandomIntInclusive ,
     universalPathSeparator , toUniversalPath , getCaller , resolveURL };

@@ -12,7 +12,8 @@ const { adminConnection } = require( '../services/database.js' ); // Base de dat
 const { COLOR , HTTP } = require( '../helpers/constantes.js' ); // Constantes
 const { logRequest } = require( '../helpers/log.js' ); // Registro
 const { generateJWT , JWTExpire } = require( '../helpers/jwt' ); // Generador de JSON Web Token
-const { pullFields } = require( '../helpers/metodos.js' ); // Metodos generales
+const { pullFields, keepFields , resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
+const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // ----------------
 
@@ -75,16 +76,18 @@ WHERE id = ?` , [
                 );
 
                 // Resuelve la URL de la imagen.
-                // await resolveURLImage( user );
+                if( result[ 0 ].imagen ){
+                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}/assets/img/pfp/` , -4 );
+                }
 
                 // Genera un token
-                generateJWT( result.id , result.isAdmin ).then( ( token ) => {
+                generateJWT( result[ 0 ].id , result[ 0 ].isAdmin ).then( ( token ) => {
                     // Elimina campos que no conviene enviar
                     pullFields( result[ 0 ] , [ 'contrasena' , 'ipv4' , 'isAdmin' ] );
 
                     // Responde con el objeto usuario, el token y su expiración
                     res.status( HTTP.success.ok ).json( {
-                        usuario: result,
+                        usuario: result[ 0 ],
                         token: {
                             jwt: token,
                             expires: JWTExpire

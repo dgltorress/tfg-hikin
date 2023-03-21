@@ -30,7 +30,7 @@ const router = Router();
 
 router.route( '/' )
     .get(
-        //validateJWT,
+        validateJWT,
         getUsuarios
     ).post(
         body( 'email' , 'Campo obligatorio (entre 3 y 60 caracteres)' ).exists().isEmail().isLength( { min: 3 , max: 60 } ),

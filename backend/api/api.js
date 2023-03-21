@@ -38,7 +38,7 @@ app.use( '/api/usuarios' , require( './routes/usuarios.js' ) );
 app.use( '/api/auth' , require( './routes/auth.js' ) );
 
 // INTERFAZ DE SWAGGER
-app.use( END_DOCS , swaggerUI.serve , swaggerUI.setup( './docs/openapi.json' ) );
+app.use( END_DOCS , swaggerUI.serve , swaggerUI.setup( require( './docs/openapi.json' ) ) );
 
 // --------------------------------
 
@@ -89,6 +89,7 @@ ESPECIFICACIÓN de la API: ${COLOR.texto.cian}${PROTOCOLO}://${RUTA}:${PUERTO}${
 app.get( '/api/ping' , ( req , res ) => {
     // Enviar la respuesta con estado OK
     res.status( HTTP.success.ok ).type( 'text/plain' ).send( 'pong' );
+
     // Registrar la acción
     logRequest( req , 'ping' , HTTP.success.ok , 'pong' );
 });

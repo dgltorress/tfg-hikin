@@ -41,7 +41,7 @@ const generateJWT = ( id , isAdmin ) => {
                 id ,
                 isAdmin
             }
-        }
+        };
         jwt.sign( payload , JWTSecret , {
             expiresIn: JWTExpire
         } , ( err , token ) => {
@@ -54,4 +54,4 @@ const generateJWT = ( id , isAdmin ) => {
         } );
     } );
 }
-module.exports = { generateJWT , JWTExpire };
+module.exports = { generateJWT , JWTSecret , JWTExpire };
