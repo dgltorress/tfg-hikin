@@ -39,7 +39,7 @@ const getUsuarios = async( req , res ) => {
                 // Resolver URLs de fotos de perfil
                 for( let i = 0 ; i < result.length ; i++ ){
                     if( result[ i ].imagen ){
-                        result[ i ].imagen = resolveURL( result[ i ].imagen , RUTAMASKFULL , 'assets/img/pfp' , -4 );
+                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}/assets/img/pfp/` , -4 );
                     }
                 }
 

@@ -33,7 +33,7 @@ INSERT INTO usuarios(
   ipv4, imagen
 ) VALUES (
   1, "johndoe", "johndoe@mail.com",
-  "$2a$12$gVty9heYMIZNXtNfOFjSuOcpE8vcEPSuQhU/oOlRj1F/QurWoO3U.",
+  "$2b$10$YEHION7LeQBsnpAm5FRti.uspPxYEW6r0FhWdrmS4sn6LyBUuHhMm",
   "John Doe", "Me gusta ir a la montaña y practicar senderismo",
   1, STR_TO_DATE( "1994-10-07" , "%Y-%m-%d" ), false, false,
   STR_TO_DATE( "2023-01-04 18:41" , "%Y-%m-%d %H:%i" ),
@@ -41,7 +41,7 @@ INSERT INTO usuarios(
   3310194375 , "../assets/img/pfp/2023/3/1/johndoe.jpg"
 ), (
   2, "janedoe", "janedoe@mail.com",
-  "$2a$12$sPEZ6fbrHdZp7CIbQjjbH.KKpfWuDzkS772Q/KceyiwglaHwyS8ou",
+  "$2b$10$iKqvfz2BZ0M4V1cUSCx7QOyrxOLIRku7hYz5b//2X9H2ktCo6Eg8S",
   "Jane Doe", "Nada como pasar un día en el campo para despejarme",
   2, STR_TO_DATE( "1998-05-17" , "%Y-%m-%d" ), false, false,
   STR_TO_DATE( "2022-11-09 10:11" , "%Y-%m-%d %H:%i" ),
@@ -49,7 +49,7 @@ INSERT INTO usuarios(
   2283231080 , "../assets/img/pfp/2023/3/1/janedoe.jpg"
 ), (
   3, "joeblow", "joeblow@mail.com",
-  "$2a$12$TL0yKkFx/hJFkJuwnuCUx.TPLcm2TYpBetEReX5dS1kKXgh1o.e96",
+  "$2b$10$z5NkBqLik9BMPS5qo4l8MuLwZ3AHHZeeIeZsx6nBCMHVJ/7mPtrV2",
   "Joe Blow", "Paso a paso",
   1, STR_TO_DATE( "2001-02-22" , "%Y-%m-%d" ), false, true,
   STR_TO_DATE( "2023-01-12 09:31" , "%Y-%m-%d %H:%i" ),
@@ -57,7 +57,7 @@ INSERT INTO usuarios(
   820021400 , "../assets/img/pfp/2023/3/1/joeblow.jpg"
 ), (
   4, "janesmith", "janesmith@mail.com",
-  "$2a$12$Z7EwjDxRk.jGAFmBs6CMCuikntxo6D.NLSI3q5s/jQLR41vQZb7mi",
+  "$2b$10$KkEktzCKGTknL9fVe9MjReJY8.czXtq2xw/./Rn05YvY01VEbLAl.",
   "Jane Smith", "ESTE PERFIL ES PRIVADO",
   2, STR_TO_DATE( "1996-08-09" , "%Y-%m-%d" ), true, false,
   STR_TO_DATE( "2023-02-05 18:41" , "%Y-%m-%d %H:%i" ),
@@ -65,7 +65,7 @@ INSERT INTO usuarios(
   1387731500 , "../assets/img/pfp/2023/3/1/janesmith.jpg"
 ), (
   5, "dickroe", "dickroe@mail.com",
-  "$2a$12$r2qPkxUO6O1OYPSt8SIH.eVBTkSnZ/OUbZQfyqUlzenR.BOpwHYhK",
+  "$2b$10$9KvDd6lRmed.iEJ/qZ1lAuTT5zwH5UWEwk2xvUETU1/gye8x2uwH6",
   "Dick Roe", "10 años (y contando) de experiencia en senderismo",
   0, STR_TO_DATE( "1990-12-01" , "%Y-%m-%d" ), true, true,
   STR_TO_DATE( "2023-01-04 18:41" , "%Y-%m-%d %H:%i" ),

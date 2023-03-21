@@ -151,19 +151,18 @@ const toUniversalPath = ( weirdPath ) => {
  * Resuelve la URL a un recurso en base a una URL.
  * 
  * @param {string} path Ruta relativa o absoluta al recurso local.
- * @param {string} maskBaseURL URL máscara base del servidor. NO debe contener separadores en los extremos.
- * @param {string} maskURL URL máscara base del directorio de recursos. NO debe contener separadores en los extremos.
+ * @param {string} maskURL URL máscara hasta el directorio de recursos. NO debe contener el separador.
  * @param {number} keepElementCount (Opcional) Cuántos elementos de la URL original se deben conservar expresado como entero negativo.
  * Útil para mantener directorios basados en fecha (p. ej. "YYYY/MM/DD/archivo.jpg" en lugar de "archivo.jpg"). Por defecto sólo el propio archivo.
  * 
  * @return {string}
  */
- const resolveURL = ( path , maskBaseURL , maskURL , keepElementCount = -1 ) => {
+ const resolveURL = ( path , maskURL , keepElementCount = -1 ) => {
     // Normaliza el filtro.
     if( keepElementCount > -1 ) keepElementCount = -1;
 
     // Ej: { http://127.0.0.1:3000 }{ / }{ assets/img/posts }{ / }{ 2023/2/17/image.jpg }
-    return `${maskBaseURL}${universalPathSeparator}${maskURL}${universalPathSeparator}${path.split( universalPathSeparator ).slice( keepElementCount ).join( universalPathSeparator ) }`;
+    return `${maskURL}${path.split( universalPathSeparator ).slice( keepElementCount ).join( universalPathSeparator ) }`;
 }
 
 /**

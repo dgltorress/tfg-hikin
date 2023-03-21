@@ -52,7 +52,7 @@ WHERE email = ?` , [
                 }
 
                 // Comprueba que la contraseña del usuario es válida
-                const validPassword = bcrypt.compareSync( result[ 0 ].contrasena , contrasena );
+                const validPassword = bcrypt.compareSync( contrasena , result[ 0 ].contrasena );
                 if( validPassword !== true ){
                     res.status( HTTP.error_client.forbidden ).json( { msg: 'Email o contraseña incorrectos' } );
                     logRequest( req , 'login' , HTTP.error_client.forbidden , `Contraseña incorrecta para email "${email}"` );
@@ -64,7 +64,7 @@ WHERE email = ?` , [
 `UPDATE usuarios
 SET ultimo_acceso = ?
 WHERE id = ?` , [
-    new Date(), result.id
+    new Date(), result[ 0 ].id
 ] ,
                     ( err ) => {
                         if( err ){
