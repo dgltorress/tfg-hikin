@@ -15,7 +15,7 @@
   },
   "externalDocs": {
     "description": "Descubre más sobre HikIn",
-    "url": "http://hikin.com"
+    "url": "http://127.0.0.1:4200"
   },
   "servers": [
     {
@@ -3256,18 +3256,6 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
-      },
-      "hikinOAuth2": {
-        "type": "oauth2",
-        "flows": {
-          "implicit": {
-            "authorizationUrl": "URL_DE_AUTORIZACION_DE_HIKIN",
-            "scopes": {
-              "read:users": "read account details",
-              "write:users": "modify account details"
-            }
-          }
-        }
       }
     }
   }

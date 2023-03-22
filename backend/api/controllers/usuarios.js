@@ -64,8 +64,7 @@ const getUsuarios = async( req , res ) => {
         parameters.push( req.query.nombre );
     }
 
-    if( req.query.p ){
-        req.query.p = parseInt( req.query.p );
+    if( req.query.p ){ // Se espera validado y procesado como entero
         filter += ` ORDER BY usuario LIMIT ?, ${usuariosPorPagina}`;
         parameters.push( req.query.p * usuariosPorPagina );
     } else {
@@ -73,7 +72,9 @@ const getUsuarios = async( req , res ) => {
     }
 
     // Query
-    adminConnection.query( `SELECT id, usuario, nombre, imagen FROM usuarios ${filter}` , parameters ,
+    adminConnection.query(
+`SELECT id, usuario, nombre, imagen FROM usuarios ${filter}` ,
+parameters ,
         ( err , result ) => {
             if( err ){
                 console.error( err );
@@ -101,11 +102,80 @@ const getUsuarios = async( req , res ) => {
     );
 }
 
+/**
+ * Responde con información detallada de un usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+ const getUsuario = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`SELECT id, usuario, nombre, bio, sexo,
+fecha_nac, privado, premium, fecha_reg,
+ultimo_acceso, imagen,
+(seguidor IS NOT NULL) AS is_siguiendo,
+(SELECT COUNT(*) FROM sigue_a WHERE seguido = ?) AS n_seguidores
+
+FROM usuarios
+LEFT JOIN sigue_a
+ON id = seguido AND seguidor = ?
+WHERE id = ?` , [
+    idObjetivo,
+    idSolicitante,
+    idObjetivo
+] ,
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getUsuario' , HTTP.error_server.internal , 'Error al obtener el usuario' );
+            } else {
+                // Si no ha habido coincidencias se termina
+                if( result.length === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'getUsuario', HTTP.error_client.not_found );
+                    return;
+                }
+
+                // Resolver URLs de fotos de perfil
+                if( result[ 0 ].imagen ){
+                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}/assets/img/pfp/` , -4 );
+                }
+                
+                // Si el usuario es privado y el solicitante no tiene permisos sólo se devuelve lo básico
+                if( result[ 0 ].privado && 
+                    ( ( idSolicitante !== idObjetivo ) || // Es propietario o
+                      ( req.user.isAdmin === true ) ) ){
+                    
+
+                    return;
+                }
+
+                res.status( HTTP.success.ok ).json( result[ 0 ] );
+                logRequest( req , 'getUsuario', HTTP.success.ok );
+            }
+        }
+    );
+}
+
 // -----------------------------------------------
 
 
 // * ================== POST =====================
 
+/**
+ * Crea un nuevo usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
 const createUsuario = ( req , res ) => {
     // Obtiene la información del cuerpo de la petición
     let { usuario, email,
@@ -171,9 +241,6 @@ const createUsuario = ( req , res ) => {
                     logRequest( req , 'createUsuario' , HTTP.error_server.internal , 'Error al insertar el usuario' );
                 }
             } else {
-                // Convierte el id de BigInt a Number (JWT no admite bigInt)
-                result.insertId = Number( result.insertId );
-
                 // Genera un token
                 generateJWT( result.insertId , false ).then( ( token ) => {
                     // Construye un objeto usuario que devolver
@@ -214,17 +281,20 @@ const createUsuario = ( req , res ) => {
 // -----------------------------------------------
 
 
-
-// * ================== PUT ======================
-
-
-
-// -----------------------------------------------
-
-
 // * ================= PATCH =====================
 
+/**
+ * Actualiza un usuario usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+ const updateUsuario = ( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
 
+}
 
 // -----------------------------------------------
 
@@ -242,4 +312,4 @@ const createUsuario = ( req , res ) => {
 
 
 // Marcar los metodos para exportar
-module.exports = { getUsuarios , createUsuario };
+module.exports = { getUsuarios , getUsuario, createUsuario, updateUsuario };

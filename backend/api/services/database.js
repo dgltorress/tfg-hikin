@@ -27,7 +27,10 @@ const adminConnection = mariadb.createConnection( {
     port: dbPort,
     user: dbUser,
     password: dbPwd,
-    database: dbName
+    database: dbName,
+
+    insertIdAsNumber: true, // Express no es capaz de trabajar con BigInt
+    bigIntAsNumber: true
 } );
 adminConnection.connect( ( err ) => {
     console.log( `
