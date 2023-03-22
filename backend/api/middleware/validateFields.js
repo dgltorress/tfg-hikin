@@ -24,7 +24,7 @@ const { logRequest } = require( '../helpers/log.js' ); // Registro
  */
 const validateFields = ( req , res , next ) => {
     const valResult = validationResult( req );
-    if( !valResult.isEmpty() ){
+    if( valResult.isEmpty() !== true ){
         res.status( HTTP.error_client.bad_request ).json( {
             errors: valResult.mapped()
         } );

@@ -10,8 +10,8 @@ const { toLong } = require( 'ip' ); // Pasar IPs a version entera
 
 // Propio
 const { adminConnection } = require( '../services/database.js' ); // Base de datos
-const { COLOR , HTTP , textRegExEsp } = require( '../helpers/constantes.js' ); // Constantes
-const { pullFields, keepFields, resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
+const { COLOR , HTTP } = require( '../helpers/constantes.js' ); // Constantes
+const { pullFields, keepFields, filterQueries, resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
 const { logRequest } = require( '../helpers/log.js' ); // Registro
 const { generateJWT , JWTExpire } = require( '../helpers/jwt' ); // Generador de JSON Web Token
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
@@ -19,12 +19,61 @@ const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 // ----------------
 
 
+// === INICIALIZAR
+
+const usuariosPorPagina = 4;
+
+// --------------------------------
+
 
 // * ================== GET ======================
 
+/**
+ * Responde con información básica de usuarios.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
 const getUsuarios = async( req , res ) => {
-    adminConnection.query(
-        'SELECT * FROM usuarios' , [] , // PAGINAR CONSULTA + FILTROS
+    // Construct SQL filter
+    let filter = '';
+    let parameters = [];
+    let firstQuery = true;
+    
+    if( req.query.usuario ){
+        req.query.usuario = `%${req.query.usuario}%`;
+        if( firstQuery === true ){
+            filter += 'WHERE ';
+            firstQuery = false;
+        } else {
+            filter += ' AND ';
+        }
+        filter += "usuario LIKE ?";
+        parameters.push( req.query.usuario );
+    }
+
+    if( req.query.nombre ){
+        req.query.nombre = `%${req.query.nombre}%`;
+        if( firstQuery === true ){
+            filter += 'WHERE ';
+            firstQuery = false;
+        } else {
+            filter += ' AND ';
+        }
+        filter += "nombre LIKE ?";
+        parameters.push( req.query.nombre );
+    }
+
+    if( req.query.p ){
+        req.query.p = parseInt( req.query.p );
+        filter += ` ORDER BY usuario LIMIT ?, ${usuariosPorPagina}`;
+        parameters.push( req.query.p * usuariosPorPagina );
+    } else {
+        filter += ` ORDER BY usuario LIMIT 0, ${usuariosPorPagina}`;
+    }
+
+    // Query
+    adminConnection.query( `SELECT id, usuario, nombre, imagen FROM usuarios ${filter}` , parameters ,
         ( err , result ) => {
             if( err ){
                 console.error( err );
@@ -33,9 +82,6 @@ const getUsuarios = async( req , res ) => {
                 } );
                 logRequest( req , 'getUsuarios' , HTTP.error_server.internal , 'Error al obtener los usuarios' );
             } else {
-                // Elimina campos que no conviene enviar
-                keepFields( result , [ 'id' , 'usuario' , 'nombre' , 'imagen' ] );
-
                 // Resolver URLs de fotos de perfil
                 for( let i = 0 ; i < result.length ; i++ ){
                     if( result[ i ].imagen ){
@@ -46,8 +92,7 @@ const getUsuarios = async( req , res ) => {
                 res.status( HTTP.success.ok ).json( {
                     usuarios: result,
                     paginado: {
-                        actual: 1,
-                        total: 1
+                        actual: ( req.query.p ) ? req.query.p : 0
                     }
                 } );
                 logRequest( req , 'getUsuarios', HTTP.success.ok );

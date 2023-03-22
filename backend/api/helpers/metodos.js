@@ -20,8 +20,8 @@ const universalPathSeparator = '/';
 /**
  * Elimina parametros de URL no admitidos de un objeto de parametros.
  * 
- * @param {*} queries Objeto de parametros de URL de la peticion (req.query en Express)
- * @param {string array} accepted Nombre de los parametros de URL aceptados ([ 'before' , 'after' , etc ]). Vacio devuelve el mismo objeto.
+ * @param {object} queries Objeto de parámetros de URL de la peticion (`req.query` en Express)
+ * @param {string[]} accepted Nombre de los parámetros de URL aceptados ([ 'before' , 'after' , etc ]). Vacío devuelve el mismo objeto.
  * 
  * @returns {*} Objeto de parametros filtrados.
  */
@@ -44,12 +44,13 @@ const filterQueries = ( queries , accepted = [] ) => {
 }
 
 /**
- * Quita campos de un recurso que no conviene enviar al cliente.
+ * Quita campos de un objeto u array de objetos.
  * 
- * @param {object | object[]} resources Array con los recursos.
- * @param {string[]} blacklistedFields Campos por eliminar.
+ * @param {object | object[]} resources Array con los objetos.
+ * @param {string[]} blacklistedFields Campos por eliminar. Si está vacío no se hace nada.
  */
 const pullFields = ( resources , blacklistedFields = [] ) => {
+    if( blacklistedFields.length === 0 ) return;
     if( typeof resources === 'array' ){
         for( let i = 0 ; i < resources.length ; ++i ){
             for( let j = 0 ; j < blacklistedFields.length ; ++j ){
@@ -64,12 +65,13 @@ const pullFields = ( resources , blacklistedFields = [] ) => {
 }
 
 /**
- * Quita campos de un recurso que no conviene enviar al cliente.
+ * Quita campos de un objeto u array de objetos.
  * 
- * @param {object | object[]} resources Array con los recursos.
- * @param {string[]} whitelistedFields Campos por mantener.ç
+ * @param {object | object[]} resources Array con los objetos.
+ * @param {string[]} whitelistedFields Campos por mantener. Si está vacío no se hace nada.
  */
  const keepFields = ( resources , whitelistedFields = [] ) => {
+    if( whitelistedFields.length === 0 ) return;
     if( Array.isArray( resources ) === true ){
         for( let i = 0 ; i < resources.length ; ++i ){
             const filteredResource = {};
