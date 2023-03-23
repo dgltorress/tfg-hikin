@@ -36,5 +36,25 @@ const validateSensitiveAction = ( req , res , next ) => {
     }
 }
 
+/**
+ * Comprueba si el usuario es el propietario de un recurso o un administrador.
+ * 
+ * @param {*} req Peticion del cliente.
+ * @param {*} res Respuesta del servidor.
+ * @param {*} next Siguiente metodo a ejecutar.
+ */
+ const validateNotSelf = ( req , res , next ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = parseInt( req.params.id );
+
+    if( idSolicitante === idObjetivo ){
+        res.status( HTTP.error_client.forbidden ).json( { msg: 'No puedes realizar esta acción sobre ti mismo' } );
+        logRequest( req , 'validateNotSelf' , HTTP.error_client.forbidden , 'No puedes realizar esta acción sobre ti mismo' );
+    } else {
+        next();
+    }
+}
+
 // Marcar para exportar
-module.exports = { validateSensitiveAction }
+module.exports = { validateSensitiveAction, validateNotSelf }

@@ -13,9 +13,12 @@ const { query , param , body } = require( 'express-validator' ); // body de Expr
 const { validateJWT } = require( '../middleware/jwt.js' ); // Validador de JSON Web Token
 const { validateFields } = require( '../middleware/validateFields.js' ); // Validador de JSON Web Token
 const { toUniversalPath } = require( '../helpers/metodos.js' );
-const { validateSensitiveAction } = require( '../middleware/validators.js' );
+const { validateSensitiveAction, validateNotSelf } = require( '../middleware/validators.js' );
 //const {  } = require('../middleware/files');
-const { getUsuarios, getUsuario, createUsuario, updateUsuario, deleteUsuario } = require( '../controllers/usuarios.js' ); // Controller Usuarios
+const { getUsuariosBasicos, getUsuario, getUsuarioBasico,
+    createUsuario, updateUsuario, deleteUsuario,
+    getFeed, getValoraciones,
+    getSeguidores, getSeguidos, seguirUsuario, deseguirUsuario } = require( '../controllers/usuarios.js' ); // Controller Usuarios
 
 // ----------------
 
@@ -37,7 +40,7 @@ router.route( '/' )
         query( 'nombre' , 'Entre 1 y 40 caracteres' ).optional().isString().isLength( { min: 1 , max: 40 } ),
         query( 'p' , 'Número natural' ).optional().isInt( { min: 0 } ).toInt(),
         validateFields,
-        getUsuarios
+        getUsuariosBasicos
     )
     .post(
         body( 'email' , 'Campo obligatorio (email válido, máx. 60 caracteres)' ).exists().isEmail().isLength( { max: 60 } ),
@@ -61,14 +64,14 @@ router.route( '/' )
 router.route( '/:id' )
     .get(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 0' ).isInt( { min: 1 } ).toInt(),
         validateFields,
         getUsuario
     )
     .patch(
         validateJWT,
         validateSensitiveAction,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 0' ).isInt( { min: 1 } ).toInt(),
         body( 'email' , 'Email válido, máx. 60 caracteres' ).optional().isEmail().isLength( { max: 60 } ),
         body( 'usuario' , 'Entre 3 y 15 caracteres' ).optional().isString().isLength( { min: 3 , max: 15 } ),
         body( 'nombre' , 'Entre 3 y 40 caracteres' ).optional().isString().isLength( { min: 3 , max: 40 } ),
@@ -103,16 +106,65 @@ router.route( '/:id' )
         param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
         validateFields,
         deleteUsuario
+    );
+
+router.route( '/:id/basico' )
+    .get(
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 0' ).isInt( { min: 1 } ).toInt(),
+        validateFields,
+        getUsuarioBasico
+    );
+
+router.route( '/:id/feed' )
+    .get(
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 0' ).isInt( { min: 1 } ).toInt(),
+        query( 'p' , 'Número natural' ).optional().isInt( { min: 0 } ).toInt(),
+        validateFields,
+        getFeed
+    );
+
+router.route( '/:id/valoraciones' )
+    .get(
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        validateFields,
+        getValoraciones
+    );
+
+router.route( '/:id/seguidores' )
+    .get(
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        validateFields,
+        getSeguidores
+    );
+
+router.route( '/:id/seguidos' )
+    .get(
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        validateFields,
+        getSeguidos
+    );
+
+router.route( '/:id/seguimiento' )
+    .post(
+        validateJWT,
+        validateNotSelf,
+        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        validateFields,
+        seguirUsuario
     )
+    .delete(
+        validateJWT,
+        validateNotSelf,
+        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        validateFields,
+        deseguirUsuario
+    );
 
-
-    //usuario, email,
-    //contrasena,
-    //nombre, bio,
-    //sexo, fecha_nac, privado, premium,
-    //fecha_reg,
-    //ultimo_acceso,
-    //ipv4, imagen
 
 // ----------------
 

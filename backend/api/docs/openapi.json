@@ -251,7 +251,7 @@
         ]
       }
     },
-    "/usuarios/basico/{id}": {
+    "/usuarios/{id}/basico": {
       "parameters": [
         {
           "name": "id",

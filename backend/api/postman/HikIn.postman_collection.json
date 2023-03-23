@@ -14,29 +14,28 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/?usuario=&nombre=&p=",
+							"raw": "{{baseURL}}/usuarios",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
-								"usuarios",
-								""
+								"usuarios"
 							],
 							"query": [
 								{
 									"key": "usuario",
 									"value": "",
-									"description": "Nombre, o una porción del nombre, del usuario. No se trata del nombre real, sino del nombre de usuario. No tiene en cuenta mayúsculas y minúsculas."
+									"disabled": true
 								},
 								{
 									"key": "nombre",
 									"value": "",
-									"description": "Nombre real, o una porción del nombre real, del usuario. No tiene en cuenta mayúsculas y minúsculas."
+									"disabled": true
 								},
 								{
 									"key": "p",
 									"value": "",
-									"description": "Índice de paginación."
+									"disabled": true
 								}
 							]
 						}
@@ -48,6 +47,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"a@mail.com\",\r\n    \"contrasena\": \"JohnDoe\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseURL}}/usuarios",
 							"host": [
@@ -66,13 +74,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}",
+							"raw": "{{baseURL}}/usuarios/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -83,14 +97,29 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"johndoe@mail.com\",\r\n    \"contrasena\": \"NO NO NO\",\r\n    \"usuario\": \"johndoee\",\r\n    \"nombre\": \"Johnn\",\r\n    \"bio\": \"Mi nombre es John Doee y me gusta el senderismo\",\r\n    \"sexo\": 2,\r\n    \"fecha_nac\": \"2022-03-23T15:23:56.400Z\",\r\n    \"privado\": true,\r\n    \"premium\": \"NO NO NO\",\r\n    \"imagen\": \"NO NO NO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}",
+							"raw": "{{baseURL}}/usuarios/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -102,32 +131,44 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}",
+							"raw": "{{baseURL}}/usuarios/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "usuarios/basico/:id",
+					"name": "usuarios/:id/basico",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/basico/{{userId}}",
+							"raw": "{{baseURL}}/usuarios/:id/basico",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"basico",
-								"{{userId}}"
+								":id",
+								"basico"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -139,14 +180,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/feed",
+							"raw": "{{baseURL}}/usuarios/:id/feed",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"feed"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -158,14 +205,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/valoraciones",
+							"raw": "{{baseURL}}/usuarios/:id/valoraciones",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"valoraciones"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -177,14 +230,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/seguidores",
+							"raw": "{{baseURL}}/usuarios/:id/seguidores",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"seguidores"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -196,14 +255,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/seguidos",
+							"raw": "{{baseURL}}/usuarios/:id/seguidos",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"seguidos"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -215,14 +280,20 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/seguimiento",
+							"raw": "{{baseURL}}/usuarios/:id/seguimiento",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"seguimiento"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
 							]
 						}
 					},
@@ -234,14 +305,20 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/seguimiento",
+							"raw": "{{baseURL}}/usuarios/:id/seguimiento",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"seguimiento"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2"
+								}
 							]
 						}
 					},
@@ -253,14 +330,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/clubes",
+							"raw": "{{baseURL}}/usuarios/:id/clubes",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"clubes"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -272,14 +355,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/salidas",
+							"raw": "{{baseURL}}/usuarios/:id/salidas",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"salidas"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -291,14 +380,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/resenas",
+							"raw": "{{baseURL}}/usuarios/:id/resenas",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"resenas"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -310,14 +405,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/distintivos",
+							"raw": "{{baseURL}}/usuarios/:id/distintivos",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"distintivos"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -329,14 +430,20 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/imagen",
+							"raw": "{{baseURL}}/usuarios/:id/imagen",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"imagen"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -348,14 +455,20 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/usuarios/{{userId}}/imagen",
+							"raw": "{{baseURL}}/usuarios/:id/imagen",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"usuarios",
-								"{{userId}}",
+								":id",
 								"imagen"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1236,6 +1349,15 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"johndoe@mail.com\",\r\n    \"contrasena\": \"JohnDoe\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "{{baseURL}}/auth",
 					"host": [

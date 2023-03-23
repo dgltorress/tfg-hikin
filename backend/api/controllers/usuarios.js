@@ -10,8 +10,8 @@ const { toLong } = require( 'ip' ); // Pasar IPs a version entera
 
 // Propio
 const { adminConnection } = require( '../services/database.js' ); // Base de datos
-const { COLOR , HTTP } = require( '../helpers/constantes.js' ); // Constantes
-const { pullFields, keepFields, filterQueries, resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
+const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
+const { resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
 const { logRequest } = require( '../helpers/log.js' ); // Registro
 const { generateJWT , JWTExpire } = require( '../helpers/jwt' ); // Generador de JSON Web Token
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
@@ -21,7 +21,7 @@ const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // === INICIALIZAR
 
-const usuariosPorPagina = 4;
+const elementosPorPagina = 20;
 
 // --------------------------------
 
@@ -29,12 +29,12 @@ const usuariosPorPagina = 4;
 // * ================== GET ======================
 
 /**
- * Responde con información básica de usuarios.
+ * Responde con información básica paginada de usuarios.
  * 
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
-const getUsuarios = async( req , res ) => {
+const getUsuariosBasicos = async( req , res ) => {
     // Construir filtro SQL
     let filter = '';
     let parameters = [];
@@ -65,10 +65,10 @@ const getUsuarios = async( req , res ) => {
     }
 
     if( req.query.p ){ // Se espera validado y procesado como entero
-        filter += ` ORDER BY usuario LIMIT ?, ${usuariosPorPagina}`;
-        parameters.push( req.query.p * usuariosPorPagina );
+        filter += ` ORDER BY usuario LIMIT ?, ${elementosPorPagina}`;
+        parameters.push( req.query.p * elementosPorPagina );
     } else {
-        filter += ` ORDER BY usuario LIMIT 0, ${usuariosPorPagina}`;
+        filter += ` ORDER BY usuario LIMIT 0, ${elementosPorPagina}`;
     }
 
     // Query
@@ -81,7 +81,7 @@ parameters ,
                 res.status( HTTP.error_server.internal ).json( {
                     msg: 'Ha habido un error'
                 } );
-                logRequest( req , 'getUsuarios' , HTTP.error_server.internal , 'Error al obtener los usuarios' );
+                logRequest( req , 'getUsuariosBasicos' , HTTP.error_server.internal , 'Error al obtener los usuarios' );
             } else {
                 // Resolver URLs de fotos de perfil
                 for( let i = 0 ; i < result.length ; i++ ){
@@ -96,7 +96,7 @@ parameters ,
                         actual: ( req.query.p ) ? req.query.p : 0
                     }
                 } );
-                logRequest( req , 'getUsuarios', HTTP.success.ok );
+                logRequest( req , 'getUsuariosBasicos', HTTP.success.ok );
             }
         }
     );
@@ -108,7 +108,7 @@ parameters ,
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
- const getUsuario = async( req , res ) => {
+const getUsuario = async( req , res ) => {
     // Distingue los identificadores
     const idSolicitante = req.user.id;
     const idObjetivo = req.params.id;
@@ -160,6 +160,173 @@ WHERE id = ?` , [
 
                 res.status( HTTP.success.ok ).json( result[ 0 ] );
                 logRequest( req , 'getUsuario', HTTP.success.ok );
+            }
+        }
+    );
+}
+
+/**
+ * Responde con información detallada de un usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const getUsuarioBasico = async( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+        'SELECT id, usuario, nombre, imagen FROM usuarios WHERE id = ?',
+        [ idObjetivo ],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getUsuarioBasico' , HTTP.error_server.internal , 'Error al obtener el usuario' );
+            } else {
+                // Si no ha habido coincidencias se termina
+                if( result.length === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'getUsuarioBasico', HTTP.error_client.not_found );
+                    return;
+                }
+
+                // Resolver URLs de fotos de perfil
+                if( result[ 0 ].imagen ){
+                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}/assets/img/pfp/` , -4 );
+                }
+
+                res.status( HTTP.success.ok ).json( result[ 0 ] );
+                logRequest( req , 'getUsuarioBasico', HTTP.success.ok );
+            }
+        }
+    );
+}
+
+/**
+ * Obtiene el feed paginado del usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const getFeed = async( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`SELECT acude, valoracion, observaciones FROM valoraciones
+WHERE valorado = ?`, [
+    idObjetivo
+],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getFeed' , HTTP.error_server.internal , 'Error al obtener los recursos' );
+            } else {
+                res.status( HTTP.success.ok ).json( result[ 0 ] );
+                logRequest( req , 'getFeed' , HTTP.success.ok );
+            }
+        }
+    );
+}
+
+/**
+ * Obtiene las valoraciones de un usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const getValoraciones = async( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`SELECT acude, valoracion, observaciones FROM valoraciones
+WHERE valorado = ?`, [
+    idObjetivo
+],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getValoraciones' , HTTP.error_server.internal , 'Error al obtener los recursos' );
+            } else {
+                res.status( HTTP.success.ok ).json( result );
+                logRequest( req , 'getValoraciones' , HTTP.success.ok );
+            }
+        }
+    );
+}
+
+/**
+ * Obtiene la información básica de los usuarios que siguen el usuario objetivo.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const getSeguidores = async( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`SELECT id, usuario, nombre, imagen FROM sigue_a AS s
+INNER JOIN usuarios AS u ON u.id = s.seguidor
+WHERE seguido = ?`, [
+    idObjetivo
+],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getSeguidores' , HTTP.error_server.internal , 'Error al obtener los recursos' );
+            } else {
+                res.status( HTTP.success.ok ).json( result );
+                logRequest( req , 'getSeguidores' , HTTP.success.ok );
+            }
+        }
+    );
+}
+
+/**
+ * Obtiene la información básica de los usuarios a los que sigue el usuario objetivo.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const getSeguidos = async( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`SELECT id, usuario, nombre, imagen FROM sigue_a AS s
+INNER JOIN usuarios AS u ON u.id = s.seguido
+WHERE seguidor = ?`, [
+    idObjetivo
+],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getSeguidos' , HTTP.error_server.internal , 'Error al obtener los recursos' );
+            } else {
+                res.status( HTTP.success.ok ).json( result );
+                logRequest( req , 'getSeguidos' , HTTP.success.ok );
             }
         }
     );
@@ -273,6 +440,40 @@ const createUsuario = ( req , res ) => {
                     res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
                     logRequest( req , 'createUsuario' , HTTP.error_server.internal , 'Error al generar el JWT' );
                 } );
+            }
+        }
+    );
+}
+
+/**
+ * Sigue a un usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const seguirUsuario = ( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`INSERT INTO sigue_a(
+  seguidor, seguido
+) VALUES (
+  ?, ?
+)` , [
+    idSolicitante,
+    idObjetivo
+] ,
+        ( err , result ) => {
+            if( err && err.errno !== 1062 ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'seguirUsuario' , HTTP.error_server.internal , 'Error al insertar el recurso' );
+            } else {
+                res.status( HTTP.success.no_content ).json();
+                logRequest( req , 'seguirUsuario' , HTTP.success.no_content );
             }
         }
     );
@@ -418,7 +619,7 @@ const updateUsuario = ( req , res ) => {
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
- const deleteUsuario = ( req , res ) => {
+const deleteUsuario = ( req , res ) => {
     // Distingue los identificadores
     const idObjetivo = req.params.id;
 
@@ -430,15 +631,46 @@ const updateUsuario = ( req , res ) => {
             if( err ){
                 console.error( err );
                 res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
-                logRequest( req , 'updateUsuario' , HTTP.error_server.internal , 'Error al actualizar el usuario' );
+                logRequest( req , 'deleteUsuario' , HTTP.error_server.internal , 'Error al actualizar el usuario' );
             } else {
                 if( result.affectedRows === 0 ){
                     res.status( HTTP.error_client.not_found ).send();
-                    logRequest( req , 'updateUsuario' , HTTP.error_client.not_found );
+                    logRequest( req , 'deleteUsuario' , HTTP.error_client.not_found );
                 } else {
                     res.status( HTTP.success.no_content ).send();
-                    logRequest( req , 'updateUsuario' , HTTP.success.no_content );
+                    logRequest( req , 'deleteUsuario' , HTTP.success.no_content );
                 }
+            }
+        }
+    );
+}
+
+/**
+ * Deja de seguir a un usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const deseguirUsuario = ( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`DELETE FROM sigue_a
+WHERE seguidor = ? AND seguido = ?` , [
+    idSolicitante,
+    idObjetivo
+] ,
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'deseguirUsuario' , HTTP.error_server.internal , 'Error al eliminar el recurso' );
+            } else {
+                res.status( HTTP.success.no_content ).json();
+                logRequest( req , 'deseguirUsuario' , HTTP.success.no_content );
             }
         }
     );
@@ -453,4 +685,7 @@ const updateUsuario = ( req , res ) => {
 
 
 // Marcar los metodos para exportar
-module.exports = { getUsuarios , getUsuario, createUsuario, updateUsuario, deleteUsuario };
+module.exports = { getUsuariosBasicos, getUsuario, getUsuarioBasico,
+    createUsuario, updateUsuario, deleteUsuario,
+    getFeed, getValoraciones,
+    getSeguidores, getSeguidos, seguirUsuario, deseguirUsuario };
