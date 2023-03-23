@@ -35,7 +35,7 @@ const usuariosPorPagina = 4;
  * @param {*} res Respuesta del servidor.
  */
 const getUsuarios = async( req , res ) => {
-    // Construct SQL filter
+    // Construir filtro SQL
     let filter = '';
     let parameters = [];
     let firstQuery = true;
@@ -267,7 +267,7 @@ const createUsuario = ( req , res ) => {
                             expires: JWTExpire
                         }
                     } );
-                    logRequest( req , 'login' , HTTP.success.ok );
+                    logRequest( req , 'createUsuario' , HTTP.success.ok );
                 } ).catch( ( err ) => {
                     console.error( err );
                     res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
@@ -289,11 +289,122 @@ const createUsuario = ( req , res ) => {
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
- const updateUsuario = ( req , res ) => {
+const updateUsuario = ( req , res ) => {
     // Distingue los identificadores
-    const idSolicitante = req.user.id;
     const idObjetivo = req.params.id;
 
+    // Obtiene la información del cuerpo de la petición
+    let { usuario, email, nombre, bio, sexo, fecha_nac, privado } = req.body;
+
+    // Construct SQL filter
+    let filter = '';
+    let parameters = [];
+    let firstQuery = true;
+
+    if( usuario ){
+        if( firstQuery === true ){
+            filter += " SET ";
+            firstQuery = false;
+        } else {
+            filter += ", ";
+        }
+        filter += "usuario = ?";
+        parameters.push( usuario );
+    }
+
+    if( email ){
+        if( firstQuery === true ){
+            filter += " SET ";
+            firstQuery = false;
+        } else {
+            filter += ", ";
+        }
+        filter += "email = ?";
+        parameters.push( email );
+    }
+
+    if( nombre ){
+        if( firstQuery === true ){
+            filter += " SET ";
+            firstQuery = false;
+        } else {
+            filter += ", ";
+        }
+        filter += "nombre = ?";
+        parameters.push( nombre );
+    }
+
+    if( bio ){
+        if( firstQuery === true ){
+            filter += " SET ";
+            firstQuery = false;
+        } else {
+            filter += ", ";
+        }
+        filter += "bio = ?";
+        parameters.push( bio );
+    }
+
+    if( sexo ){
+        if( firstQuery === true ){
+            filter += " SET ";
+            firstQuery = false;
+        } else {
+            filter += ", ";
+        }
+        filter += "sexo = ?";
+        parameters.push( sexo );
+    }
+
+    if( fecha_nac ){
+        if( firstQuery === true ){
+            filter += " SET ";
+            firstQuery = false;
+        } else {
+            filter += ", ";
+        }
+        filter += "fecha_nac = ?";
+        parameters.push( fecha_nac );
+    }
+
+    if( privado ){
+        if( firstQuery === true ){
+            filter += " SET ";
+            firstQuery = false;
+        } else {
+            filter += ", ";
+        }
+        filter += "privado = ?";
+        parameters.push( privado );
+    }
+
+    parameters.push( idObjetivo );
+
+    // Intenta insertar el nuevo usuario con su información
+    adminConnection.query(
+`UPDATE usuarios ${filter} WHERE id = ?` , parameters ,
+        ( err , result ) => {
+            if( err ){
+                if( err.sqlState === '23000' ){
+                    res.status( HTTP.error_client.bad_request ).json( { msg: 'Ya existe una cuenta con ese email' } );
+                    logRequest( req , 'updateUsuario' , HTTP.error_client.bad_request , 'Ya existe una cuenta con ese email' );
+                }
+                else{
+                    console.error( err );
+                    res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                    logRequest( req , 'updateUsuario' , HTTP.error_server.internal , 'Error al actualizar el usuario' );
+                }
+            } else {
+                if( result.affectedRows === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'updateUsuario' , HTTP.error_client.not_found );
+                } else {
+                    res.status( HTTP.success.no_content ).send();
+                    logRequest( req , 'updateUsuario' , HTTP.success.no_content );
+                }
+            }
+        }
+    );
 }
 
 // -----------------------------------------------
@@ -301,7 +412,37 @@ const createUsuario = ( req , res ) => {
 
 // * ================= DELETE ====================
 
+/**
+ * Actualiza un usuario usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+ const deleteUsuario = ( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
 
+    // Intenta insertar el nuevo usuario con su información
+    adminConnection.query(
+        'DELETE FROM usuarios WHERE id = ?' ,
+        [ idObjetivo ] ,
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'updateUsuario' , HTTP.error_server.internal , 'Error al actualizar el usuario' );
+            } else {
+                if( result.affectedRows === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'updateUsuario' , HTTP.error_client.not_found );
+                } else {
+                    res.status( HTTP.success.no_content ).send();
+                    logRequest( req , 'updateUsuario' , HTTP.success.no_content );
+                }
+            }
+        }
+    );
+}
 
 // -----------------------------------------------
 
@@ -312,4 +453,4 @@ const createUsuario = ( req , res ) => {
 
 
 // Marcar los metodos para exportar
-module.exports = { getUsuarios , getUsuario, createUsuario, updateUsuario };
+module.exports = { getUsuarios , getUsuario, createUsuario, updateUsuario, deleteUsuario };

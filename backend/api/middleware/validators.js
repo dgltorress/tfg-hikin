@@ -20,10 +20,10 @@ const { logRequest } = require( '../helpers/log.js' );  // Registro
  * @param {*} res Respuesta del servidor.
  * @param {*} next Siguiente metodo a ejecutar.
  */
-const validateSensitiveAccess = ( req , res , next ) => {
+const validateSensitiveAction = ( req , res , next ) => {
     // Distingue los identificadores
     const idSolicitante = req.user.id;
-    const idObjetivo = req.params.id;
+    const idObjetivo = parseInt( req.params.id );
 
     if( ( idSolicitante === idObjetivo ) || // Es propietario o
         ( req.user.isAdmin === true ) ){    // Es administrador
@@ -32,9 +32,9 @@ const validateSensitiveAccess = ( req , res , next ) => {
         res.status( HTTP.error_client.forbidden ).json( {
             msg: 'No cuentas con los permisos necesarios para realizar esta acción'
         } );
-        logRequest( req , 'validateSensitiveAccess' , HTTP.error_client.forbidden , 'El solicitante no es el propietario del recurso o un administrador' );
+        logRequest( req , 'validateSensitiveAction' , HTTP.error_client.forbidden , 'El solicitante no es el propietario del recurso o un administrador' );
     }
 }
 
 // Marcar para exportar
-module.exports = { validateSensitiveAccess }
+module.exports = { validateSensitiveAction }

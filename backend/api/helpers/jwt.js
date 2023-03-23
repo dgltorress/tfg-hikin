@@ -39,7 +39,7 @@ const generateJWT = ( id , isAdmin ) => {
         const payload = {
             user: {
                 id ,
-                isAdmin
+                isAdmin: Boolean( isAdmin )
             }
         };
         jwt.sign( payload , JWTSecret , {

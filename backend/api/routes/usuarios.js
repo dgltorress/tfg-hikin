@@ -13,9 +13,9 @@ const { query , param , body } = require( 'express-validator' ); // body de Expr
 const { validateJWT } = require( '../middleware/jwt.js' ); // Validador de JSON Web Token
 const { validateFields } = require( '../middleware/validateFields.js' ); // Validador de JSON Web Token
 const { toUniversalPath } = require( '../helpers/metodos.js' );
-const { validateSensitiveAccess } = require( '../middleware/validators.js' );
+const { validateSensitiveAction } = require( '../middleware/validators.js' );
 //const {  } = require('../middleware/files');
-const { getUsuarios, getUsuario, createUsuario, updateUsuario } = require( '../controllers/usuarios.js' ); // Controller Usuarios
+const { getUsuarios, getUsuario, createUsuario, updateUsuario, deleteUsuario } = require( '../controllers/usuarios.js' ); // Controller Usuarios
 
 // ----------------
 
@@ -67,9 +67,9 @@ router.route( '/:id' )
     )
     .patch(
         validateJWT,
-        validateSensitiveAccess,
+        validateSensitiveAction,
+        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
         body( 'email' , 'Email válido, máx. 60 caracteres' ).optional().isEmail().isLength( { max: 60 } ),
-        body( 'contrasena' , 'Más de 7 caracteres' ).optional().isString().isLength( { min: 8 } ),
         body( 'usuario' , 'Entre 3 y 15 caracteres' ).optional().isString().isLength( { min: 3 , max: 15 } ),
         body( 'nombre' , 'Entre 3 y 40 caracteres' ).optional().isString().isLength( { min: 3 , max: 40 } ),
         body( 'bio' , 'Entre 3 y 120 caracteres' ).optional().isString().isLength( { min: 3 , max: 120 } ),
@@ -78,20 +78,31 @@ router.route( '/:id' )
                 ( sexValue !== 1 ) &&
                 ( sexValue !== 2 ) &&
                 ( sexValue !== 9 ) ){
-              throw new Error( 'El sexo sigue el estándar ISO/IEC 5218 (0: Desconocido | 1: Varón | 2: Mujer | 9: No aplicable)' );
+                throw new Error( 'El sexo sigue el estándar ISO/IEC 5218 (0: Desconocido | 1: Varón | 2: Mujer | 9: No aplicable)' );
             }
 
             return true;
         } ),
-        body( 'fecha_nac' , 'Fecha válida' ).optional().isDate().toDate().custom( ( dateValue , { req } ) => {
-            if( dateValue > new Date() ){
-              throw new Error( 'La fecha debe estar en el pasado' );
+        body( 'fecha_nac' ).optional().custom( ( dateValue , { req } ) => {
+            dateValue = new Date( dateValue );
+
+            if( ( isNaN( dateValue ) === true ) || 
+                ( dateValue > new Date() ) ){
+                throw new Error( 'La fecha debe ser válida y estar en el pasado' );
             }
 
             return true;
-        } ),
+        } ).toDate(),
+        body( 'privado' , 'Booleano' ).optional().isBoolean().toBoolean(),
         validateFields,
         updateUsuario
+    )
+    .delete(
+        validateJWT,
+        validateSensitiveAction,
+        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        validateFields,
+        deleteUsuario
     )
 
 
