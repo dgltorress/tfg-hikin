@@ -1,5 +1,5 @@
 /**
- * CONTROLLER: Usuarios
+ * CONTROLLER: Info
  */
 
 // === IMPORTAR ===

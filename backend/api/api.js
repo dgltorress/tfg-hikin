@@ -34,10 +34,13 @@ app.use( express.json() );                           // Soporte para cuerpos cod
 app.use( express.urlencoded( { extended: true } ) ); // Soporte extendido para cuerpos codificados <---------------------------------------- REVISAR SI SE PUEDE QUITAR
 
 // RUTAS
-app.use( '/api/usuarios' , require( './routes/usuarios.js' ) );
+app.use( '/api/usuarios'      , require( './routes/usuarios.js'      ) );
 app.use( '/api/publicaciones' , require( './routes/publicaciones.js' ) );
-app.use( '/api/itinerarios' , require( './routes/itinerarios.js' ) );
-app.use( '/api/auth' , require( './routes/auth.js' ) );
+app.use( '/api/itinerarios'   , require( './routes/itinerarios.js'   ) );
+app.use( '/api/clubes'        , require( './routes/clubes.js'        ) );
+app.use( '/api/salidas'       , require( './routes/salidas.js'       ) );
+app.use( '/api/info'          , require( './routes/info.js'          ) );
+app.use( '/api/auth'          , require( './routes/auth.js'          ) );
 
 // INTERFAZ DE SWAGGER
 app.use( END_DOCS , swaggerUI.serve , swaggerUI.setup( require( './docs/openapi.json' ) ) );
