@@ -189,6 +189,13 @@
 								":id",
 								"feed"
 							],
+							"query": [
+								{
+									"key": "p",
+									"value": "",
+									"disabled": true
+								}
+							],
 							"variable": [
 								{
 									"key": "id",
@@ -485,7 +492,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/publicaciones?texto=&autor=&itinerario=&club=&desde=&hasta=&p",
+							"raw": "{{baseURL}}/publicaciones",
 							"host": [
 								"{{baseURL}}"
 							],
@@ -495,38 +502,45 @@
 							"query": [
 								{
 									"key": "texto",
-									"value": "",
-									"description": "Título o descripción, o una parte del título o descripción, de la publicación. No atiende a mayúsculas."
+									"value": "iki",
+									"description": "Título o descripción, o una parte del título o descripción, de la publicación. No atiende a mayúsculas.",
+									"disabled": true
 								},
 								{
 									"key": "autor",
-									"value": "",
-									"description": "Identificador del autor."
+									"value": "1",
+									"description": "Identificador del autor.",
+									"disabled": true
 								},
 								{
 									"key": "itinerario",
-									"value": "",
-									"description": "Identificador del itinerario asociado, si tiene."
+									"value": "1",
+									"description": "Identificador del itinerario asociado, si tiene.",
+									"disabled": true
 								},
 								{
 									"key": "club",
-									"value": "",
-									"description": "Identificador del club asociado, si tiene."
+									"value": "1",
+									"description": "Identificador del club asociado, si tiene.",
+									"disabled": true
 								},
 								{
 									"key": "desde",
-									"value": "",
-									"description": "Fecha más antigua desde la que buscar."
+									"value": "2023-03-02T11:34:00Z",
+									"description": "Fecha más antigua desde la que buscar.",
+									"disabled": true
 								},
 								{
 									"key": "hasta",
-									"value": "",
-									"description": "Fecha más reciente hasta la que buscar."
+									"value": "2023-03-03T11:34:00Z",
+									"description": "Fecha más reciente hasta la que buscar.",
+									"disabled": true
 								},
 								{
 									"key": "p",
-									"value": null,
-									"description": "Índice de paginación."
+									"value": "0",
+									"description": "Índice de paginación.",
+									"disabled": true
 								}
 							]
 						}
@@ -556,13 +570,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/publicaciones/{{pubId}}",
+							"raw": "{{baseURL}}/publicaciones/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"publicaciones",
-								"{{pubId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -574,13 +594,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/publicaciones/{{pubId}}",
+							"raw": "{{baseURL}}/publicaciones/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"publicaciones",
-								"{{pubId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -592,14 +618,20 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/publicaciones/{{pubId}}/kudos",
+							"raw": "{{baseURL}}/publicaciones/:id/kudos",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"publicaciones",
-								"{{pubId}}",
+								":id",
 								"kudos"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -611,14 +643,20 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/publicaciones/{{pubId}}/kudos",
+							"raw": "{{baseURL}}/publicaciones/:id/kudos",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"publicaciones",
-								"{{pubId}}",
+								":id",
 								"kudos"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -630,14 +668,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/publicaciones/{{pubId}}/comentarios",
+							"raw": "{{baseURL}}/publicaciones/:id/comentarios",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"publicaciones",
-								"{{pubId}}",
+								":id",
 								"comentarios"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -648,15 +692,30 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"texto\": \"UN COMENTARIO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{baseURL}}/publicaciones/{{pubId}}/comentarios",
+							"raw": "{{baseURL}}/publicaciones/:id/comentarios",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"publicaciones",
-								"{{pubId}}",
+								":id",
 								"comentarios"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -668,15 +727,25 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/publicaciones/{{pubId}}/comentarios/{{comId}}",
+							"raw": "{{baseURL}}/publicaciones/:pubId/comentarios/:comId",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"publicaciones",
-								"{{pubId}}",
+								":pubId",
 								"comentarios",
-								"{{comId}}"
+								":comId"
+							],
+							"variable": [
+								{
+									"key": "pubId",
+									"value": "1"
+								},
+								{
+									"key": "comId",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -693,7 +762,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/itinerarios?cod=&texto=&codauto=&cpro=&dificultad=&dist_min=&dist_max=&desn_min=&desn_max=&tiempo_min=&tiempo_max=&circular=&p",
+							"raw": "{{baseURL}}/itinerarios",
 							"host": [
 								"{{baseURL}}"
 							],
@@ -703,68 +772,80 @@
 							"query": [
 								{
 									"key": "cod",
-									"value": "",
-									"description": "Código, o una parte del código, del itinerario. No atiende a mayúsculas."
+									"value": "PR",
+									"disabled": true
 								},
 								{
 									"key": "texto",
-									"value": "",
-									"description": "Denominación o descripción, o una parte de la denominación o descripción, del itinerario. No atiende a mayúsculas."
+									"value": "alb",
+									"description": "Denominación o descripción, o una parte de la denominación o descripción, del itinerario. No atiende a mayúsculas.",
+									"disabled": true
 								},
 								{
 									"key": "codauto",
-									"value": "",
-									"description": "Identificador de la comunidad autónoma."
+									"value": "2",
+									"description": "Identificador de la comunidad autónoma.",
+									"disabled": true
 								},
 								{
 									"key": "cpro",
-									"value": "",
-									"description": "Identificador de la provincia."
+									"value": "48",
+									"description": "Identificador de la provincia.",
+									"disabled": true
 								},
 								{
 									"key": "dificultad",
-									"value": "",
-									"description": "Identificador de la dificultad."
+									"value": "1",
+									"description": "Identificador de la dificultad.",
+									"disabled": true
 								},
 								{
 									"key": "dist_min",
-									"value": "",
-									"description": "Distancia horizontal mínima en metros."
+									"value": "5000",
+									"description": "Distancia horizontal mínima en metros.",
+									"disabled": true
 								},
 								{
 									"key": "dist_max",
-									"value": "",
-									"description": "Distancia horizontal máxima en metros."
+									"value": "15000",
+									"description": "Distancia horizontal máxima en metros.",
+									"disabled": true
 								},
 								{
 									"key": "desn_min",
-									"value": "",
-									"description": "Desnivel absoluto mínimo en metros."
+									"value": "650",
+									"description": "Desnivel absoluto mínimo en metros.",
+									"disabled": true
 								},
 								{
 									"key": "desn_max",
-									"value": "",
-									"description": "Desnivel absoluto máximo en metros."
+									"value": "750",
+									"description": "Desnivel absoluto máximo en metros.",
+									"disabled": true
 								},
 								{
 									"key": "tiempo_min",
-									"value": "",
-									"description": "Tiempo mínimo en segundos."
+									"value": "250",
+									"description": "Tiempo mínimo en segundos.",
+									"disabled": true
 								},
 								{
 									"key": "tiempo_max",
-									"value": "",
-									"description": "Tiempo máximo en segundos."
+									"value": "350",
+									"description": "Tiempo máximo en segundos.",
+									"disabled": true
 								},
 								{
 									"key": "circular",
-									"value": "",
-									"description": "Si es circular."
+									"value": "true",
+									"description": "Si es circular.",
+									"disabled": true
 								},
 								{
 									"key": "p",
 									"value": null,
-									"description": "Índice de paginación."
+									"description": "Índice de paginación.",
+									"disabled": true
 								}
 							]
 						}
@@ -777,13 +858,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/itinerarios/{{itId}}",
+							"raw": "{{baseURL}}/itinerarios/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"itinerarios",
-								"{{itId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -795,14 +882,20 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/itinerarios/{{itId}}/resenas",
+							"raw": "{{baseURL}}/itinerarios/:id/resenas",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"itinerarios",
-								"{{itId}}",
+								":id",
 								"resenas"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -813,35 +906,60 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"valoracion\": 1,\r\n    \"observaciones\": \"OBSERVACIONES\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{baseURL}}/itinerarios/{{itId}}/resenas",
+							"raw": "{{baseURL}}/itinerarios/:id/resenas",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"itinerarios",
-								"{{itId}}",
+								":id",
 								"resenas"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "itinerarios/:pubId/resenas/:userId",
+					"name": "itinerarios/:itId/resenas/:userId",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/itinerarios/{{itId}}/resenas/{{userId}}",
+							"raw": "{{baseURL}}/itinerarios/:itId/resenas/:userId",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"itinerarios",
-								"{{itId}}",
+								":itId",
 								"resenas",
-								"{{userId}}"
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "itId",
+									"value": "1"
+								},
+								{
+									"key": "userId",
+									"value": "1"
+								}
 							]
 						}
 					},
