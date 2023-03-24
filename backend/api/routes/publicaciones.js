@@ -36,7 +36,7 @@ const router = Router();
 router.route( '/' )
     .get(
         validateJWT,
-        query( 'texto' , 'Entre 1 y 35 caracteres' ).optional().isString().isLength( { min: 1 , max: 35 } ),
+        query( 'texto' , 'Entre 1 y 30 caracteres' ).optional().isString().isLength( { min: 1 , max: 30 } ),
         query( 'autor' , 'Número natural mayor que 0' ).optional().isInt( { min: 1 } ).toInt(),
         query( 'itinerario' , 'Número natural mayor que 0' ).optional().isInt( { min: 1 } ).toInt(),
         query( 'club' , 'Número natural mayor que 0' ).optional().isInt( { min: 1 } ).toInt(),

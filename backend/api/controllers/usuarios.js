@@ -791,7 +791,7 @@ const deleteUsuario = ( req , res ) => {
             if( err ){
                 console.error( err );
                 res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
-                logRequest( req , 'deleteUsuario' , HTTP.error_server.internal , 'Error al actualizar el usuario' );
+                logRequest( req , 'deleteUsuario' , HTTP.error_server.internal , 'Error al eliminar el usuario' );
             } else {
                 if( result.affectedRows === 0 ){
                     res.status( HTTP.error_client.not_found ).send();

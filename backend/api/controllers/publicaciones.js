@@ -32,7 +32,7 @@ const elementosPorPagina = 20;
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
- const getPublicaciones = async( req , res ) => {
+const getPublicaciones = async( req , res ) => {
     // Construir filtro SQL
     let filter = '';
     let parameters = [];
@@ -217,7 +217,8 @@ const getComentarios = async( req , res ) => {
     // Query
     adminConnection.query(
 `SELECT * FROM comentarios
-WHERE publicacion = ?`,
+WHERE publicacion = ?
+ORDER BY fecha DESC`,
         [  idObjetivo ],
         ( err , result ) => {
             if( err ){
@@ -311,7 +312,7 @@ const createComentario = async( req , res ) => {
             if( err ){
                 console.error( err );
                 res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
-                logRequest( req , 'createComentario' , HTTP.error_server.internal , 'Error al obtener el recurso' );
+                logRequest( req , 'createComentario' , HTTP.error_server.internal , 'Error al insertar el recurso' );
             } else {
                 const comentarioInsertado = {};
 
@@ -403,7 +404,7 @@ const deleteComentario = async( req , res ) => {
     const idPubObjetivo = req.params.pubId;
     const idComObjetivo = req.params.comId;
 
-    // Determina si el usuario posee el recurso o es administrador
+    // Encuentra al propietario del recurso
     adminConnection.query(
         'SELECT autor FROM comentarios WHERE publicacion = ? AND id = ?' ,
         [ idPubObjetivo, idComObjetivo ] ,
