@@ -46,7 +46,7 @@ const filterQueries = ( queries , accepted = [] ) => {
 /**
  * Quita campos de un objeto u array de objetos.
  * 
- * @param {object | object[]} resources Array con los objetos.
+ * @param {object | object[]} resources Array con los objetos u objeto suelto.
  * @param {string[]} blacklistedFields Campos por eliminar. Si está vacío no se hace nada.
  */
 const pullFields = ( resources , blacklistedFields = [] ) => {
@@ -67,10 +67,12 @@ const pullFields = ( resources , blacklistedFields = [] ) => {
 /**
  * Quita campos de un objeto u array de objetos.
  * 
- * @param {object | object[]} resources Array con los objetos.
+ * @param {object | object[]} resources Array con los objetos u objeto suelto.
  * @param {string[]} whitelistedFields Campos por mantener. Si está vacío no se hace nada.
+ * 
+ * @return Array u objeto modificado.
  */
- const keepFields = ( resources , whitelistedFields = [] ) => {
+const keepFields = ( resources , whitelistedFields = [] ) => {
     if( whitelistedFields.length === 0 ) return;
     if( Array.isArray( resources ) === true ){
         for( let i = 0 ; i < resources.length ; ++i ){
@@ -91,6 +93,8 @@ const pullFields = ( resources , blacklistedFields = [] ) => {
 
         resources = filteredResource;
     }
+
+    return resources;
 }
 
 

@@ -11,7 +11,7 @@ const { toLong } = require( 'ip' ); // Pasar IPs a version entera
 // Propio
 const { adminConnection } = require( '../services/database.js' ); // Base de datos
 const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
-const { resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
+const { resolveURL, keepFields } = require( '../helpers/metodos.js' ); // Metodos generales
 const { logRequest } = require( '../helpers/log.js' ); // Registro
 const { generateJWT , JWTExpire } = require( '../helpers/jwt' ); // Generador de JSON Web Token
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
@@ -73,7 +73,7 @@ const getUsuariosBasicos = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT id, usuario, nombre, imagen FROM usuarios ${filter}` ,
+`SELECT id, usuario, nombre, imagen, privado FROM usuarios ${filter}` ,
 parameters ,
         ( err , result ) => {
             if( err ){
@@ -140,7 +140,7 @@ WHERE id = ?` , [
                 // Si no ha habido coincidencias se termina
                 if( result.length === 0 ){
                     res.status( HTTP.error_client.not_found ).send();
-                    logRequest( req , 'getUsuario', HTTP.error_client.not_found );
+                    logRequest( req , 'getUsuario' , HTTP.error_client.not_found );
                     return;
                 }
 
@@ -151,15 +151,16 @@ WHERE id = ?` , [
                 
                 // Si el usuario es privado y el solicitante no tiene permisos sólo se devuelve lo básico
                 if( result[ 0 ].privado && 
-                    ( ( idSolicitante !== idObjetivo ) || // Es propietario o
+                    ( ( idSolicitante !== idObjetivo ) ||
                       ( req.user.isAdmin === true ) ) ){
-                    
-
+                    result[ 0 ] = keepFields( result[ 0 ] , [ 'id' , 'usuario' , 'nombre' , 'imagen' , 'privado' ] );
+                    res.status( HTTP.success.ok ).json( result[ 0 ] );
+                    logRequest( req , 'getUsuario' , HTTP.success.ok , 'Devuelto básico' );
                     return;
                 }
 
                 res.status( HTTP.success.ok ).json( result[ 0 ] );
-                logRequest( req , 'getUsuario', HTTP.success.ok );
+                logRequest( req , 'getUsuario' , HTTP.success.ok );
             }
         }
     );
@@ -177,7 +178,7 @@ const getUsuarioBasico = async( req , res ) => {
 
     // Query
     adminConnection.query(
-        'SELECT id, usuario, nombre, imagen FROM usuarios WHERE id = ?',
+        'SELECT id, usuario, nombre, imagen, privado FROM usuarios WHERE id = ?',
         [ idObjetivo ],
         ( err , result ) => {
             if( err ){
@@ -265,7 +266,8 @@ const getValoraciones = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT acude, valoracion, observaciones FROM valoraciones
+`SELECT v.acude, v.valoracion, v.observaciones FROM valoraciones AS v
+INNER JOIN usuarios AS u ON v.valorado = u.id
 WHERE valorado = ?`, [
     idObjetivo
 ],
@@ -296,9 +298,9 @@ const getSeguidores = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT id, usuario, nombre, imagen FROM sigue_a AS s
+`SELECT u.id, u.usuario, u.nombre, u.imagen FROM sigue_a AS s
 INNER JOIN usuarios AS u ON u.id = s.seguidor
-WHERE seguido = ?`, [
+WHERE s.seguido = ?`, [
     idObjetivo
 ],
         ( err , result ) => {
@@ -328,9 +330,9 @@ const getSeguidos = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT id, usuario, nombre, imagen FROM sigue_a AS s
+`SELECT u.id, u.usuario, u.nombre, u.imagen FROM sigue_a AS s
 INNER JOIN usuarios AS u ON u.id = s.seguido
-WHERE seguidor = ?`, [
+WHERE s.seguidor = ?`, [
     idObjetivo
 ],
         ( err , result ) => {
@@ -781,7 +783,7 @@ const deleteUsuario = ( req , res ) => {
     // Distingue los identificadores
     const idObjetivo = req.params.id;
 
-    // Intenta insertar el nuevo usuario con su información
+    // Intenta eliminar el usuario
     adminConnection.query(
         'DELETE FROM usuarios WHERE id = ?' ,
         [ idObjetivo ] ,

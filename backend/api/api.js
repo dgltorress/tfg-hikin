@@ -35,6 +35,8 @@ app.use( express.urlencoded( { extended: true } ) ); // Soporte extendido para c
 
 // RUTAS
 app.use( '/api/usuarios' , require( './routes/usuarios.js' ) );
+app.use( '/api/publicaciones' , require( './routes/publicaciones.js' ) );
+app.use( '/api/itinerarios' , require( './routes/itinerarios.js' ) );
 app.use( '/api/auth' , require( './routes/auth.js' ) );
 
 // INTERFAZ DE SWAGGER

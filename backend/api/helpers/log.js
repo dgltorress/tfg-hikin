@@ -136,6 +136,17 @@ const logRequestIntoFile = async( log ) => {
  * @param {object} log Objeto de registro de actividad.
  */
 const logRequestIntoDB = async( log ) => {
+    // Mapear nombre de método a un número
+    switch( log.method ){
+        case 'GET':    log.method = 1; break;
+        case 'POST':   log.method = 2; break;
+        case 'PUT':    log.method = 3; break;
+        case 'PATCH':  log.method = 4; break;
+        case 'DELETE': log.method = 5; break;
+
+        default: log.method = 0; break;
+    }
+
     // Hace la consulta a la base de datos
     adminConnection.query(
 `INSERT INTO registros_api (

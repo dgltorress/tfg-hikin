@@ -13,8 +13,8 @@ const { query , param , body } = require( 'express-validator' ); // body de Expr
 const { validateJWT } = require( '../middleware/jwt.js' ); // Validador de JSON Web Token
 const { validateFields } = require( '../middleware/validateFields.js' ); // Validador de JSON Web Token
 const { toUniversalPath } = require( '../helpers/metodos.js' );
-const { validateSensitiveAction, validateNotSelf } = require( '../middleware/validators.js' );
-//const {  } = require('../middleware/files');
+const { validateSensitiveActionUser, validateNotSelf } = require( '../middleware/validators.js' );
+//const {  } = require( '../middleware/files' );
 const { getUsuariosBasicos, getUsuario, getUsuarioBasico,
     createUsuario, updateUsuario, deleteUsuario,
     getFeed, getValoraciones,
@@ -65,14 +65,14 @@ router.route( '/' )
 router.route( '/:id' )
     .get(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 0' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         getUsuario
     )
     .patch(
         validateJWT,
-        validateSensitiveAction,
-        param( 'id' , 'Número natural mayor que 0' ).isInt( { min: 1 } ).toInt(),
+        validateSensitiveActionUser,
+        param( 'id' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
         body( 'email' , 'Email válido, máx. 60 caracteres' ).optional().isEmail().isLength( { max: 60 } ),
         body( 'usuario' , 'Entre 3 y 15 caracteres' ).optional().isString().isLength( { min: 3 , max: 15 } ),
         body( 'nombre' , 'Entre 3 y 40 caracteres' ).optional().isString().isLength( { min: 3 , max: 40 } ),
@@ -103,8 +103,8 @@ router.route( '/:id' )
     )
     .delete(
         validateJWT,
-        validateSensitiveAction,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        validateSensitiveActionUser,
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         deleteUsuario
     );
@@ -112,7 +112,7 @@ router.route( '/:id' )
 router.route( '/:id/basico' )
     .get(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 0' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         getUsuarioBasico
     );
@@ -120,7 +120,8 @@ router.route( '/:id/basico' )
 router.route( '/:id/feed' )
     .get(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 0' ).isInt( { min: 1 } ).toInt(),
+        validateSensitiveActionUser,
+        param( 'id' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
         query( 'p' , 'Número natural' ).optional().isInt( { min: 0 } ).toInt(),
         validateFields,
         getFeed
@@ -129,7 +130,7 @@ router.route( '/:id/feed' )
 router.route( '/:id/valoraciones' )
     .get(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         getValoraciones
     );
@@ -137,7 +138,7 @@ router.route( '/:id/valoraciones' )
 router.route( '/:id/seguidores' )
     .get(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         getSeguidores
     );
@@ -145,7 +146,7 @@ router.route( '/:id/seguidores' )
 router.route( '/:id/seguidos' )
     .get(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         getSeguidos
     );
@@ -154,14 +155,14 @@ router.route( '/:id/seguimiento' )
     .post(
         validateJWT,
         validateNotSelf,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         seguirUsuario
     )
     .delete(
         validateJWT,
         validateNotSelf,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         deseguirUsuario
     );
@@ -169,7 +170,7 @@ router.route( '/:id/seguimiento' )
 router.route( '/:id/clubes' )
     .get(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         getClubes
     );
@@ -177,7 +178,7 @@ router.route( '/:id/clubes' )
 router.route( '/:id/salidas' )
     .get(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         getSalidas
     );
@@ -185,7 +186,7 @@ router.route( '/:id/salidas' )
 router.route( '/:id/resenas' )
     .get(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         getResenas
     );
@@ -193,7 +194,7 @@ router.route( '/:id/resenas' )
 router.route( '/:id/distintivos' )
     .get(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         getDistintivos
     );
