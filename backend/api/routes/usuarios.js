@@ -18,7 +18,8 @@ const { validateSensitiveAction, validateNotSelf } = require( '../middleware/val
 const { getUsuariosBasicos, getUsuario, getUsuarioBasico,
     createUsuario, updateUsuario, deleteUsuario,
     getFeed, getValoraciones,
-    getSeguidores, getSeguidos, seguirUsuario, deseguirUsuario } = require( '../controllers/usuarios.js' ); // Controller Usuarios
+    getSeguidores, getSeguidos, seguirUsuario, deseguirUsuario,
+    getClubes, getSalidas, getResenas, getDistintivos } = require( '../controllers/usuarios.js' ); // Controller Usuarios
 
 // ----------------
 
@@ -163,6 +164,38 @@ router.route( '/:id/seguimiento' )
         param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
         validateFields,
         deseguirUsuario
+    );
+
+router.route( '/:id/clubes' )
+    .get(
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        validateFields,
+        getClubes
+    );
+
+router.route( '/:id/salidas' )
+    .get(
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        validateFields,
+        getSalidas
+    );
+
+router.route( '/:id/resenas' )
+    .get(
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        validateFields,
+        getResenas
+    );
+
+router.route( '/:id/distintivos' )
+    .get(
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).isInt( { min: 1 } ).toInt(),
+        validateFields,
+        getDistintivos
     );
 
 

@@ -41,7 +41,7 @@ con usuario "${COLOR.texto.cian}${dbUser}${COLOR.reset}"...
         console.error( `${COLOR.texto.rojo}ERROR al conectar con la base de datos${COLOR.reset}` );
         console.error( err );
     } else {
-        console.log( `${COLOR.texto.verde}== BD online ==${COLOR.reset}` );
+        console.log( `${COLOR.texto.verde}== BD online (${adminConnection.serverVersion()}) ==${COLOR.reset}` );
     }
     adminConnection = connection;
 } );

@@ -209,19 +209,35 @@ const getUsuarioBasico = async( req , res ) => {
 /**
  * Obtiene el feed paginado del usuario.
  * 
+ * Se entiende por feed las publicaciones de los usuarios que sigue ordenadas por fecha.
+ * 
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
 const getFeed = async( req , res ) => {
+    // Variables
+    const parameters = [];
+
     // Distingue los identificadores
     const idObjetivo = req.params.id;
+    parameters.push( idObjetivo );
+
+    // Paginación
+    let pagFilter = '';
+    if( req.query.p ){ // Se espera validado y procesado como entero
+        pagFilter += `LIMIT ?, ${elementosPorPagina}`;
+        parameters.push( req.query.p * elementosPorPagina );
+    } else {
+        pagFilter += `LIMIT 0, ${elementosPorPagina}`;
+    }
 
     // Query
     adminConnection.query(
-`SELECT acude, valoracion, observaciones FROM valoraciones
-WHERE valorado = ?`, [
-    idObjetivo
-],
+`SELECT * FROM publicaciones AS p
+INNER JOIN sigue_a AS s ON s.seguido = p.autor
+WHERE s.seguidor = ?
+ORDER BY fecha DESC
+${pagFilter}`, parameters,
         ( err , result ) => {
             if( err ){
                 console.error( err );
@@ -230,7 +246,7 @@ WHERE valorado = ?`, [
                 } );
                 logRequest( req , 'getFeed' , HTTP.error_server.internal , 'Error al obtener los recursos' );
             } else {
-                res.status( HTTP.success.ok ).json( result[ 0 ] );
+                res.status( HTTP.success.ok ).json( result );
                 logRequest( req , 'getFeed' , HTTP.success.ok );
             }
         }
@@ -332,6 +348,148 @@ WHERE seguidor = ?`, [
     );
 }
 
+/**
+ * Obtiene la información básica de los usuarios a los que sigue el usuario objetivo.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const getClubes = async( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`SELECT c.id, c.nombre, c.imagen, c.privado,
+(SELECT COUNT(*) FROM miembro_de WHERE club = id) AS n_miembros
+FROM clubes AS c
+INNER JOIN miembro_de AS m ON c.id = m.club
+WHERE m.usuario = ?`, [
+    idObjetivo
+],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getClubes' , HTTP.error_server.internal , 'Error al obtener los recursos' );
+            } else {
+                res.status( HTTP.success.ok ).json( result );
+                logRequest( req , 'getClubes' , HTTP.success.ok );
+            }
+        }
+    );
+}
+
+/**
+ * Obtiene las salidas en las que el usuario ha participado.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const getSalidas = async( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`SELECT s.* FROM salidas AS s
+INNER JOIN participa_en AS p ON s.id = p.salida
+WHERE p.usuario = ?
+ORDER BY fecha_inicio DESC`, [
+    idObjetivo
+],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getSalidas' , HTTP.error_server.internal , 'Error al obtener los recursos' );
+            } else {
+                res.status( HTTP.success.ok ).json( result );
+                logRequest( req , 'getSalidas' , HTTP.success.ok );
+            }
+        }
+    );
+}
+
+/**
+ * Obtiene las reseñas de itinerarios del usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const getResenas = async( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`SELECT * FROM resenas
+WHERE usuario = ?
+ORDER BY fecha DESC`, [
+    idObjetivo
+],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getResenas' , HTTP.error_server.internal , 'Error al obtener los recursos' );
+            } else {
+                res.status( HTTP.success.ok ).json( result );
+                logRequest( req , 'getResenas' , HTTP.success.ok );
+            }
+        }
+    );
+}
+
+/**
+ * Obtiene los distintivos que el usuario ha recibido.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const getDistintivos = async( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`SELECT d.* FROM distintivos AS d
+INNER JOIN recibe_distintivo AS r ON d.id = r.distintivo
+WHERE r.usuario = ?`, [
+    idObjetivo
+],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getDistintivos' , HTTP.error_server.internal , 'Error al obtener los recursos' );
+            } else {
+                // Resolver URLs de imágenes de distintivos
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].imagen ){
+                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}/assets/img/distintivo/` , -4 );
+                    }
+                }
+
+                res.status( HTTP.success.ok ).json( result );
+                logRequest( req , 'getDistintivos' , HTTP.success.ok );
+            }
+        }
+    );
+}
+
+
+
+
+
 // -----------------------------------------------
 
 
@@ -398,7 +556,7 @@ const createUsuario = ( req , res ) => {
 ] ,
         ( err , result ) => {
             if( err ){
-                if( err.sqlState === '23000' ){
+                if( err.errno === 1062 ){
                     res.status( HTTP.error_client.bad_request ).json( { msg: 'Ya existe una cuenta con ese email' } );
                     logRequest( req , 'createUsuario' , HTTP.error_client.bad_request , 'Ya existe una cuenta con ese email' );
                 }
@@ -586,7 +744,7 @@ const updateUsuario = ( req , res ) => {
 `UPDATE usuarios ${filter} WHERE id = ?` , parameters ,
         ( err , result ) => {
             if( err ){
-                if( err.sqlState === '23000' ){
+                if( err.errno === 1062 ){
                     res.status( HTTP.error_client.bad_request ).json( { msg: 'Ya existe una cuenta con ese email' } );
                     logRequest( req , 'updateUsuario' , HTTP.error_client.bad_request , 'Ya existe una cuenta con ese email' );
                 }
@@ -688,4 +846,5 @@ WHERE seguidor = ? AND seguido = ?` , [
 module.exports = { getUsuariosBasicos, getUsuario, getUsuarioBasico,
     createUsuario, updateUsuario, deleteUsuario,
     getFeed, getValoraciones,
-    getSeguidores, getSeguidos, seguirUsuario, deseguirUsuario };
+    getSeguidores, getSeguidos, seguirUsuario, deseguirUsuario,
+    getClubes, getSalidas, getResenas, getDistintivos };
