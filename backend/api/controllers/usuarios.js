@@ -137,7 +137,7 @@ WHERE id = ?` , [
                 } );
                 logRequest( req , 'getUsuario' , HTTP.error_server.internal , 'Error al obtener el usuario' );
             } else {
-                // Si no ha habido coincidencias se termina
+                // Si no ha habido coincidencias se indica
                 if( result.length === 0 ){
                     res.status( HTTP.error_client.not_found ).send();
                     logRequest( req , 'getUsuario' , HTTP.error_client.not_found );
@@ -503,7 +503,7 @@ WHERE r.usuario = ?`, [
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
-const createUsuario = ( req , res ) => {
+const createUsuario = async( req , res ) => {
     // Obtiene la información del cuerpo de la petición
     let { usuario, email,
         contrasena,
@@ -611,7 +611,7 @@ const createUsuario = ( req , res ) => {
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
-const seguirUsuario = ( req , res ) => {
+const seguirUsuario = async( req , res ) => {
     // Distingue los identificadores
     const idSolicitante = req.user.id;
     const idObjetivo = req.params.id;
@@ -650,7 +650,7 @@ const seguirUsuario = ( req , res ) => {
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
-const updateUsuario = ( req , res ) => {
+const updateUsuario = async( req , res ) => {
     // Distingue los identificadores
     const idObjetivo = req.params.id;
 
@@ -741,31 +741,36 @@ const updateUsuario = ( req , res ) => {
 
     parameters.push( idObjetivo );
 
-    // Intenta insertar el nuevo usuario con su información
-    adminConnection.query(
-`UPDATE usuarios ${filter} WHERE id = ?` , parameters ,
-        ( err , result ) => {
-            if( err ){
-                if( err.errno === 1062 ){
-                    res.status( HTTP.error_client.bad_request ).json( { msg: 'Ya existe una cuenta con ese email' } );
-                    logRequest( req , 'updateUsuario' , HTTP.error_client.bad_request , 'Ya existe una cuenta con ese email' );
-                }
-                else{
-                    console.error( err );
-                    res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
-                    logRequest( req , 'updateUsuario' , HTTP.error_server.internal , 'Error al actualizar el usuario' );
-                }
-            } else {
-                if( result.affectedRows === 0 ){
-                    res.status( HTTP.error_client.not_found ).send();
-                    logRequest( req , 'updateUsuario' , HTTP.error_client.not_found );
+    if( filter !== '' ){
+        // Intenta insertar el nuevo usuario con su información
+        adminConnection.query(
+            `UPDATE usuarios ${filter} WHERE id = ?` , parameters ,
+            ( err , result ) => {
+                if( err ){
+                    if( err.errno === 1062 ){
+                        res.status( HTTP.error_client.bad_request ).json( { msg: 'Ya existe una cuenta con ese email' } );
+                        logRequest( req , 'updateUsuario' , HTTP.error_client.bad_request , 'Ya existe una cuenta con ese email' );
+                    }
+                    else{
+                        console.error( err );
+                        res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                        logRequest( req , 'updateUsuario' , HTTP.error_server.internal , 'Error al actualizar el usuario' );
+                    }
                 } else {
-                    res.status( HTTP.success.no_content ).send();
-                    logRequest( req , 'updateUsuario' , HTTP.success.no_content );
+                    if( result.affectedRows === 0 ){
+                        res.status( HTTP.error_client.not_found ).send();
+                        logRequest( req , 'updateUsuario' , HTTP.error_client.not_found );
+                    } else {
+                        res.status( HTTP.success.no_content ).send();
+                        logRequest( req , 'updateUsuario' , HTTP.success.no_content );
+                    }
                 }
             }
-        }
-    );
+        );
+    } else {
+        res.status( HTTP.success.no_content ).send();
+        logRequest( req , 'updateClub', HTTP.success.no_content );
+    }
 }
 
 // -----------------------------------------------
@@ -779,7 +784,7 @@ const updateUsuario = ( req , res ) => {
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
-const deleteUsuario = ( req , res ) => {
+const deleteUsuario = async( req , res ) => {
     // Distingue los identificadores
     const idObjetivo = req.params.id;
 
@@ -811,7 +816,7 @@ const deleteUsuario = ( req , res ) => {
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
-const deseguirUsuario = ( req , res ) => {
+const deseguirUsuario = async( req , res ) => {
     // Distingue los identificadores
     const idSolicitante = req.user.id;
     const idObjetivo = req.params.id;

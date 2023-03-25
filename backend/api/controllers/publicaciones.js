@@ -185,7 +185,7 @@ WHERE p.id = ?`,
                 } );
                 logRequest( req , 'getPublicacion' , HTTP.error_server.internal , 'Error al obtener el recurso' );
             } else {
-                // Si no ha habido coincidencias se termina
+                // Si no ha habido coincidencias se indica
                 if( result.length === 0 ){
                     res.status( HTTP.error_client.not_found ).send();
                     logRequest( req , 'getPublicacion', HTTP.error_client.not_found );

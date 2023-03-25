@@ -199,6 +199,14 @@ router.route( '/:id/distintivos' )
         getDistintivos
     );
 
+router.route( '/:id/imagen' )
+    .post(
+        
+    )
+    .delete(
+        
+    );
+
 
 // ----------------
 

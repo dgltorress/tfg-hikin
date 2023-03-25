@@ -976,7 +976,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/clubes?texto=&propietario=&codauto=&cpro=&privado=&p",
+							"raw": "{{baseURL}}/clubes",
 							"host": [
 								"{{baseURL}}"
 							],
@@ -986,33 +986,38 @@
 							"query": [
 								{
 									"key": "texto",
-									"value": "",
-									"description": "Título o descripción, o una parte del título o descripción, del club. No atiende a mayúsculas."
+									"value": "ar",
+									"disabled": true
 								},
 								{
 									"key": "propietario",
-									"value": "",
-									"description": "Identificador del propietario."
+									"value": "1",
+									"description": "Identificador del propietario.",
+									"disabled": true
 								},
 								{
 									"key": "codauto",
-									"value": "",
-									"description": "Identificador de la comunidad autónoma."
+									"value": "2",
+									"description": "Identificador de la comunidad autónoma.",
+									"disabled": true
 								},
 								{
 									"key": "cpro",
-									"value": "",
-									"description": "Identificador de la provincia."
+									"value": "1",
+									"description": "Identificador de la provincia.",
+									"disabled": true
 								},
 								{
 									"key": "privado",
-									"value": "",
-									"description": "Si el club es privado."
+									"value": "false",
+									"description": "Si el club es privado.",
+									"disabled": true
 								},
 								{
 									"key": "p",
-									"value": null,
-									"description": "Índice de paginación."
+									"value": "0",
+									"description": "Índice de paginación.",
+									"disabled": true
 								}
 							]
 						}
@@ -1024,6 +1029,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 69420,\r\n    \"nombre\": \"CLUB DE PRUEBA\",\r\n    \"descripcion\": \"DESCRIPCIÓN DE PRUEBA\",\r\n    \"codauto\": 1,\r\n    \"cpro\": 4,\r\n    \"localidad\": 69420,\r\n    \"propietario\": 69420,\r\n    \"privado\": true,\r\n    \"imagen\": \"COLADA.jpg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseURL}}/clubes",
 							"host": [
@@ -1042,13 +1056,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/clubes/{{clubId}}",
+							"raw": "{{baseURL}}/clubes/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"clubes",
-								"{{clubId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1059,14 +1079,29 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 69421,\r\n    \"nombre\": \"CLUB EDITADO\",\r\n    \"descripcion\": \"DESCRIPCIÓN EDITADA\",\r\n    \"codauto\": 1,\r\n    \"cpro\": 11,\r\n    \"localidad\": 69421,\r\n    \"propietario\": 69421,\r\n    \"privado\": false,\r\n    \"imagen\": \"COLADA.jpg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{baseURL}}/clubes/{{clubId}}",
+							"raw": "{{baseURL}}/clubes/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"clubes",
-								"{{clubId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1078,13 +1113,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/clubes/{{clubId}}",
+							"raw": "{{baseURL}}/clubes/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"clubes",
-								"{{clubId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1438,6 +1479,72 @@
 								"{{salId}}",
 								"invitacion",
 								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Info",
+			"item": [
+				{
+					"name": "localidades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/info/localidades",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"info",
+								"localidades"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "autonomias",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/info/autonomias",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"info",
+								"autonomias"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "provincias",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/info/provincias",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"info",
+								"provincias"
+							],
+							"query": [
+								{
+									"key": "codauto",
+									"value": "1",
+									"disabled": true
+								}
 							]
 						}
 					},

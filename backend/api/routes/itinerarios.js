@@ -12,9 +12,6 @@ const { query , param , body } = require( 'express-validator' ); // body de Expr
 // Propio
 const { validateJWT } = require( '../middleware/jwt.js' ); // Validador de JSON Web Token
 const { validateFields } = require( '../middleware/validateFields.js' ); // Validador de JSON Web Token
-const { toUniversalPath } = require( '../helpers/metodos.js' );
-const { validateSensitiveActionUser, validateNotSelf, validateDateExpress } = require( '../middleware/validators.js' );
-//const {  } = require( '../middleware/files' );
 const { getItinerarios, getItinerario,
     getResenas, createResena, deleteResena } = require( '../controllers/itinerarios.js' ); // Controller Itinerarios
 

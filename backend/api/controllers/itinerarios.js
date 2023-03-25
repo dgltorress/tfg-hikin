@@ -187,12 +187,13 @@ const getItinerarios = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT i.id, i.cod, i.denominacion, i.localidad,
+`SELECT i.id, i.cod, i.denominacion,
+l.codauto, l.cpro,
 a.nombre AS autonomia, p.nombre AS provincia
 FROM itinerarios AS i
 INNER JOIN localidades AS l ON i.localidad = l.id
 INNER JOIN autonomias AS a ON l.codauto = a.cod
-INNER JOIN provincias AS p ON l.cpro = p.cod
+LEFT JOIN provincias AS p ON l.cpro = p.cod
 ${filter}` ,
 parameters ,
         ( err , result ) => {
@@ -228,22 +229,21 @@ const getItinerario = async( req , res ) => {
     // Query
     adminConnection.query(
 `SELECT i.*,
+l.codauto, l.cpro,
 a.nombre AS autonomia, p.nombre AS provincia
 FROM itinerarios AS i
 INNER JOIN localidades AS l ON i.localidad = l.id
 INNER JOIN autonomias AS a ON l.codauto = a.cod
-INNER JOIN provincias AS p ON l.cpro = p.cod
+LEFT JOIN provincias AS p ON l.cpro = p.cod
 WHERE i.id = ?`,
         [ idObjetivo ],
         ( err , result ) => {
             if( err ){
                 console.error( err );
-                res.status( HTTP.error_server.internal ).json( {
-                    msg: 'Ha habido un error'
-                } );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
                 logRequest( req , 'getItinerario' , HTTP.error_server.internal , 'Error al obtener el recurso' );
             } else {
-                // Si no ha habido coincidencias se termina
+                // Si no ha habido coincidencias se indica
                 if( result.length === 0 ){
                     res.status( HTTP.error_client.not_found ).send();
                     logRequest( req , 'getItinerario', HTTP.error_client.not_found );

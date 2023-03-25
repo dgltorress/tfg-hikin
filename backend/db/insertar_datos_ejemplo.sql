@@ -118,7 +118,8 @@ INSERT INTO miembro_de( usuario , club ) VALUES
   ( 2 , 1 ),
   ( 3 , 1 ),
   ( 2 , 2 ),
-  ( 4 , 2 );
+  ( 4 , 2 ),
+  ( 1 , 3 );
 
 -- Itinerarios
 INSERT INTO itinerarios(

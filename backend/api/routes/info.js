@@ -12,10 +12,7 @@ const { query , param , body } = require( 'express-validator' ); // body de Expr
 // Propio
 const { validateJWT } = require( '../middleware/jwt.js' ); // Validador de JSON Web Token
 const { validateFields } = require( '../middleware/validateFields.js' ); // Validador de JSON Web Token
-const { toUniversalPath } = require( '../helpers/metodos.js' );
-const { validateDateExpress } = require( '../middleware/validators.js' );
-//const {  } = require( '../middleware/files' );
-const {  } = require( '../controllers/info.js' ); // Controller Info
+const { getLocalidades, getAutonomias, getProvincias } = require( '../controllers/info.js' ); // Controller Info
 
 // ----------------
 
@@ -30,7 +27,24 @@ const router = Router();
 
 // === LLAMADAS ===
 
+router.route( '/localidades' )
+    .get(
+        validateJWT,
+        getLocalidades
+    );
 
+router.route( '/autonomias' )
+    .get(
+        validateJWT,
+        getAutonomias
+    );
+
+router.route( '/provincias' )
+    .get(
+        validateJWT,
+        query( 'codauto' , 'Número natural' ).optional().isInt( { min: 0 } ).toInt(),
+        getProvincias
+    );
 
 
 // ----------------
