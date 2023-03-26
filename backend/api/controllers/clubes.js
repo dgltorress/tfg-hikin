@@ -38,6 +38,10 @@ const elementosPorPagina = 20;
     const parameters = [];
     let firstQuery = true;
 
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    parameters.push( idSolicitante );
+
     if( req.query.texto ){
         req.query.texto = `%${req.query.texto}%`;
         if( firstQuery === true ){
@@ -108,11 +112,14 @@ const elementosPorPagina = 20;
 `SELECT c.id, c.nombre, c.imagen, c.privado,
 l.codauto, l.cpro,
 a.nombre AS nombreauto, p.nombre AS nombrepro,
+(m.club IS NOT NULL) AS is_miembro,
+NOT(m.pendiente IS NULL || m.pendiente = 0) AS is_invitado,
 (SELECT COUNT(*) FROM miembro_de AS m WHERE c.id = m.club) AS n_miembros
 FROM clubes AS c
 INNER JOIN localidades AS l ON c.localidad = l.id
 INNER JOIN autonomias AS a ON l.codauto = a.cod
 LEFT JOIN provincias AS p ON l.cpro = p.cod
+LEFT JOIN miembro_de AS m ON m.club = c.id AND m.usuario = ?
 ${filter}` ,
 parameters ,
         ( err , result ) => {
@@ -150,6 +157,7 @@ parameters ,
  */
 const getClub = async( req , res ) => {
     // Distingue los identificadores
+    const idSolicitante = req.user.id;
     const idObjetivo = req.params.id;
 
     // Query
@@ -157,13 +165,16 @@ const getClub = async( req , res ) => {
 `SELECT c.*,
 l.codauto, l.cpro,
 a.nombre AS nombreauto, p.nombre AS nombrepro,
+(m.club IS NOT NULL) AS is_miembro,
+NOT(m.pendiente IS NULL || m.pendiente = 0) AS is_invitado,
 (SELECT COUNT(*) FROM miembro_de AS m WHERE c.id = m.club) AS n_miembros
 FROM clubes AS c
 INNER JOIN localidades AS l ON c.localidad = l.id
 INNER JOIN autonomias AS a ON l.codauto = a.cod
 LEFT JOIN provincias AS p ON l.cpro = p.cod
+LEFT JOIN miembro_de AS m ON m.club = c.id AND m.usuario = ?
 WHERE c.id = ?`,
-        [ idObjetivo ],
+        [ idObjetivo, idSolicitante ],
         ( err , result ) => {
             if( err ){
                 console.error( err );

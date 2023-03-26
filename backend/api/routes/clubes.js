@@ -13,12 +13,11 @@ const { query , param , body } = require( 'express-validator' ); // body de Expr
 const { validateJWT } = require( '../middleware/jwt.js' ); // Validador de JSON Web Token
 const { validateFields } = require( '../middleware/validateFields.js' ); // Validador de JSON Web Token
 const { toUniversalPath } = require( '../helpers/metodos.js' );
-const { validateDateExpress } = require( '../middleware/validators.js' );
 //const {  } = require( '../middleware/files' );
 const { getClubes, getClub,
     createClub, updateClub, deleteClub,
     inscribirseClub, desinscribirseClub,
-    invitarClub, desinvitarClub, } = require( '../controllers/clubes.js' ); // Controller Clubes
+    invitarClub, desinvitarClub } = require( '../controllers/clubes.js' ); // Controller Clubes
 
 // ----------------
 

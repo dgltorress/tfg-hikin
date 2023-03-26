@@ -19,7 +19,7 @@ const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // === INICIALIZAR
 
-const elementosPorPagina = 20;
+const elementosPorPagina = 10;
 
 // --------------------------------
 
