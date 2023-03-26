@@ -50,11 +50,13 @@ router.route( '/' )
     )
     .post(
         validateJWT,
-        body( 'nombre' , 'Obligatorio (entre 3 y 60 caracteres)' ).exists().isString().isLength( { min: 3 , max: 60 } ),
-        body( 'codauto' , 'Obligatorio (número natural mayor que 0)' ).exists().isInt( { min: 1 } ).toInt(),
-        body( 'cpro' , 'Obligatorio (número natural mayor que 0)' ).optional().isInt( { min: 1 } ).toInt(),
-        body( 'descripcion' , 'Entre 3 y 200 caracteres' ).optional().isString().isLength( { min: 3 , max: 200 } ),
-        body( 'privado' , 'Booleano' ).optional().isBoolean().toBoolean(),
+        body( 'nombre' , 'Obligatorio (entre 3 y 80 caracteres)' ).exists().isString().isLength( { min: 3 , max: 80 } ),
+        body( 'descripcion' , 'Obligatorio (entre 3 y 600 caracteres)' ).exists().isString().isLength( { min: 3 , max: 600 } ),
+        body( 'itinerario' , 'Obligatorio (número natural mayor que 0)' ).exists().isInt( { min: 1 } ).toInt(),
+        body( 'club' , 'Obligatorio (número natural mayor que 0)' ).optional().isInt( { min: 1 } ).toInt(),
+        body( 'fecha_inicio' , 'Fecha válida' ).exists().custom( validateDateExpress ).toDate(),
+        body( 'fecha_fin' , 'Fecha válida' ).exists().custom( validateDateExpress ).toDate(),
+        body( 'privada' , 'Booleano' ).optional().isBoolean().toBoolean(),
         validateFields,
         createSalida
     );
@@ -68,12 +70,14 @@ router.route( '/:id' )
     )
     .patch(
         validateJWT,
-        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
-        body( 'nombre' , 'Obligatorio (entre 3 y 60 caracteres)' ).optional().isString().isLength( { min: 3 , max: 60 } ),
-        body( 'codauto' , 'Número natural mayor que 0' ).optional().isInt( { min: 1 } ).toInt(),
-        body( 'cpro' , 'Número natural mayor que 0' ).optional().isInt( { min: 1 } ).toInt(),
-        body( 'descripcion' , 'Entre 3 y 200 caracteres' ).optional().isString().isLength( { min: 3 , max: 200 } ),
-        body( 'privado' , 'Booleano' ).optional().isBoolean().toBoolean(),
+        body( 'nombre' , 'Obligatorio (entre 3 y 80 caracteres)' ).optional().isString().isLength( { min: 3 , max: 80 } ),
+        body( 'descripcion' , 'Obligatorio (entre 3 y 600 caracteres)' ).optional().isString().isLength( { min: 3 , max: 600 } ),
+        body( 'club' , 'Obligatorio (número natural mayor que 0)' ).optional().isInt( { min: 1 } ).toInt(),
+        body( 'itinerario' , 'Obligatorio (número natural mayor que 0)' ).optional().isInt( { min: 1 } ).toInt(),
+        body( 'fecha_inicio' , 'Fecha válida' ).optional().custom( validateDateExpress ).toDate(),
+        body( 'fecha_fin' , 'Fecha válida' ).optional().custom( validateDateExpress ).toDate(),
+        body( 'privada' , 'Booleano' ).optional().isBoolean().toBoolean(),
+        body( 'cancelada' , 'Booleano' ).optional().isBoolean().toBoolean(),
         validateFields,
         updateSalida
     )

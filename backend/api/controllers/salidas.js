@@ -249,67 +249,74 @@ WHERE s.id = ?`,
     const idSolicitante = req.user.id;
 
     // Obtiene la información del cuerpo de la petición
-    let { nombre, descripcion, codauto, cpro, privado } = req.body;
+    let { nombre, descripcion, itinerario, club, fecha_inicio, fecha_fin, privada } = req.body;
 
-    // Variables extra
-    let proComparator;
-    if( cpro !== undefined ){
-        proComparator = '=';
-    } else {
-        proComparator = 'IS';
-        cpro = null;
-    }
+    if( club === undefined ) club = null;
+    if( privada === undefined ) privada = false;
 
-    // Obtiene la localidad que coincide con la autonomía y la provincia recibidas
+    // Obtiene el itinerario que coincide con el identificador recibido
     adminConnection.query(
-`SELECT id, codauto, cpro FROM localidades
-WHERE codauto = ? AND cpro ${proComparator} ?`,
-        [ codauto , cpro ],
+`SELECT id FROM itinerarios
+WHERE id = ?`,
+[ itinerario ],
         ( err , result ) => {
             if( err ){
                 console.error( err );
                 res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
-                logRequest( req , 'createSalida' , HTTP.error_server.internal , 'Error al insertar el recurso' );
+                logRequest( req , 'createSalida' , HTTP.error_server.internal , 'Error' );
             } else {
                 // Si no ha habido coincidencias se indica
                 if( result.length === 0 ){
-                    res.status( HTTP.error_client.not_found ).json( { msg: 'No existe localidad para esa autonomía y provincia' } );
-                    logRequest( req , 'createSalida', HTTP.error_client.not_found , 'No existe localidad para esa autonomía y provincia' );
+                    res.status( HTTP.error_client.not_found ).json( { msg: 'No existe un itinerario con ese ID' } );
+                    logRequest( req , 'createSalida', HTTP.error_client.not_found , 'No existe un itinerario con ese ID' );
                     return;
                 }
-
-                // Intenta insertar el nuevo club con su información
+    
+                // Intenta insertar la nueva salida con su información
                 adminConnection.query(
-`INSERT INTO clubes(
+`INSERT INTO salidas(
   nombre, descripcion,
-  localidad, propietario,
-  privado, imagen
+  organizador,
+  itinerario, club,
+  fecha_inicio, fecha_fin,
+  privada
 ) VALUES (
   ?, ?,
+  ?,
   ?, ?,
-  ?, ?
+  ?, ?,
+  ?
 )` , [
     nombre, descripcion,
-    result[ 0 ].id, idSolicitante,
-    privado, null
+    idSolicitante,
+    itinerario, club,
+    fecha_inicio, fecha_fin,
+    privada
 ] ,
-                    ( err , result2 ) => {
+                    ( err , result ) => {
                         if( err ){
-                            console.error( err );
-                            res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
-                            logRequest( req , 'createSalida' , HTTP.error_server.internal , 'Error al insertar el club' );
+                            if( err.errno === 1452 ){
+                                res.status( HTTP.error_client.not_found ).json( { msg: 'No existe un club con ese ID' } );
+                                logRequest( req , 'createSalida', HTTP.error_client.not_found , 'No existe un club con ese ID' );
+                            } else {
+                                console.error( err );
+                                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                                logRequest( req , 'createSalida' , HTTP.error_server.internal , 'Error al crear la salida' );
+                            }
                         } else {
                             // Construye un objeto usuario que devolver
                             const insertedObject = {};
                         
-                            insertedObject.id = result2.insertId;
+                            insertedObject.id = result.insertId;
                             insertedObject.nombre = nombre;
                             insertedObject.descripcion = descripcion;
-                            insertedObject.codauto = codauto;
-                            insertedObject.cpro = cpro;
-                            insertedObject.localidad = result[ 0 ].id;
-                            insertedObject.privado = privado;
-                            insertedObject.imagen = null;
+                            insertedObject.organizador = idSolicitante;
+                            insertedObject.itinerario = itinerario;
+                            insertedObject.club = club;
+                            insertedObject.fecha_inicio = fecha_inicio;
+                            insertedObject.fecha_fin = fecha_fin;
+                            insertedObject.privada = privada;
+                            insertedObject.cancelada = 0;
                         
                             // Responde con el objeto usuario, el token y su expiración
                             res.status( HTTP.success.ok ).json( insertedObject );
