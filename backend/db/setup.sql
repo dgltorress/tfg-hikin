@@ -99,6 +99,7 @@ CREATE TABLE clubes (
 CREATE TABLE miembro_de (
   usuario INT UNSIGNED ,
   club    INT UNSIGNED ,
+  pendiente    BOOLEAN NOT NULL DEFAULT false ,
 
   PRIMARY KEY ( usuario , club ) ,
   FOREIGN KEY ( usuario ) REFERENCES usuarios( id ) ON DELETE CASCADE ,
@@ -212,6 +213,7 @@ CREATE TABLE salidas (
 CREATE TABLE participa_en (
   usuario INT UNSIGNED ,
   salida  INT UNSIGNED ,
+  pendiente    BOOLEAN NOT NULL DEFAULT false ,
 
   PRIMARY KEY ( usuario , salida ) ,
   FOREIGN KEY ( usuario ) REFERENCES usuarios( id ) ON DELETE CASCADE ,

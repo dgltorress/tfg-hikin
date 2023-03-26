@@ -263,16 +263,15 @@ const darKudos = async( req , res ) => {
 
     // Query
     adminConnection.query(
-        `INSERT INTO kudos(
-          usuario, publicacion
-        ) VALUES (
-          ?, ?
-        )` , [
-            idSolicitante,
-            idObjetivo
-        ] ,
+`INSERT INTO kudos(
+  usuario, publicacion
+) VALUES (
+  ?, ?
+)` , [
+    idSolicitante, idObjetivo
+] ,
         ( err , result ) => {
-            if( err && err.errno !== 1062 ){
+            if( err && ( err.errno !== 1062 ) ){
                 console.error( err );
                 res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
                 logRequest( req , 'darKudos' , HTTP.error_server.internal , 'Error al insertar el recurso' );

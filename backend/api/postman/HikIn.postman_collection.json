@@ -1137,14 +1137,20 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/clubes/{{clubId}}/imagen",
+							"raw": "{{baseURL}}/clubes/:id/imagen",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"clubes",
-								"{{clubId}}",
+								":id",
 								"imagen"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1156,14 +1162,20 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/clubes/{{clubId}}/imagen",
+							"raw": "{{baseURL}}/clubes/:id/imagen",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"clubes",
-								"{{clubId}}",
+								":id",
 								"imagen"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1175,14 +1187,20 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/clubes/{{clubId}}/inscripcion",
+							"raw": "{{baseURL}}/clubes/:id/inscripcion",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"clubes",
-								"{{clubId}}",
+								":id",
 								"inscripcion"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1194,54 +1212,80 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/clubes/{{clubId}}/inscripcion",
+							"raw": "{{baseURL}}/clubes/:id/inscripcion",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"clubes",
-								"{{clubId}}",
+								":id",
 								"inscripcion"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "clubes/:clubId/inscripcion/:userId",
+					"name": "clubes/:clubId/invitacion/:userId",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/clubes/{{clubId}}/invitacion/{{userId}}",
+							"raw": "{{baseURL}}/clubes/:clubId/invitacion/:userId",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"clubes",
-								"{{clubId}}",
+								":clubId",
 								"invitacion",
-								"{{userId}}"
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "clubId",
+									"value": "1"
+								},
+								{
+									"key": "userId",
+									"value": "1"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "clubes/:clubId/inscripcion/:userId",
+					"name": "clubes/:clubId/invitacion/:userId",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/clubes/{{clubId}}/invitacion/{{userId}}",
+							"raw": "{{baseURL}}/clubes/:clubId/invitacion/:userId",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"clubes",
-								"{{clubId}}",
+								":clubId",
 								"invitacion",
-								"{{userId}}"
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "clubId",
+									"value": "1"
+								},
+								{
+									"key": "userId",
+									"value": "1"
+								}
 							]
 						}
 					},

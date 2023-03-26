@@ -16,7 +16,9 @@ const { toUniversalPath } = require( '../helpers/metodos.js' );
 const { validateDateExpress } = require( '../middleware/validators.js' );
 //const {  } = require( '../middleware/files' );
 const { getClubes, getClub,
-    createClub, updateClub, deleteClub } = require( '../controllers/clubes.js' ); // Controller Clubes
+    createClub, updateClub, deleteClub,
+    inscribirseClub, desinscribirseClub,
+    invitarClub, desinvitarClub, } = require( '../controllers/clubes.js' ); // Controller Clubes
 
 // ----------------
 
@@ -89,18 +91,32 @@ router.route( '/:id/imagen' )
 
 router.route( '/:id/inscripcion' )
     .post(
-        
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
+        validateFields,
+        inscribirseClub
     )
     .delete(
-        
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
+        validateFields,
+        desinscribirseClub
     );
 
-router.route( '/:clubId/inscripcion/:userId' )
+router.route( '/:clubId/invitacion/:userId' )
     .post(
-        
+        validateJWT,
+        param( 'clubId' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
+        param( 'userId' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
+        validateFields,
+        invitarClub
     )
     .delete(
-        
+        validateJWT,
+        param( 'clubId' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
+        param( 'userId' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
+        validateFields,
+        desinvitarClub
     );
 
 

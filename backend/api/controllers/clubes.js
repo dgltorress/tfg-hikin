@@ -278,6 +278,154 @@ WHERE codauto = ? AND cpro ${proComparator} ?`,
     );
 }
 
+/**
+ * Desinscribe al solicitante de un club.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const inscribirseClub = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Comprueba si está invitado
+    adminConnection.query(
+`SELECT
+(SELECT privado FROM clubes WHERE id = ?) AS privado,
+(SELECT pendiente FROM miembro_de WHERE usuario = ? AND club = ?) AS pendiente` , [
+    idObjetivo, idSolicitante, idObjetivo
+] ,
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'inscribirseClub' , HTTP.error_server.internal , 'Error' );
+            } else {
+                // No se ha encontrado
+                if( result[ 0 ].privado === null ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'inscribirseClub', HTTP.error_client.not_found );
+                    return;
+                }
+
+                // No está en el club ni tiene invitación (insertar)
+                if( result[ 0 ].pendiente === null ){
+                    // No se puede inscribir directamente en un club privado
+                    if( result[ 0 ].privado === 1 ){
+                        res.status( HTTP.error_client.forbidden ).json( { msg: 'Este club es privado y requiere de invitación' } );
+                        logRequest( req , 'inscribirseClub' , HTTP.error_client.forbidden , 'Club privado' );
+                        return;
+                    }
+
+                    adminConnection.query(
+`INSERT INTO miembro_de(
+    usuario, club, pendiente
+) VALUES (
+    ?, ?, false
+)` , [
+    idSolicitante, idObjetivo
+] ,
+                            ( err , result ) => {
+                                if( err && ( err.errno !== 1062 ) ){
+                                    console.error( err );
+                                    res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                                    logRequest( req , 'inscribirseClub' , HTTP.error_server.internal , 'Error al insertar' );
+                                } else {
+                                    res.status( HTTP.success.no_content ).json();
+                                    logRequest( req , 'inscribirseClub' , HTTP.success.no_content , 'Inscripción directa' );
+                                }
+                            }
+                        );
+                // Está invitado al club público pero no ha aceptado (poner a false)
+                } else if( result[ 0 ].pendiente === 1 ){
+                    adminConnection.query(
+`UPDATE miembro_de
+SET pendiente = false
+WHERE usuario = ?` , [
+    idSolicitante
+] ,
+                        ( err , result ) => {
+                            if( err ){
+                                console.error( err );
+                                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                                logRequest( req , 'inscribirseClub' , HTTP.error_server.internal , 'Error al actualizar' );
+                            } else {
+                                res.status( HTTP.success.no_content ).json();
+                                logRequest( req , 'inscribirseClub' , HTTP.success.no_content , 'Inscripción por invitación' );
+                            }
+                        }
+                    );
+                // Ya está dentro (no hacer nada)
+                } else {
+                    res.status( HTTP.success.no_content ).json();
+                    logRequest( req , 'inscribirseClub' , HTTP.success.no_content );
+                }
+            }
+        }
+    );
+}
+
+/**
+ * Revoca la invitación a un club de un usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const invitarClub = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idClubObjetivo = req.params.clubId;
+    const idUserObjetivo = req.params.userId;
+
+    // Comprueba si es el propietario
+    adminConnection.query(
+        'SELECT propietario FROM clubes WHERE id = ?' ,
+        [ idClubObjetivo ] ,
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'invitarClub' , HTTP.error_server.internal , 'Error' );
+            } else {
+                // No encontrado
+                if( result.length === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'invitarClub', HTTP.error_client.not_found );
+                    return;
+                }
+
+                // Solicitante es propietario o admin
+                if( ( result[ 0 ].propietario === idSolicitante ) ||
+                    ( req.user.isAdmin === true ) ){
+                        adminConnection.query(
+`INSERT INTO miembro_de(
+    usuario, club, pendiente
+) VALUES (
+    ?, ?, true
+)` , [
+    idUserObjetivo, idClubObjetivo
+] ,
+                        ( err , result ) => {
+                            if( err && ( err.errno !== 1062 ) ){
+                                console.error( err );
+                                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                                logRequest( req , 'invitarClub' , HTTP.error_server.internal , 'Error al insertar' );
+                            } else {
+                                res.status( HTTP.success.no_content ).json();
+                                logRequest( req , 'invitarClub' , HTTP.success.no_content );
+                            }
+                        }
+                    );
+                } else {
+                    res.status( HTTP.error_client.forbidden ).json( { msg: 'Sólo el propietario de un club puede invitar a nuevos miembros' } );
+                    logRequest( req , 'invitarClub' , HTTP.error_client.forbidden , 'Solicitante no propietario o admin' );
+                }
+            }
+        }
+    );
+}
+
 // -----------------------------------------------
 
 
@@ -499,6 +647,91 @@ const deleteClub = async( req , res ) => {
     );
 }
 
+/**
+ * Desinscribe al solicitante de un club.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const desinscribirseClub = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`DELETE FROM miembro_de
+WHERE usuario = ? AND club = ?` , [
+    idSolicitante, idObjetivo
+] ,
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'desinscribirseClub' , HTTP.error_server.internal , 'Error al eliminar el recurso' );
+            } else {
+                res.status( HTTP.success.no_content ).json();
+                logRequest( req , 'desinscribirseClub' , HTTP.success.no_content );
+            }
+        }
+    );
+}
+
+/**
+ * Revoca la invitación a un club de un usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const desinvitarClub = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idClubObjetivo = req.params.clubId;
+    const idUserObjetivo = req.params.userId;
+
+    // Comprueba si es el propietario
+    adminConnection.query(
+        'SELECT propietario FROM clubes WHERE id = ?' ,
+        [ idClubObjetivo ] ,
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'desinvitarClub' , HTTP.error_server.internal , 'Error' );
+            } else {
+                // No encontrado
+                if( result.length === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'desinvitarClub', HTTP.error_client.not_found );
+                    return;
+                }
+
+                // Solicitante es propietario o admin
+                if( ( result[ 0 ].propietario === idSolicitante ) ||
+                    ( req.user.isAdmin === true ) ){
+                        adminConnection.query(
+                        'DELETE FROM miembro_de WHERE usuario = ? AND club = ?',
+                        [ idUserObjetivo, idClubObjetivo ],
+                        ( err , result ) => {
+                            if( err ){
+                                console.error( err );
+                                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                                logRequest( req , 'desinvitarClub' , HTTP.error_server.internal , 'Error al eliminar' );
+                            } else {
+                                res.status( HTTP.success.no_content ).json();
+                                logRequest( req , 'desinvitarClub' , HTTP.success.no_content );
+                            }
+                        }
+                    );
+                } else {
+                    res.status( HTTP.error_client.forbidden ).json( { msg: 'Sólo el propietario de un club puede eliminar miembros de un club' } );
+                    logRequest( req , 'desinvitarClub' , HTTP.error_client.forbidden , 'Solicitante no propietario o admin' );
+                }
+            }
+        }
+    );
+}
+
 // -----------------------------------------------
 
 
@@ -509,4 +742,6 @@ const deleteClub = async( req , res ) => {
 
 // Marcar los metodos para exportar
 module.exports = { getClubes, getClub,
-    createClub, updateClub, deleteClub };
+    createClub, updateClub, deleteClub,
+    inscribirseClub, desinscribirseClub,
+    invitarClub, desinvitarClub };

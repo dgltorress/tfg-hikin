@@ -113,13 +113,13 @@ INSERT INTO clubes(
 );
 
 -- Membresías de clubes
-INSERT INTO miembro_de( usuario , club ) VALUES
-  ( 1 , 1 ),
-  ( 2 , 1 ),
-  ( 3 , 1 ),
-  ( 2 , 2 ),
-  ( 4 , 2 ),
-  ( 1 , 3 );
+INSERT INTO miembro_de( usuario , club , pendiente ) VALUES
+  ( 1 , 1 , false ),
+  ( 2 , 1 , false ),
+  ( 3 , 1 , true ),
+  ( 2 , 2 , false ),
+  ( 4 , 2 , false ),
+  ( 1 , 3 , false );
 
 -- Itinerarios
 INSERT INTO itinerarios(
@@ -299,15 +299,15 @@ INSERT INTO salidas (
 );
 
 -- Participantes de salidas
-INSERT INTO participa_en( usuario , salida ) VALUES
-  ( 1 , 1 ),
-  ( 1 , 3 ),
-  ( 2 , 1 ),
-  ( 2 , 3 ),
-  ( 3 , 1 ),
-  ( 3 , 3 ),
-  ( 4 , 1 ),
-  ( 5 , 1 );
+INSERT INTO participa_en( usuario , salida, pendiente ) VALUES
+  ( 1 , 1 , false ),
+  ( 1 , 3 , false ),
+  ( 2 , 1 , false ),
+  ( 2 , 3 , false ),
+  ( 3 , 1 , false ),
+  ( 3 , 3 , true ),
+  ( 4 , 1 , false ),
+  ( 5 , 1 , false );
 
 -- Conjuntos de valoraciones
 INSERT INTO conjuntos_valoraciones (
