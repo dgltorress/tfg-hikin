@@ -137,10 +137,10 @@ const elementosPorPagina = 10;
 
 
     if( req.query.p ){ // Se espera validado y procesado como entero
-        filter += ` ORDER BY id LIMIT ?, ${elementosPorPagina}`;
+        filter += ` ORDER BY s.fecha_inicio DESC LIMIT ?, ${elementosPorPagina}`;
         parameters.push( req.query.p * elementosPorPagina );
     } else {
-        filter += ` ORDER BY id LIMIT 0, ${elementosPorPagina}`;
+        filter += ` ORDER BY s.fecha_inicio DESC LIMIT 0, ${elementosPorPagina}`;
     }
 
     // Query

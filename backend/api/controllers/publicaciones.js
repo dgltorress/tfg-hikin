@@ -111,10 +111,10 @@ const getPublicaciones = async( req , res ) => {
     }
 
     if( req.query.p ){ // Se espera validado y procesado como entero
-        filter += ` ORDER BY autor LIMIT ?, ${elementosPorPagina}`;
+        filter += ` ORDER BY fecha DESC LIMIT ?, ${elementosPorPagina}`;
         parameters.push( req.query.p * elementosPorPagina );
     } else {
-        filter += ` ORDER BY autor LIMIT 0, ${elementosPorPagina}`;
+        filter += ` ORDER BY fecha DESC LIMIT 0, ${elementosPorPagina}`;
     }
 
     // Query
