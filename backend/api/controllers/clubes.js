@@ -290,7 +290,7 @@ WHERE codauto = ? AND cpro ${proComparator} ?`,
 }
 
 /**
- * Desinscribe al solicitante de un club.
+ * Inscribe al solicitante en un club.
  * 
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
@@ -348,7 +348,7 @@ const inscribirseClub = async( req , res ) => {
                                 }
                             }
                         );
-                // Está invitado al club público pero no ha aceptado (poner a false)
+                // Está invitado al club pero no había aceptado (poner pendiente a false)
                 } else if( result[ 0 ].pendiente === 1 ){
                     adminConnection.query(
 `UPDATE miembro_de
@@ -378,7 +378,7 @@ WHERE usuario = ?` , [
 }
 
 /**
- * Revoca la invitación a un club de un usuario.
+ * Invita a un usuario a un club.
  * 
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
@@ -451,7 +451,7 @@ const invitarClub = async( req , res ) => {
 const updateClub = async( req , res ) => {
     // Distingue los identificadores
     const idSolicitante = req.user.id;
-    const idObjetivo = req.params.id;
+    const idObjetivo = parseInt( req.params.id );
 
     // Obtiene la información del cuerpo de la petición
     let { nombre, descripcion, codauto, cpro, privado } = req.body;
@@ -568,10 +568,10 @@ WHERE c.id = ?` ,
                                 res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
                                 logRequest( req , 'updateClub' , HTTP.error_server.internal , 'Error al actualizar el club' );
                             } else {
-                                // Construye un objeto usuario que devolver
+                                // Construye un objeto que devolver
                                 const insertedObject = {};
                             
-                                insertedObject.id = result2.insertId;
+                                insertedObject.id = idObjetivo;
                                 insertedObject.nombre = nombre;
                                 insertedObject.descripcion = descripcion;
                                 insertedObject.codauto = codauto;
@@ -580,7 +580,7 @@ WHERE c.id = ?` ,
                                 insertedObject.privado = privado;
                                 insertedObject.imagen = null;
                             
-                                // Responde con el objeto usuario, el token y su expiración
+                                // Responde con el objeto
                                 res.status( HTTP.success.ok ).json( insertedObject );
                                 logRequest( req , 'updateClub', HTTP.success.ok );
                             }
@@ -650,7 +650,7 @@ const deleteClub = async( req , res ) => {
                         );
                     } else {
                         res.status( HTTP.error_client.forbidden ).json( { msg: 'No cuentas con los permisos necesarios para realizar esta acción' } );
-                        logRequest( req , 'deleteComentario' , HTTP.error_client.forbidden , 'El solicitante no es el propietario del recurso o un administrador' );
+                        logRequest( req , 'deleteClub' , HTTP.error_client.forbidden , 'El solicitante no es el propietario del recurso o un administrador' );
                     }
                 }
             }
@@ -735,7 +735,7 @@ const desinvitarClub = async( req , res ) => {
                         }
                     );
                 } else {
-                    res.status( HTTP.error_client.forbidden ).json( { msg: 'Sólo el propietario de un club puede eliminar miembros de un club' } );
+                    res.status( HTTP.error_client.forbidden ).json( { msg: 'Sólo el propietario de un club puede eliminar miembros' } );
                     logRequest( req , 'desinvitarClub' , HTTP.error_client.forbidden , 'Solicitante no propietario o admin' );
                 }
             }

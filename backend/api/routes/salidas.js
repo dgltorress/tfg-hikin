@@ -18,6 +18,7 @@ const { validateDateExpress } = require( '../middleware/validators.js' );
 const { getSalidas, getSalida,
     createSalida, updateSalida, deleteSalida,
     inscribirseSalida, desinscribirseSalida,
+    createValoraciones,
     invitarSalida, desinvitarSalida } = require( '../controllers/salidas.js' ); // Controller Salidas
 
 // ----------------
@@ -104,20 +105,28 @@ router.route( '/:id/inscripcion' )
 
 router.route( '/:id/valoraciones' )
     .post(
-
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
+        body().isArray(),
+        body( '*.valorado' , 'Obligatorio (número natural mayor que 0)' ).exists().isInt( { min: 1 } ).toInt(),
+        body( '*.acude' , 'Booleano' ).exists().isBoolean().toBoolean(),
+        body( '*.valoracion' , 'Obligatorio (natural entre 1 y 5)' ).exists().isInt( { min: 1, max: 5 } ).toInt(),
+        body( '*.observaciones' , 'Obligatorio (entre 3 y 250 caracteres)' ).optional().isString().isLength( { min: 3 , max: 80 } ),
+        validateFields,
+        createValoraciones
     );
 
-router.route( '/:clubId/invitacion/:userId' )
+router.route( '/:salId/invitacion/:userId' )
     .post(
         validateJWT,
-        param( 'clubId' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
+        param( 'salId' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
         param( 'userId' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         invitarSalida
     )
     .delete(
         validateJWT,
-        param( 'clubId' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
+        param( 'salId' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
         param( 'userId' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         desinvitarSalida

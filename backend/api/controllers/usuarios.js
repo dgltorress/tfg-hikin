@@ -652,7 +652,7 @@ const seguirUsuario = async( req , res ) => {
  */
 const updateUsuario = async( req , res ) => {
     // Distingue los identificadores
-    const idObjetivo = req.params.id;
+    const idObjetivo = parseInt( req.params.id );
 
     // Obtiene la información del cuerpo de la petición
     let { usuario, email, nombre, bio, sexo, fecha_nac, privado } = req.body;
