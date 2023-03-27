@@ -29,7 +29,7 @@ const adminConnection = mariadb.createConnection( {
     password: dbPwd,
     database: dbName,
 
-    insertIdAsNumber: true, // Express no es capaz de trabajar con BigInt
+    insertIdAsNumber: true, // El sistema no es capaz de trabajar con BigInt
     bigIntAsNumber: true
 } );
 adminConnection.connect( ( err ) => {

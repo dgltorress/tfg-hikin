@@ -14,12 +14,14 @@ const { validateJWT } = require( '../middleware/jwt.js' ); // Validador de JSON 
 const { validateFields } = require( '../middleware/validateFields.js' ); // Validador de JSON Web Token
 const { toUniversalPath } = require( '../helpers/metodos.js' );
 const { validateSensitiveActionUser, validateNotSelf } = require( '../middleware/validators.js' );
-//const {  } = require( '../middleware/files' );
+const { uploadPfp, deletePfp } = require( '../middleware/files.js' );
 const { getUsuariosBasicos, getUsuario, getUsuarioBasico,
     createUsuario, updateUsuario, deleteUsuario,
     getFeed, getValoraciones,
     getSeguidores, getSeguidos, seguirUsuario, deseguirUsuario,
-    getClubes, getSalidas, getResenas, getDistintivos } = require( '../controllers/usuarios.js' ); // Controller Usuarios
+    getClubes, getSalidas, getResenas, getDistintivos,
+    cambiarImagen, cambiarImagenResponse,
+    borrarImagen, borrarImagenResponse } = require( '../controllers/usuarios.js' ); // Controller Usuarios
 
 // ----------------
 
@@ -201,10 +203,20 @@ router.route( '/:id/distintivos' )
 
 router.route( '/:id/imagen' )
     .post(
-        
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
+        validateFields,
+        cambiarImagen,
+        uploadPfp,
+        cambiarImagenResponse
     )
     .delete(
-        
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
+        validateFields,
+        borrarImagen,
+        deletePfp,
+        borrarImagenResponse
     );
 
 

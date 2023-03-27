@@ -14,6 +14,7 @@ const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
 const { resolveURL, keepFields } = require( '../helpers/metodos.js' ); // Metodos generales
 const { logRequest } = require( '../helpers/log.js' ); // Registro
 const { generateJWT , JWTExpire } = require( '../helpers/jwt' ); // Generador de JSON Web Token
+const { deletePfp } = require( '../middleware/files.js' );
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // ----------------
@@ -151,8 +152,8 @@ WHERE id = ?` , [
                 
                 // Si el usuario es privado y el solicitante no tiene permisos sólo se devuelve lo básico
                 if( result[ 0 ].privado && 
-                    ( ( idSolicitante !== idObjetivo ) ||
-                      ( req.user.isAdmin === true ) ) ){
+                    ( ( idSolicitante !== idObjetivo ) &&
+                      ( req.user.isAdmin !== true ) ) ){
                     result[ 0 ] = keepFields( result[ 0 ] , [ 'id' , 'usuario' , 'nombre' , 'imagen' , 'privado' ] );
                     res.status( HTTP.success.ok ).json( result[ 0 ] );
                     logRequest( req , 'getUsuario' , HTTP.success.ok , 'Devuelto básico' );
@@ -639,6 +640,131 @@ const seguirUsuario = async( req , res ) => {
     );
 }
 
+/**
+ * Prepara para cambiar la imagen de perfil de un usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const cambiarImagen = async( req , res , next ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+        'SELECT id FROM usuarios WHERE id = ?' ,
+        [ idObjetivo ],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'cambiarImagen' , HTTP.error_server.internal , 'Error' );
+            } else {
+                // Si no ha habido coincidencias se indica
+                if( result.length === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'cambiarImagen' , HTTP.error_client.not_found );
+                    return;
+                }
+
+                // Si el usuario que tiene el recurso que se solicita cambiar no es el solicitante
+                // y el solicitante no es administrador, no se hace
+                if( ( result[ 0 ].id !== idSolicitante ) &&
+                    ( req.user.isAdmin !== true ) ){
+                    res.status( HTTP.error_client.forbidden ).json( { msg: 'No cuentas con los permisos necesarios para realizar esta acción' } );
+                    logRequest( req , 'cambiarImagen' , HTTP.error_client.forbidden , 'El solicitante no es el propietario del recurso o un administrador' );
+                    return;
+                }
+
+                next();
+            }
+        }
+    );
+}
+
+/**
+ * Maneja los eventos posteriores al cambio de foto de perfil de un usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const cambiarImagenResponse = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+        'SELECT imagen FROM usuarios WHERE id = ?' ,
+        [ idObjetivo ],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'cambiarImagenResponse' , HTTP.error_server.internal , 'Error' );
+            } else {
+                // Si no ha habido coincidencias se indica
+                if( result.length === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'cambiarImagenResponse' , HTTP.error_client.not_found );
+                    return;
+                }
+
+                // Si se ha subido una imagen,
+                if( req.file ){
+                    const newFileName = req.file.filename;
+                
+                    // se intenta borrar el archivo antiguo asignado (no se puede asumir que exista, el usuario solo guarda el nombre).
+                    if( result[ 0 ].image !== null ) deletePfp( result[ 0 ].image );
+                
+                    // Construye la URL de la imagen.
+                    const imageUniversalURL = toUniversalPath( relative( '.' , req.file.path ) );
+                    user.image = imageUniversalURL;
+                
+                    // Se asigna el nuevo archivo (el campo podria no estar creado).
+                    await User.findByIdAndUpdate( userId , { $set: { image: imageUniversalURL } } );
+                
+                    // Se resuelve la URL y se devuelve.
+                    await resolveURLImage( user );
+                
+                    res.status( HTTP.success.ok ).json( {
+                        image: user.image
+                    } );
+                    saveAction( req , 'Has actualizado tu foto de perfil' );
+                    logRequest( req , 'changeImageResponse' , HTTP.success.ok , `Foto de perfil actualizada ("${newFileName}")` );
+                }
+                // Si no se ha subido una imagen,
+                else{
+                    // y no era un error,
+                    if( !req.uploadErr ){
+                        const noFileDeleted = 'ninguna';
+                        const oldFileName = ( user.image ) ? `"${user.image}"` : noFileDeleted;
+                    
+                        // se intenta borrar el archivo antiguo asignado (no se puede asumir que exista, el usuario solo guarda el nombre).
+                        if( user.image ) await deletePfp( user.image );
+
+                        // se desasigna la imagen que ya habia (eliminar foto de perfil).
+                        await User.findByIdAndUpdate( userId , { $unset: { image: "" } } );
+                    
+                        res.status( HTTP.success.ok ).json( {
+                            msg: 'Foto de perfil eliminada'
+                        } );
+                        if( oldFileName !== noFileDeleted ) saveAction( req , 'Has eliminado tu foto de perfil' );
+                        logRequest( req , 'changeImageResponse' , HTTP.success.ok , `Foto de perfil eliminada (${oldFileName})` );
+                    }
+                    // y ha habido un error,
+                    else{
+                        // se indica.
+                        res.status( req.uploadErr.status ).json( { msg: req.uploadErr.msg } );
+                        logRequest( req , 'changeImageResponse' , req.uploadErr.status , req.uploadErr.msg );
+                    }
+                }
+            }
+        }
+    );
+}
+
 // -----------------------------------------------
 
 
@@ -854,4 +980,6 @@ module.exports = { getUsuariosBasicos, getUsuario, getUsuarioBasico,
     createUsuario, updateUsuario, deleteUsuario,
     getFeed, getValoraciones,
     getSeguidores, getSeguidos, seguirUsuario, deseguirUsuario,
-    getClubes, getSalidas, getResenas, getDistintivos };
+    getClubes, getSalidas, getResenas, getDistintivos,
+    cambiarImagen, cambiarImagenResponse,
+    borrarImagen, borrarImagenResponse };
