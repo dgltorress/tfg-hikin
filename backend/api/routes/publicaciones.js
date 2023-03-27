@@ -66,6 +66,11 @@ router.route( '/:id' )
         deletePublicacion
     );
 
+router.route( '/:id/imagen' )
+    .post(
+        
+    )
+
 router.route( '/:id/kudos' )
     .post(
         validateJWT,

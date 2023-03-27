@@ -11,10 +11,10 @@ const { toLong } = require( 'ip' ); // Pasar IPs a version entera
 // Propio
 const { adminConnection } = require( '../services/database.js' ); // Base de datos
 const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
-const { resolveURL, keepFields } = require( '../helpers/metodos.js' ); // Metodos generales
+const { resolveURL, keepFields, toUniversalPath } = require( '../helpers/metodos.js' ); // Metodos generales
 const { logRequest } = require( '../helpers/log.js' ); // Registro
 const { generateJWT , JWTExpire } = require( '../helpers/jwt' ); // Generador de JSON Web Token
-const { deletePfp } = require( '../middleware/files.js' );
+const { deletePfp, pfpURL } = require( '../middleware/files.js' );
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // ----------------
@@ -684,7 +684,7 @@ const cambiarImagen = async( req , res , next ) => {
 }
 
 /**
- * Maneja los eventos posteriores al cambio de foto de perfil de un usuario.
+ * Maneja los eventos posteriores a la subida de foto de perfil de un usuario.
  * 
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
@@ -719,39 +719,41 @@ const cambiarImagenResponse = async( req , res ) => {
                     if( result[ 0 ].image !== null ) deletePfp( result[ 0 ].image );
                 
                     // Construye la URL de la imagen.
-                    const imageUniversalURL = toUniversalPath( relative( '.' , req.file.path ) );
-                    user.image = imageUniversalURL;
+                    let imageUniversalURL = toUniversalPath( relative( '.' , req.file.path ) );
                 
-                    // Se asigna el nuevo archivo (el campo podria no estar creado).
-                    await User.findByIdAndUpdate( userId , { $set: { image: imageUniversalURL } } );
+                    // Se asigna el nuevo archivo
+                    adminConnection.query(
+                        'UPDATE usuarios SET imagen = ? WHERE id = ?' ,
+                        [ imageUniversalURL , idObjetivo ],
+                        ( err , result ) => {
+                            if( err ){
+                                console.error( err );
+                                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                                logRequest( req , 'cambiarImagenResponse' , HTTP.error_server.internal , 'Error' );
+                            } else {
+                                // Si no ha habido coincidencias se indica
+                                if( result.length === 0 ){
+                                    res.status( HTTP.error_client.not_found ).send();
+                                    logRequest( req , 'cambiarImagenResponse' , HTTP.error_client.not_found , 'Usuario encontrado en SELECT pero no en UPDATE' );
+                                    return;
+                                }
+                            }
+                        }
+                    );
                 
                     // Se resuelve la URL y se devuelve.
-                    await resolveURLImage( user );
+                    imageUniversalURL = resolveURL( imageUniversalURL, `${RUTAMASKFULL}${pfpURL}`, -4 );
                 
-                    res.status( HTTP.success.ok ).json( {
-                        image: user.image
-                    } );
-                    saveAction( req , 'Has actualizado tu foto de perfil' );
+                    res.status( HTTP.success.ok ).json( { image: imageUniversalURL } );
                     logRequest( req , 'changeImageResponse' , HTTP.success.ok , `Foto de perfil actualizada ("${newFileName}")` );
                 }
                 // Si no se ha subido una imagen,
                 else{
                     // y no era un error,
                     if( !req.uploadErr ){
-                        const noFileDeleted = 'ninguna';
-                        const oldFileName = ( user.image ) ? `"${user.image}"` : noFileDeleted;
-                    
-                        // se intenta borrar el archivo antiguo asignado (no se puede asumir que exista, el usuario solo guarda el nombre).
-                        if( user.image ) await deletePfp( user.image );
-
-                        // se desasigna la imagen que ya habia (eliminar foto de perfil).
-                        await User.findByIdAndUpdate( userId , { $unset: { image: "" } } );
-                    
-                        res.status( HTTP.success.ok ).json( {
-                            msg: 'Foto de perfil eliminada'
-                        } );
-                        if( oldFileName !== noFileDeleted ) saveAction( req , 'Has eliminado tu foto de perfil' );
-                        logRequest( req , 'changeImageResponse' , HTTP.success.ok , `Foto de perfil eliminada (${oldFileName})` );
+                        // se indica.
+                        res.status( HTTP.error_client.bad_request ).json( { msg: 'El campo del formulario con la imagen está vacío' } );
+                        logRequest( req , 'changeImageResponse' , HTTP.error_client.bad_request , 'Imagen vacía' );
                     }
                     // y ha habido un error,
                     else{
@@ -971,8 +973,8 @@ WHERE seguidor = ? AND seguido = ?` , [
 
 
 
-
-
+const borrarImagen = () => {}
+const borrarImagenResponse = () => {}
 
 
 // Marcar los metodos para exportar

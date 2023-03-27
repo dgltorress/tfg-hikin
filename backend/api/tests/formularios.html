@@ -16,8 +16,8 @@
         <h1>Prueba formularios Express</h1>
             <section>
                 <h2>Formulario foto de perfil</h2>
-                <form id="userPfp" onsubmit="enviarPfp();" method="POST" enctype='multipart/form-data'>
-                    <input type="file" name="image" accept="image/png, image/jpeg" />
+                <form id="userPfpForm" onsubmit="enviarPfp(); return false;" method="POST" enctype='multipart/form-data'>
+                    <input type="file" name="imagen" accept="image/png, image/jpeg" />
                     <button type="submit">Enviar</button>
                 </form>
             </section>

@@ -16,6 +16,7 @@ require( 'dotenv' ).config( { // Variables de entorno
 } );
 
 const express   = require( 'express' );            // Express
+const cors      = require( 'cors' )                // CORS
 const swaggerUI = require( 'swagger-ui-express' ); // Interfaz de usuario de Swagger para Express
 
 // Propias
@@ -32,6 +33,9 @@ const { RUTA , PUERTO , END_DOCS , PROTOCOLO } = require( './helpers/rutas.js' )
 const app = express();
 app.use( express.json() );                           // Soporte para cuerpos codificados en JSON
 app.use( express.urlencoded( { extended: true } ) ); // Soporte extendido para cuerpos codificados <---------------------------------------- REVISAR SI SE PUEDE QUITAR
+
+// CORS
+app.use( cors() );
 
 // RUTAS
 app.use( '/api/usuarios'      , require( './routes/usuarios.js'      ) );

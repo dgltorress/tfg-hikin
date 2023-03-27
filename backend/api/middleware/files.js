@@ -22,7 +22,7 @@ const { HTTP , COLOR } = require( '../helpers/constantes.js' );      // Constant
 // Parsea las variables de entorno y crea otras constantes.
 // Tamano maximo por defecto.
 const maxSizeDefault   = '2MB';
-const fieldNameImageDefault = 'image';
+const fieldNameImageDefault = 'imagen';
 
 // === IMÁGENES DE PUBLICACIÓN
 
@@ -356,10 +356,10 @@ const uploadPostImage = ( req , res , next ) => {
             }
             else{
                 if( req.file ){
-                    console.log( `Imagen de publicación del usuario con UID ${req.uid} subida a "${req.file.path}"` );
+                    console.log( `Imagen de publicación del usuario con ID ${req.user.id} subida a "${req.file.path}"` );
                 }
                 else{
-                    console.log( `Imagen de publicación del usuario con UID ${req.uid} vacía. No se ha creado ningún archivo.` );
+                    console.log( `Imagen de publicación del usuario con ID ${req.user.id} vacía. No se ha creado ningún archivo.` );
                 }
             }
     
@@ -436,10 +436,10 @@ const uploadPfp = ( req , res , next ) => {
             }
             else{
                 if( req.file ){
-                    console.log( `Foto de perfil del usuario con UID ${req.uid} subida a "${req.file.path}"` );
+                    console.log( `Foto de perfil del usuario con ID ${req.user.id} subida a "${req.file.path}"` );
                 }
                 else{
-                    console.log( `Foto de perfil del usuario con UID ${req.uid} vacía. No se ha creado ningún archivo.` );
+                    console.log( `Foto de perfil del usuario con ID ${req.user.id} vacía. No se ha creado ningún archivo.` );
                 }
             }
     
@@ -515,10 +515,10 @@ const deletePfp = async( path ) => {
             }
             else{
                 if( req.file ){
-                    console.log( `Imagen de club del usuario con UID ${req.uid} subida a "${req.file.path}"` );
+                    console.log( `Imagen de club del usuario con ID ${req.user.id} subida a "${req.file.path}"` );
                 }
                 else{
-                    console.log( `Imagen de club del usuario con UID ${req.uid} vacía. No se ha creado ningún archivo.` );
+                    console.log( `Imagen de club del usuario con ID ${req.user.id} vacía. No se ha creado ningún archivo.` );
                 }
             }
     
