@@ -339,7 +339,7 @@ const createValoraciones = async( req , res ) => {
     // No atiende cuerpos vacíos
     if( req.body.length === 0 ){
         res.status( HTTP.success.no_content ).send();
-        logRequest( req, 'invitarSalida', HTTP.success.no_content, 'Ninguna valoración proporcionada' );
+        logRequest( req, 'createValoraciones', HTTP.success.no_content, 'Ninguna valoración proporcionada' );
         return;
     }
 
@@ -349,94 +349,96 @@ const createValoraciones = async( req , res ) => {
 
     // Comprueba si el solicitante ha acudido a la salida y si ya existe un conjunto
     adminConnection.query(
-`SELECT p.pendiente, c.id AS conjunto
+`SELECT p.pendiente, s.fecha_fin
 FROM participa_en AS p
-LEFT JOIN conjuntos_valoraciones AS c
-ON c.usuario = p.usuario AND c.salida = p.salida
+INNER JOIN salidas AS s
+ON p.salida = s.id
 WHERE p.usuario = ? AND p.salida = ?` ,
 [ idSolicitante, idObjetivo ] ,
         ( err , result ) => {
             if( err ){
                 console.error( err );
                 res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
-                logRequest( req , 'invitarSalida' , HTTP.error_server.internal , 'Error' );
+                logRequest( req , 'createValoraciones' , HTTP.error_server.internal , 'Error' );
             } else {
+                // === COMPROBACIONES
+
                 // No encontrado
                 if( result.length === 0 ){
                     res.status( HTTP.error_client.not_found ).json( { msg: 'No has participado en esta salida' } );
-                    logRequest( req, 'invitarSalida', HTTP.error_client.not_found, 'No ha participado' );
+                    logRequest( req, 'createValoraciones', HTTP.error_client.not_found, 'No ha participado' );
                     return;
                 }
 
                 // No ha aceptado la invitación
                 if( result[ 0 ].pendiente === 1 ){
                     res.status( HTTP.error_client.forbidden ).json( { msg: 'No has aceptado la invitación a esta salida' } );
-                    logRequest( req, 'invitarSalida', HTTP.error_client.forbidden, 'No ha aceptado invitación' );
+                    logRequest( req, 'createValoraciones', HTTP.error_client.forbidden, 'No ha aceptado invitación' );
                     return;
                 }
 
-                // Ya existe un conjunto de datos
-                if( result[ 0 ].conjunto !== null ){
-                    res.status( HTTP.error_client.bad_request ).json( { msg: 'Ya has enviado valoraciones' } );
-                    logRequest( req, 'invitarSalida', HTTP.error_client.bad_request, 'Ya ha enviado valoraciones' );
+                // La salida no ha finalizado
+                const fechaFinSalida = result[ 0 ].fecha_fin;
+                if( isNaN( fechaFinSalida ) === true ){
+                    console.error( err );
+                    res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                    logRequest( req , 'createValoraciones' , HTTP.error_server.internal , 'Error al procesar la fecha de la salida' );
+                    return;
+                } else if( fechaFinSalida > new Date() ) {
+                    res.status( HTTP.error_client.bad_request ).json( { msg: `Sólo pueden enviarse valoraciones tras concluir la salida. Ésta concluirá en la siguiente fecha: ${fechaFinSalida}` } );
+                    logRequest( req, 'createValoraciones', HTTP.error_client.bad_request, 'Salida no ha finalizado' );
                     return;
                 }
 
-                // Insertar el conjunto
+                // Construye las instrucciones INSERT
+                const body = req.body;
+                const parameters = [];
+                let inserts = '';
+
+                for( let i = 0 ; i < body.length ; ++i ){
+                    const currentItem = body[ i ];
+
+                    // Comprobación de no valorarse a sí mismo
+                    if( currentItem.valorado === idSolicitante ){
+                        console.error( err );
+                        res.status( HTTP.error_client.bad_request ).json( { msg: 'No puedes autovalorarte' } );
+                        logRequest( req , 'createValoraciones' , HTTP.error_client.bad_request , 'Autovaloración' );
+                        return;
+                    }
+
+                    inserts += '(?,?,?,?,?,?)';
+
+                    parameters.push( idSolicitante );
+                    parameters.push( currentItem.valorado );
+                    parameters.push( idObjetivo );
+                    parameters.push( currentItem.acude );
+                    parameters.push( currentItem.valoracion );
+                    parameters.push( ( currentItem.observaciones !== undefined ) ? currentItem.observaciones : null );
+
+                    if( i+1 < body.length ) inserts += ', ';
+                } inserts += ';';
+                
+
+                // Insertar las valoraciones
                 adminConnection.query(
-`INSERT INTO conjuntos_valoraciones(
-	usuario, salida,
-	fecha
-) VALUES (
-	?, ?,
-	?
-)` , [
-    idSolicitante, idObjetivo,
-    new Date()
-] ,
+`INSERT INTO valoraciones (
+  valorador, valorado, salida,
+  acude, valoracion,
+  observaciones
+) VALUES ${inserts}` , parameters ,
                     ( err , result ) => {
                         if( err ){
-                            console.error( err );
-                            res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
-                            logRequest( req , 'invitarSalida' , HTTP.error_server.internal , 'Error al insertar el conjunto' );
+                            if( err.errno === 1062 ){
+                                res.status( HTTP.error_client.bad_request ).json( { msg: 'Al menos una de las valoraciones ya existe' } );
+                                logRequest( req , 'createValoraciones' , HTTP.error_client.bad_request , 'Al menos una valoración ya existe' );
+                            } else {
+                                console.error( err );
+                                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                                logRequest( req , 'createValoraciones' , HTTP.error_server.internal , 'Error al insertar el conjunto' );
+                            }
                         } else {
-                            // Construye las instrucciones INSERT
-                            const body = req.body;
-                            const parameters = [];
-                            let inserts = '';
-
-                            for( let i = 0 ; i < body.length ; ++i ){
-                                const currentItem = body[ i ];
-                                inserts += '(?,?,?,?,?)';
-
-                                parameters.push( result.insertId );
-                                parameters.push( currentItem.valorado );
-                                parameters.push( currentItem.acude );
-                                parameters.push( currentItem.valoracion );
-                                parameters.push( ( currentItem.observaciones !== undefined ) ? currentItem.observaciones : null );
-
-                                if( i+1 < body.length ){ inserts += ', ' }
-                            } inserts += ';'
-
-                            // Insertar las valoraciones para ese conjunto
-                            adminConnection.query(
-`INSERT INTO valoraciones(
-    conjunto, valorado,
-    acude,
-    valoracion, observaciones
-) VALUES ${inserts}` ,
-parameters ,
-                                ( err , result ) => {
-                                    if( err ){
-                                        console.error( err );
-                                        res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
-                                        logRequest( req , 'invitarSalida' , HTTP.error_server.internal , 'Error al insertar las valoraciones' );
-                                    } else {
-                                        res.status( HTTP.success.no_content ).json();
-                                        logRequest( req , 'invitarSalida' , HTTP.success.no_content );
-                                    }
-                                }
-                            );
+                            res.status( HTTP.success.no_content ).send();
+                            logRequest( req , 'createValoraciones' , HTTP.success.no_content );
                         }
                     }
                 );

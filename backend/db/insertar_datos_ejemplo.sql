@@ -98,17 +98,17 @@ INSERT INTO clubes(
   1, "Club de senderismo ARAGÓN",
   "En este club se organizan salidas a itinerarios de Aragón",
   10, 1, false,
-  "../assets/img/club/2023/03/01/club1.jpg"
+  "../assets/img/club/2023/3/1/club1.jpg"
 ), (
   2, "Grupo de rutas PR",
   "Club casual donde salimos de vez en cuando a rutas de pequeño recorrido en el País Vasco",
   62, 2, false,
-  "../assets/img/club/2023/03/01/club2.jpg"
+  "../assets/img/club/2023/3/1/club2.jpg"
 ), (
   3, "Salidas MADRID",
   "Salidas por Madrid",
   56, 1, true,
-  "../assets/img/club/2023/03/01/club3.jpg"
+  "../assets/img/club/2023/3/1/club3.jpg"
 );
 
 -- Membresías de clubes
@@ -184,19 +184,19 @@ INSERT INTO publicaciones (
   1, 1, "Dando una vuelta por la ruta de Albarracín",
   "Aunque aún estamos a principios de marzo, hace un tiempo que sin duda invita a salir. Después de esto iremos a tomar algo al bar del pueblo; ¡me ha contado un pajarito que tienen un ternasco que está de muerte!",
   1, 1,
-  "../assets/img/posts/2023/03/04/post1.jpg", 
+  "../assets/img/posts/2023/3/4/post1.jpg", 
   STR_TO_DATE( "2023-03-04 11:34" , "%Y-%m-%d %H:%i" )
 ), (
   2, 1, "¡En las costas de Vizcaya!",
   "Estamos en la etapa 12 de la ruta de gran recorrido que da la vuelta a esta encantadora provincia. Ahora mismo nos encontramos frente a la ermita de San Juan de Gaztelugatxe. ¡Se agradece que el camino esté pavimentado!",
   NULL, 2,
-  "../assets/img/posts/2023/03/04/post2.jpg", 
+  "../assets/img/posts/2023/3/4/post2.jpg", 
   STR_TO_DATE( "2023-02-01 12:41" , "%Y-%m-%d %H:%i" )
 ), (
   3, 2, "Reunión anual del club",
   "Como uno de los primeros clubs activos de HikIn, nos enorgullece estar aquí reunidos una vez más. Por muchas aventuras más en la montaña.",
   2, NULL,
-  "../assets/img/posts/2023/03/04/post3.jpg", 
+  "../assets/img/posts/2023/3/4/post3.jpg", 
   STR_TO_DATE( "2023-03-04 11:34" , "%Y-%m-%d %H:%i" )
 ), (
   4, 3, "Hola a todos",
@@ -208,7 +208,7 @@ INSERT INTO publicaciones (
   5, 3, "Impresionantes vistas de Laguna de las Lomas",
   "El viaje hasta aquí ha valido la pena, la verdad es que deja sin aliento. ¡Y pensar que tenemos algo así tan cerca!",
   NULL, 3,
-  "../assets/img/posts/2023/03/04/post5.jpg", 
+  "../assets/img/posts/2023/3/4/post5.jpg", 
   STR_TO_DATE( "2023-03-21 10:03" , "%Y-%m-%d %H:%i" )
 ), (
   6, 4, "PUBLICACIÓN DE USUARIO PRIVADO",
@@ -428,15 +428,15 @@ INSERT INTO distintivos (
 ) VALUES (
   1, "Aspirante a líder",
   "Has creado un club y has conseguido que se unan dos miembros.",
-  "../assets/img/distintivos/2023/03/01/distintivo1.jpg"
+  "../assets/img/distintivos/2023/3/1/distintivo1.jpg"
 ), (
   2, "Organizador novato",
   "Organiza una salida y consigue que se unan dos personas.",
-  "../assets/img/distintivos/2023/03/01/distintivo2.jpg"
+  "../assets/img/distintivos/2023/3/1/distintivo2.jpg"
 ), (
   3, "Popular (en tu casa)",
   "Consigue 10 kudos en una publicación.",
-  "../assets/img/distintivos/2023/03/01/distintivo3.jpg"
+  "../assets/img/distintivos/2023/3/1/distintivo3.jpg"
 );
 
 -- Asignación de distintivos
