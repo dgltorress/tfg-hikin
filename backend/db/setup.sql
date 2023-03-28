@@ -26,7 +26,7 @@ CREATE TABLE usuarios (
   fecha_reg     DATETIME              NOT NULL ,
   ultimo_acceso DATETIME                       ,
   ipv4          INT UNSIGNED          NOT NULL ,
-  imagen        VARCHAR( 120 )                  ,
+  imagen        VARCHAR( 120 )                 ,
 
   PRIMARY KEY ( id ) ,
   UNIQUE ( email )

@@ -12,7 +12,8 @@ const { adminConnection } = require( '../services/database.js' ); // Base de dat
 const { COLOR , HTTP } = require( '../helpers/constantes.js' ); // Constantes
 const { logRequest } = require( '../helpers/log.js' ); // Registro
 const { generateJWT , JWTExpire } = require( '../helpers/jwt' ); // Generador de JSON Web Token
-const { pullFields, keepFields , resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
+const { pullFields, resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
+const { pfpURL } = require( '../middleware/files.js' );
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // ----------------
@@ -77,7 +78,7 @@ WHERE id = ?` , [
 
                 // Resuelve la URL de la imagen.
                 if( result[ 0 ].imagen ){
-                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}/assets/img/pfp/` , -4 );
+                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
                 }
 
                 // Genera un token

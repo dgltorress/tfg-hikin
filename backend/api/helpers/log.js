@@ -6,6 +6,7 @@
 
 // Librerias
 const { resolve } = require( 'path' ); // Transformar rutas de archivo relativas
+const { toLong } = require( 'ip' ); // Transformar rutas de archivo relativas
 const fs          = require( 'fs' );   // FileSystem para operar con archivos
 const { EOL }     = require( 'os' );   // Fin de línea para portabilidad entre sistemas operativos
 
@@ -148,18 +149,25 @@ const logRequestIntoDB = async( log ) => {
     }
 
     // Hace la consulta a la base de datos
+    // NO SE SANITIZA EL NOMBRE DE LA TABLA DADO QUE VIENE DE LAS VARIABLES DE ENTORNO
     adminConnection.query(
-`INSERT INTO registros_api (
-    usuario, fecha, ipv4, uri, metodo, funcion, estado, msg
-  ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?, ?
-  );` , [
-    log.id, new Date(), log.ip, log.url, log.method, log.functionName, log.status, log.msg
+`INSERT INTO ${logTableName} (
+    usuario, fecha, ipv4,
+    uri, metodo, funcion,
+    estado, msg
+) VALUES (
+  ?, ?, ?,
+  ?, ?, ?,
+  ?, ?
+);` , [
+    ( log.id !== undefined ) ? log.id : null, new Date(), toLong( log.ip ),
+    log.url, log.method, log.functionName,
+    log.status, ( log.msg !== undefined ) ? log.msg : null
 ] ,
         ( err ) => {
             if( err ){
                 console.warn( `${COLOR.texto.amarillo}ERROR al guardar registro en la base de datos${COLOR.reset}` );
-                console.warn( err );
+                console.warn( err.errno, err.text );
             }
         }
     );

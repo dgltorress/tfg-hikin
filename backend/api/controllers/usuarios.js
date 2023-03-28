@@ -88,7 +88,7 @@ parameters ,
                 // Resolver URLs de fotos de perfil
                 for( let i = 0 ; i < result.length ; i++ ){
                     if( result[ i ].imagen ){
-                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}/assets/img/pfp/` , -4 );
+                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
                     }
                 }
 
@@ -148,7 +148,7 @@ WHERE id = ?` , [
 
                 // Resolver URLs de fotos de perfil
                 if( result[ 0 ].imagen ){
-                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}/assets/img/pfp/` , -4 );
+                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
                 }
                 
                 // Si el usuario es privado y el solicitante no tiene permisos sólo se devuelve lo básico
@@ -199,7 +199,7 @@ const getUsuarioBasico = async( req , res ) => {
 
                 // Resolver URLs de fotos de perfil
                 if( result[ 0 ].imagen ){
-                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}/assets/img/pfp/` , -4 );
+                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
                 }
 
                 res.status( HTTP.success.ok ).json( result[ 0 ] );
@@ -368,7 +368,7 @@ const getClubes = async( req , res ) => {
 (SELECT COUNT(*) FROM miembro_de WHERE club = id) AS n_miembros
 FROM clubes AS c
 INNER JOIN miembro_de AS m ON c.id = m.club
-WHERE m.usuario = ?`, [
+WHERE m.usuario = ? AND m.pendiente = 0`, [
     idObjetivo
 ],
         ( err , result ) => {

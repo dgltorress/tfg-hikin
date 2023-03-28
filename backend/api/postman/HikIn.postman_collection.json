@@ -436,6 +436,16 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "imagen",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
 						"url": {
 							"raw": "{{baseURL}}/usuarios/:id/imagen",
 							"host": [
@@ -552,6 +562,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"titulo\": \"PUBLICACIÓN DE PRUEBA\",\r\n    \"descripcion\": \"DESCRIPCIÓN DE PRUEBA\",\r\n    \"club\": 1,\r\n    \"itinerario\": 1,\r\n    \"CAMPO_INVALIDO\": 69420\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseURL}}/publicaciones",
 							"host": [
@@ -601,6 +620,41 @@
 							"path": [
 								"publicaciones",
 								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "publicaciones/:id/imagen",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "imagen",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/publicaciones/:id/imagen",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"publicaciones",
+								":id",
+								"imagen"
 							],
 							"variable": [
 								{
@@ -1136,6 +1190,16 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "imagen",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
 						"url": {
 							"raw": "{{baseURL}}/clubes/:id/imagen",
 							"host": [
@@ -1302,7 +1366,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/salidas?texto=&organizador=&itinerario=&club=&desde=&hasta=&codauto=&cpro=&p",
+							"raw": "{{baseURL}}/salidas",
 							"host": [
 								"{{baseURL}}"
 							],
@@ -1313,47 +1377,56 @@
 								{
 									"key": "texto",
 									"value": "",
-									"description": "Nombre, o una parte del nombre, de la salida. No atiende a mayúsculas."
+									"description": "Nombre, o una parte del nombre, de la salida. No atiende a mayúsculas.",
+									"disabled": true
 								},
 								{
 									"key": "organizador",
 									"value": "",
-									"description": "Identificador del organizador."
+									"description": "Identificador del organizador.",
+									"disabled": true
 								},
 								{
 									"key": "itinerario",
 									"value": "",
-									"description": "Identificador del itinerario asociado."
+									"description": "Identificador del itinerario asociado.",
+									"disabled": true
 								},
 								{
 									"key": "club",
 									"value": "",
-									"description": "Identificador del club asociado, si tiene."
+									"description": "Identificador del club asociado, si tiene.",
+									"disabled": true
 								},
 								{
 									"key": "desde",
 									"value": "",
-									"description": "Fecha (de inicio) más antigua desde la que buscar."
+									"description": "Fecha (de inicio) más antigua desde la que buscar.",
+									"disabled": true
 								},
 								{
 									"key": "hasta",
 									"value": "",
-									"description": "Fecha (de inicio) más reciente hasta la que buscar."
+									"description": "Fecha (de inicio) más reciente hasta la que buscar.",
+									"disabled": true
 								},
 								{
 									"key": "codauto",
 									"value": "",
-									"description": "Identificador de la comunidad autónoma."
+									"description": "Identificador de la comunidad autónoma.",
+									"disabled": true
 								},
 								{
 									"key": "cpro",
 									"value": "",
-									"description": "Identificador de la provincia."
+									"description": "Identificador de la provincia.",
+									"disabled": true
 								},
 								{
 									"key": "p",
 									"value": null,
-									"description": "Índice de paginación."
+									"description": "Índice de paginación.",
+									"disabled": true
 								}
 							]
 						}
@@ -1365,6 +1438,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"SALIDA DE PRUEBA\",\r\n    \"descripcion\": \"DESCRIPCIÓN DE PRUEBA\",\r\n    \"itinerario\": 1,\r\n    \"club\": 1,\r\n    \"fecha_inicio\": \"2023-03-25T00:00:00Z\",\r\n    \"fecha_fin\": \"2023-03-26T00:00:00Z\",\r\n    \"privada\": false,\r\n    \"cancelada\": \"COLADA\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseURL}}/salidas",
 							"host": [
@@ -1383,13 +1465,19 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/salidas/{{salId}}",
+							"raw": "{{baseURL}}/salidas/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"salidas",
-								"{{salId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1400,14 +1488,29 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"SALIDA EDITADA\",\r\n    \"descripcion\": \"DESCRIPCIÓN EDITADA\",\r\n    \"itinerario\": 2,\r\n    \"club\": 2,\r\n    \"fecha_inicio\": \"2023-03-20T00:00:00Z\",\r\n    \"fecha_fin\": \"2023-03-21T00:00:00Z\",\r\n    \"privada\": true,\r\n    \"cancelada\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{baseURL}}/salidas/{{salId}}",
+							"raw": "{{baseURL}}/salidas/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"salidas",
-								"{{salId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1419,13 +1522,19 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/salidas/{{salId}}",
+							"raw": "{{baseURL}}/salidas/:id",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"salidas",
-								"{{salId}}"
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1437,14 +1546,20 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/salidas/{{salId}}/inscripcion",
+							"raw": "{{baseURL}}/salidas/:id/inscripcion",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"salidas",
-								"{{salId}}",
+								":id",
 								"inscripcion"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1456,14 +1571,20 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/salidas/{{salId}}/inscripcion",
+							"raw": "{{baseURL}}/salidas/:id/inscripcion",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"salidas",
-								"{{salId}}",
+								":id",
 								"inscripcion"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
 							]
 						}
 					},
@@ -1474,15 +1595,30 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n  {\r\n    \"valorado\": 1,\r\n    \"acude\": true,\r\n    \"valoracion\": 5,\r\n    \"observaciones\": \"VALORADO 1\"\r\n  },\r\n  {\r\n    \"valorado\": 3,\r\n    \"acude\": false,\r\n    \"valoracion\": 4,\r\n    \"observaciones\": \"VALORADO 2\"\r\n  }\r\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{baseURL}}/salidas/{{salId}}/valoraciones",
+							"raw": "{{baseURL}}/salidas/:id/valoraciones",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"salidas",
-								"{{salId}}",
+								":id",
 								"valoraciones"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3"
+								}
 							]
 						}
 					},
@@ -1494,15 +1630,25 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/salidas/{{salId}}/invitacion/{{userId}}",
+							"raw": "{{baseURL}}/salidas/:salId/invitacion/:userId",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"salidas",
-								"{{salId}}",
+								":salId",
 								"invitacion",
-								"{{userId}}"
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "salId",
+									"value": "1"
+								},
+								{
+									"key": "userId",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -1514,15 +1660,25 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseURL}}/salidas/{{salId}}/invitacion/{{userId}}",
+							"raw": "{{baseURL}}/salidas/:salId/invitacion/:userId",
 							"host": [
 								"{{baseURL}}"
 							],
 							"path": [
 								"salidas",
-								"{{salId}}",
+								":salId",
 								"invitacion",
-								"{{userId}}"
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "salId",
+									"value": "1"
+								},
+								{
+									"key": "userId",
+									"value": "1"
+								}
 							]
 						}
 					},

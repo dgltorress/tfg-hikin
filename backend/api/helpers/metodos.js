@@ -153,7 +153,7 @@ const toUniversalPath = ( weirdPath ) => {
     // Normaliza el filtro.
     if( keepElementCount > -1 ) keepElementCount = -1;
 
-    // Ej: { http://127.0.0.1:3000 }{ / }{ assets/img/posts }{ / }{ 2023/2/17/image.jpg }
+    // Ej: { http://127.0.0.1:3000/assets/img/posts/ }{ --- ../assets/img/posts/ --- 2023/2/17/image.jpg }
     return `${maskURL}${path.split( universalPathSeparator ).slice( keepElementCount ).join( universalPathSeparator ) }`;
 }
 

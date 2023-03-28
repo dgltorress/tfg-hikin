@@ -455,13 +455,13 @@ INSERT INTO registros_api (
 ) VALUES (
   1, 1,
   STR_TO_DATE( "2023-03-12 11:39" , "%Y-%m-%d %H:%i" ),
-  3310194375, "api/EJEMPLO",
+  3310194375, "/api/EJEMPLO",
   1, "getEjemplo", 200,
   "Petición exitosa"
 ), (
   2, NULL,
   STR_TO_DATE( "2023-03-12 11:41" , "%Y-%m-%d %H:%i" ),
-  3310194375, "api/EJEMPLO",
+  3310194375, "/api/EJEMPLO",
   2, "postEjemplo", 200,
   NULL
 );

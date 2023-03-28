@@ -48,7 +48,11 @@ router.route( '/' )
     )
     .post(
         validateJWT,
-        //validateFields,
+        body( 'titulo' , 'Entre 3 y 50 caracteres' ).exists().isString().isLength( { min: 3 , max: 50 } ),
+        body( 'descripcion' , 'Entre 3 y 250 caracteres' ).exists().isString().isLength( { min: 3 , max: 250 } ),
+        body( 'itinerario' , 'Número natural mayor que 0' ).optional().isInt( { min: 1 } ).toInt(),
+        body( 'club' , 'Número natural mayor que 0' ).optional().isInt( { min: 1 } ).toInt(),
+        validateFields,
         createPublicacion
     );
 

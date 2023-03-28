@@ -1,11 +1,11 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "HikIn API 1.0.0",
+    "title": "HikIn API 0.9.0",
     "description": "La API de HikIn permite realizar una diversa serie de operaciones de forma programática.\n\nMuchas de las llamadas precisan autenticación con JSON Web Token y/o contraseña. No incluir la cabecera o un token, formatear la cabecera de forma incorrecta o proveer un token no válido (entendiéndose por ello un token mal formado o expirado) recibirá una respuesta con un código de estado HTTP `401`. Si, habiendo provisto un token válido, se concluye que el usuario identificado no dispone de la autorización necesaria para realizar la operación solicitada, se responderá con un código de estado `403`.\n\nLas llamadas que tengan como objeto la transferencia de un solo recurso responderán con un código de estado `404` si no existe ningún recurso que coincida con los parámetros de búsqueda. Las llamadas que devuelvan múltiples recursos responderán con `200` aunque no encuentren ninguna coincidencia, pero el contenedor principal de su cuerpo estará vacío.\n\nLos cuerpos de todas las peticiones y respuestas tendrán formato JSON. Cualquier respuesta podrá incluir un campo `msg` adicional, que contendrá aclaraciones sobre el resultado de una petición. Este campo será opcional.",
-    "termsOfService": "http://hikin.com/terms-and-conditions",
+    "termsOfService": "about:blank",
     "contact": {
-      "email": "hikin@gmail.com"
+      "email": "about:blank"
     },
     "license": {
       "name": "Apache 2.0",

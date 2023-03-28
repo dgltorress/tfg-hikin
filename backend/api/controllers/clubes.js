@@ -134,7 +134,7 @@ parameters ,
                 // Resolver URLs de imágenes de club
                 for( let i = 0 ; i < result.length ; i++ ){
                     if( result[ i ].imagen ){
-                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}/assets/img/clubes/` , -4 );
+                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}${clubURL}` , -4 );
                     }
                 }
 
@@ -191,7 +191,7 @@ WHERE c.id = ?`,
 
                 // Resolver URLs de imagen de club
                 if( result[ 0 ].imagen ){
-                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}/assets/img/clubes/` , -4 );
+                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}${clubURL}` , -4 );
                 }
 
                 res.status( HTTP.success.ok ).json( result[ 0 ] );

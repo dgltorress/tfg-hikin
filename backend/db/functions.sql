@@ -28,3 +28,5 @@ END
 $$
 
 DELIMITER ;
+
+-- TRIGGERS --

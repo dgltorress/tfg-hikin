@@ -140,7 +140,7 @@ parameters ,
                 // Resolver URLs de fotos de perfil
                 for( let i = 0 ; i < result.length ; i++ ){
                     if( result[ i ].imagen ){
-                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}/assets/img/posts/` , -4 );
+                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}${postURL}` , -4 );
                     }
                 }
 
@@ -195,7 +195,7 @@ WHERE p.id = ?`,
 
                 // Resolver URLs de imágenes
                 if( result[ 0 ].imagen ){
-                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}/assets/img/posts/` , -4 );
+                    result[ 0 ].imagen = resolveURL( result[ 0 ].imagen , `${RUTAMASKFULL}${postURL}` , -4 );
                 }
 
                 res.status( HTTP.success.ok ).json( result[ 0 ] );
@@ -248,7 +248,110 @@ ORDER BY fecha DESC`,
  * @param {*} res Respuesta del servidor.
  */
 const createPublicacion = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
 
+    // Obtiene la información del cuerpo de la petición
+    let { titulo, descripcion, club, itinerario } = req.body;
+
+    if( club === undefined ) club = null;
+    if( itinerario === undefined ) itinerario = null;
+
+    // Comprueba que el usuario sea miembro del club si ha especificado alguno
+    if( club !== null ){
+        adminConnection.query(
+`SELECT club, pendiente FROM miembro_de
+WHERE usuario = ? AND club = ?` , [
+            idSolicitante, club
+        ] ,
+            ( err , result ) => {
+                if( err ){
+                    console.error( err );
+                    res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                    logRequest( req , 'createPublicacion' , HTTP.error_server.internal , 'Error al insertar el club' );
+                } else {
+                    if( result.length === 0 ){
+                        res.status( HTTP.error_client.forbidden ).json( { msg: 'Debes ser miembro de este club para publicar en él' } );
+                        logRequest( req , 'createPublicacion' , HTTP.error_client.forbidden , 'Intenta asociar a club nulo o al que no pertenece' );
+                    } else {
+                        if( result[ 0 ].pendiente === 1 ){ // Se ha intentado publicar en un club cuya invitación al cual no se ha aceptado
+                            res.status( HTTP.error_client.forbidden ).json( { msg: 'Debes aceptar la invitación a este club para publicar en él' } );
+                            logRequest( req , 'createPublicacion' , HTTP.error_client.forbidden , 'Intenta asociar a club al cual sigue invitado' );
+                        } else {
+                            insertPublicacion( req, res, idSolicitante, titulo, descripcion, club, itinerario );
+                        }
+                    }
+                }
+            }
+        );
+    } else {
+        insertPublicacion( req, res, idSolicitante, titulo, descripcion, club, itinerario );
+    }
+}
+
+/**
+ * Inserta una publicación en la base de datos y responde al cliente.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ * 
+ * @param {number} autor
+ * @param {string} titulo
+ * @param {string} descripcion
+ * @param {number | null} club
+ * @param {number | null} itinerario
+ */
+const insertPublicacion = async( req, res, autor, titulo, descripcion, club = null, itinerario = null ) => {
+    // Obtiene la fecha actual
+    const ahora = new Date();
+
+    // Crea la publicación
+    adminConnection.query(
+`INSERT INTO publicaciones(
+  autor, titulo,
+  descripcion,
+  club, itinerario,
+  fecha
+) VALUES (
+  ?, ?,
+  ?,
+  ?, ?,
+  ?
+)` , [
+    autor, titulo,
+    descripcion,
+    club, itinerario,
+    ahora
+] ,
+        ( err , result ) => {
+            if( err ){
+                if( err.errno === 1452 ){
+                    res.status( HTTP.error_client.bad_request ).json( { msg: 'No existe el itinerario o club' } );
+                    logRequest( req , 'createPublicacion' , HTTP.error_client.bad_request , 'Error al crear la publicación' );
+                } else {
+                    console.error( err );
+                    res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                    logRequest( req , 'createPublicacion' , HTTP.error_server.internal , 'Error al crear la publicación' );
+                }
+            } else {
+                // Construye un objeto usuario que devolver
+                const insertedObject = {};
+            
+                insertedObject.id = result.insertId;
+                insertedObject.autor = autor;
+                insertedObject.titulo = titulo;
+                insertedObject.descripcion = descripcion;
+                insertedObject.club = club;
+                insertedObject.itinerario = itinerario;
+                insertedObject.imagen = null;
+                insertedObject.fecha = ahora;
+            
+                // Responde con el objeto usuario, el token y su expiración
+                res.status( HTTP.success.ok ).json( insertedObject );
+                logRequest( req , 'createPublicacion', HTTP.success.ok );
+            }
+        }
+    );
 }
 
 /**
