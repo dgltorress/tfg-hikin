@@ -1,8 +1,8 @@
 -- Usar base de datos
 USE hikinbd;
 
--- PROCEDIMIENTOS --
--- Validar usuario
+-- TRIGGERS --
+-- Incrementar identificador de la columna identificativa secundaria de comentarios
 DROP TRIGGER IF EXISTS hikinbd.incremento_comentario;
 
 DELIMITER $$
@@ -19,5 +19,3 @@ BEGIN
 END $$
 
 DELIMITER ;
-
--- TRIGGERS --
