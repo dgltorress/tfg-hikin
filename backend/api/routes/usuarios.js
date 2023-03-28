@@ -38,7 +38,7 @@ const router = Router();
 router.route( '/' )
     .get(
         validateJWT,
-        query( 'usuario' , 'Entre 1 y 15 caracteres' ).optional().isString().isLength( { min: 1 , max: 15 } ),
+        query( 'usuario' , 'Entre 1 y 25 caracteres' ).optional().isString().isLength( { min: 1 , max: 25 } ),
         query( 'nombre' , 'Entre 1 y 40 caracteres' ).optional().isString().isLength( { min: 1 , max: 40 } ),
         query( 'p' , 'Número natural' ).optional().isInt( { min: 0 } ).toInt(),
         validateFields,
@@ -47,7 +47,7 @@ router.route( '/' )
     .post(
         body( 'email' , 'Campo obligatorio (email válido, máx. 60 caracteres)' ).exists().isEmail().isLength( { max: 60 } ),
         body( 'contrasena' , 'Campo obligatorio (más de 7 caracteres)' ).exists().isString().isLength( { min: 8 } ),
-        body( 'usuario' , 'Entre 3 y 15 caracteres' ).optional().isString().isLength( { min: 3 , max: 15 } ),
+        body( 'usuario' , 'Entre 3 y 25 caracteres' ).optional().isString().isLength( { min: 3 , max: 25 } ),
         body( 'nombre' , 'Entre 3 y 40 caracteres' ).optional().isString().isLength( { min: 3 , max: 40 } ),
         body( 'sexo' , 'Entero: 0, 1, 2 o 9' ).optional().isInt().toInt().custom( ( sexValue , { req } ) => {
             if( ( sexValue !== 0 ) &&
@@ -75,7 +75,7 @@ router.route( '/:id' )
         validateSensitiveActionUser,
         param( 'id' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
         body( 'email' , 'Email válido, máx. 60 caracteres' ).optional().isEmail().isLength( { max: 60 } ),
-        body( 'usuario' , 'Entre 3 y 15 caracteres' ).optional().isString().isLength( { min: 3 , max: 15 } ),
+        body( 'usuario' , 'Entre 3 y 25 caracteres' ).optional().isString().isLength( { min: 3 , max: 25 } ),
         body( 'nombre' , 'Entre 3 y 40 caracteres' ).optional().isString().isLength( { min: 3 , max: 40 } ),
         body( 'bio' , 'Entre 3 y 120 caracteres' ).optional().isString().isLength( { min: 3 , max: 120 } ),
         body( 'sexo' , 'Entero: 0, 1, 2 o 9' ).optional().isInt().toInt().custom( ( sexValue , { req } ) => {

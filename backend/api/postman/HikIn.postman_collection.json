@@ -512,7 +512,7 @@
 							"query": [
 								{
 									"key": "texto",
-									"value": "iki",
+									"value": "dando",
 									"description": "Título o descripción, o una parte del título o descripción, de la publicación. No atiende a mayúsculas.",
 									"disabled": true
 								},
@@ -825,14 +825,13 @@
 							],
 							"query": [
 								{
-									"key": "cod",
-									"value": "PR",
+									"key": "texto",
+									"value": "trazado",
 									"disabled": true
 								},
 								{
-									"key": "texto",
-									"value": "alb",
-									"description": "Denominación o descripción, o una parte de la denominación o descripción, del itinerario. No atiende a mayúsculas.",
+									"key": "cod",
+									"value": "PR",
 									"disabled": true
 								},
 								{
@@ -1040,7 +1039,7 @@
 							"query": [
 								{
 									"key": "texto",
-									"value": "ar",
+									"value": "aragón",
 									"disabled": true
 								},
 								{
@@ -1376,55 +1375,55 @@
 							"query": [
 								{
 									"key": "texto",
-									"value": "",
+									"value": "albarr",
 									"description": "Nombre, o una parte del nombre, de la salida. No atiende a mayúsculas.",
 									"disabled": true
 								},
 								{
 									"key": "organizador",
-									"value": "",
+									"value": "1",
 									"description": "Identificador del organizador.",
 									"disabled": true
 								},
 								{
 									"key": "itinerario",
-									"value": "",
+									"value": "1",
 									"description": "Identificador del itinerario asociado.",
 									"disabled": true
 								},
 								{
 									"key": "club",
-									"value": "",
+									"value": "1",
 									"description": "Identificador del club asociado, si tiene.",
 									"disabled": true
 								},
 								{
 									"key": "desde",
-									"value": "",
+									"value": "2023-03-02T11:34:00Z",
 									"description": "Fecha (de inicio) más antigua desde la que buscar.",
 									"disabled": true
 								},
 								{
 									"key": "hasta",
-									"value": "",
+									"value": "2023-03-02T11:34:00Z",
 									"description": "Fecha (de inicio) más reciente hasta la que buscar.",
 									"disabled": true
 								},
 								{
 									"key": "codauto",
-									"value": "",
+									"value": "2",
 									"description": "Identificador de la comunidad autónoma.",
 									"disabled": true
 								},
 								{
 									"key": "cpro",
-									"value": "",
+									"value": "48",
 									"description": "Identificador de la provincia.",
 									"disabled": true
 								},
 								{
 									"key": "p",
-									"value": null,
+									"value": "0",
 									"description": "Índice de paginación.",
 									"disabled": true
 								}

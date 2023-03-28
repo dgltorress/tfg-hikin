@@ -41,15 +41,14 @@ const elementosPorPagina = 10;
     parameters.push( idSolicitante );
 
     if( req.query.texto ){
-        req.query.texto = `%${req.query.texto}%`;
+        req.query.texto = `*${req.query.texto}*`; // Comodines
         if( firstQuery === true ){
             filter += 'WHERE ';
             firstQuery = false;
         } else {
             filter += ' AND ';
         }
-        filter += "(s.nombre LIKE ? OR s.descripcion LIKE ? )";
-        parameters.push( req.query.texto );
+        filter += 'MATCH( s.nombre, s.descripcion ) AGAINST( ? IN BOOLEAN MODE )';
         parameters.push( req.query.texto );
     }
 

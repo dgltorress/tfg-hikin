@@ -14,7 +14,7 @@ GRANT ALL ON hikinbd.* TO 'hikinadmin'@'localhost';
 -- Usuarios
 CREATE TABLE usuarios (
   id            INT UNSIGNED          auto_increment ,
-  usuario       VARCHAR( 15 )         NOT NULL ,
+  usuario       VARCHAR( 25 )         NOT NULL ,
   email         VARCHAR( 60 )         NOT NULL ,
   contrasena    VARCHAR( 80 )         NOT NULL ,
   nombre        VARCHAR( 40 )         NOT NULL ,
@@ -26,7 +26,7 @@ CREATE TABLE usuarios (
   fecha_reg     DATETIME              NOT NULL ,
   ultimo_acceso DATETIME                       ,
   ipv4          INT UNSIGNED          NOT NULL ,
-  imagen        VARCHAR( 120 )                 ,
+  imagen        TEXT                           ,
 
   PRIMARY KEY ( id ) ,
   UNIQUE ( email )
@@ -83,16 +83,18 @@ CREATE TABLE localidades (
 -- Clubes
 CREATE TABLE clubes (
   id          INT UNSIGNED   auto_increment ,
-  nombre      VARCHAR( 60 )  NOT NULL ,
-  descripcion VARCHAR( 200 )          ,
+  nombre      TEXT           NOT NULL ,
+  descripcion TEXT                    ,
   localidad   INT UNSIGNED   NOT NULL ,
   propietario INT UNSIGNED   NOT NULL ,
   privado     BOOLEAN        NOT NULL DEFAULT false ,
-  imagen      VARCHAR( 120 )           ,
+  imagen      TEXT                    ,
 
   PRIMARY KEY ( id ) ,
   FOREIGN KEY ( localidad )   REFERENCES localidades( id ) ON DELETE CASCADE ,
-  FOREIGN KEY ( propietario ) REFERENCES usuarios( id ) ON DELETE CASCADE
+  FOREIGN KEY ( propietario ) REFERENCES usuarios( id ) ON DELETE CASCADE ,
+
+  FULLTEXT club_search_idx ( nombre, descripcion )
 ) ENGINE = InnoDB;
 
 -- Membresías de clubes
@@ -111,8 +113,8 @@ CREATE TABLE itinerarios (
   id           INT UNSIGNED       auto_increment ,
   cod          VARCHAR( 10 )      NOT NULL ,
   localidad    INT UNSIGNED       NOT NULL ,
-  denominacion VARCHAR( 60 )      NOT NULL ,
-  descripcion  VARCHAR( 750 )              ,
+  denominacion TEXT               NOT NULL ,
+  descripcion  TEXT                        ,
   distancia    INT UNSIGNED       NOT NULL ,
   dificultad   TINYINT( 1 )       NOT NULL DEFAULT 0 ,
   desnivel     INT UNSIGNED                ,
@@ -121,11 +123,13 @@ CREATE TABLE itinerarios (
   latitud      DECIMAL( 8 , 6 )            ,
   longitud     DECIMAL( 9 , 6 )            ,
   promotor     VARCHAR( 60 )               ,
-  uri          VARCHAR( 120 )              ,
+  uri          TEXT                        ,
 
   PRIMARY KEY ( id ) ,
   UNIQUE ( cod ) ,
-  FOREIGN KEY ( localidad ) REFERENCES localidades( id ) ON DELETE CASCADE
+  FOREIGN KEY ( localidad ) REFERENCES localidades( id ) ON DELETE CASCADE ,
+
+  FULLTEXT itinerario_search_idx ( denominacion, descripcion )
 ) ENGINE = InnoDB;
 
 -- Itinerarios largos
@@ -154,17 +158,19 @@ CREATE TABLE resenas (
 CREATE TABLE publicaciones (
   id          INT UNSIGNED   auto_increment,
   autor       INT UNSIGNED   NOT NULL ,
-  titulo      VARCHAR( 50 )  NOT NULL ,
-  descripcion VARCHAR( 250 ) NOT NULL ,
+  titulo      TEXT           NOT NULL ,
+  descripcion TEXT           NOT NULL ,
   club        INT UNSIGNED            ,
   itinerario  INT UNSIGNED            ,
-  imagen      VARCHAR( 120 )           ,
+  imagen      TEXT                    ,
   fecha       DATETIME       NOT NULL ,
 
   PRIMARY KEY ( id ) ,
   FOREIGN KEY ( autor )      REFERENCES usuarios( id ) ON DELETE CASCADE ,
   FOREIGN KEY ( club )       REFERENCES clubes( id ) ON DELETE CASCADE ,
-  FOREIGN KEY ( itinerario ) REFERENCES itinerarios( id ) ON DELETE CASCADE
+  FOREIGN KEY ( itinerario ) REFERENCES itinerarios( id ) ON DELETE CASCADE ,
+
+  FULLTEXT publicacion_search_idx ( titulo, descripcion )
 ) ENGINE = InnoDB;
 
 -- Kudos
@@ -193,8 +199,8 @@ CREATE TABLE comentarios (
 -- Salidas
 CREATE TABLE salidas (
   id           INT UNSIGNED   auto_increment ,
-  nombre       VARCHAR( 80 )  NOT NULL ,
-  descripcion  VARCHAR( 600 ) NOT NULL ,
+  nombre       TEXT           NOT NULL ,
+  descripcion  TEXT           NOT NULL ,
   organizador  INT UNSIGNED   NOT NULL ,
   club         INT UNSIGNED            ,
   itinerario   INT UNSIGNED   NOT NULL ,
@@ -206,7 +212,9 @@ CREATE TABLE salidas (
   PRIMARY KEY ( id ) ,
   FOREIGN KEY ( organizador ) REFERENCES usuarios( id ) ON DELETE CASCADE ,
   FOREIGN KEY ( itinerario )  REFERENCES itinerarios( id ) ON DELETE CASCADE ,
-  FOREIGN KEY ( club )        REFERENCES clubes( id ) ON DELETE CASCADE
+  FOREIGN KEY ( club )        REFERENCES clubes( id ) ON DELETE CASCADE ,
+
+  FULLTEXT salida_search_idx ( nombre, descripcion )
 ) ENGINE = InnoDB;
 
 -- Participantes de salidas
@@ -239,7 +247,7 @@ CREATE TABLE distintivos (
   id          INT UNSIGNED   auto_increment ,
   nombre      VARCHAR( 50 )  NOT NULL ,
   descripcion VARCHAR( 100 ) NOT NULL ,
-  imagen      VARCHAR( 120 )  NOT NULL ,
+  imagen      TEXT           NOT NULL ,
 
   PRIMARY KEY ( id )
 ) ENGINE = InnoDB;
@@ -260,7 +268,7 @@ CREATE TABLE registros_api (
   usuario INT UNSIGNED               ,
   fecha   DATETIME          NOT NULL ,
   ipv4    INT UNSIGNED      NOT NULL ,
-  uri     VARCHAR( 80 )     NOT NULL ,
+  uri     TEXT              NOT NULL ,
   metodo  TINYINT( 1 )      NOT NULL DEFAULT 0 ,
   funcion VARCHAR( 30 )     NOT NULL ,
   estado  SMALLINT UNSIGNED NOT NULL ,

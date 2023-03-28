@@ -44,15 +44,14 @@ const getPublicaciones = async( req , res ) => {
     parameters.push( idSolicitante );
     
     if( req.query.texto ){
-        req.query.texto = `%${req.query.texto}%`;
+        req.query.texto = `*${req.query.texto}*`; // Comodines
         if( firstQuery === true ){
             filter += 'WHERE ';
             firstQuery = false;
         } else {
             filter += ' AND ';
         }
-        filter += "(titulo LIKE ? OR descripcion LIKE ? )";
-        parameters.push( req.query.texto );
+        filter += 'MATCH( titulo, descripcion ) AGAINST( ? IN BOOLEAN MODE )';
         parameters.push( req.query.texto );
     }
 

@@ -33,7 +33,7 @@ const elementosPorPagina = 20;
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
- const getClubes = async( req , res ) => {
+const getClubes = async( req , res ) => {
     // Construir filtro SQL
     let filter = '';
     const parameters = [];
@@ -44,15 +44,14 @@ const elementosPorPagina = 20;
     parameters.push( idSolicitante );
 
     if( req.query.texto ){
-        req.query.texto = `%${req.query.texto}%`;
+        req.query.texto = `*${req.query.texto}*`; // Comodines
         if( firstQuery === true ){
             filter += 'WHERE ';
             firstQuery = false;
         } else {
             filter += ' AND ';
         }
-        filter += "(c.nombre LIKE ? OR c.descripcion LIKE ? )";
-        parameters.push( req.query.texto );
+        filter += 'MATCH( c.nombre, c.descripcion ) AGAINST( ? IN BOOLEAN MODE )';
         parameters.push( req.query.texto );
     }
 

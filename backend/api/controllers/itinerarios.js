@@ -49,14 +49,14 @@ const getItinerarios = async( req , res ) => {
     }
     
     if( req.query.texto ){
-        req.query.texto = `%${req.query.texto}%`;
+        req.query.texto = `*${req.query.texto}*`; // Comodines
         if( firstQuery === true ){
             filter += 'WHERE ';
             firstQuery = false;
         } else {
             filter += ' AND ';
         }
-        filter += "denominacion LIKE ?";
+        filter += 'MATCH( denominacion, descripcion ) AGAINST( ? IN BOOLEAN MODE )';
         parameters.push( req.query.texto );
     }
 
