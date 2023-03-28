@@ -388,14 +388,15 @@ const deletePostImage = async( path ) => {
     const fullPath = resolve( path );
     fs.unlink( fullPath , ( err ) => {
         if( err ){
-            console.warn( err );
             console.log( `No se ha podido eliminar el fichero "${fullPath}"` );
-            return err;
         }
-        else console.log( `Fichero "${fullPath}" eliminado` );
+        else{
+            console.log( `Fichero "${fullPath}" eliminado` );
+            return true;
+        }
     } );
 
-    return null;
+    return false;
 }
 
 
@@ -468,14 +469,15 @@ const deletePfp = async( path ) => {
     const fullPath = resolve( path );
     fs.unlink( fullPath , ( err ) => {
         if( err ){
-            console.warn( err );
             console.log( `No se ha podido eliminar el fichero "${fullPath}"` );
-            return err;
         }
-        else console.log( `Fichero "${fullPath}" eliminado` );
+        else{
+            console.log( `Fichero "${fullPath}" eliminado` );
+            return true;
+        }
     } );
 
-    return null;
+    return false;
 }
 
 
@@ -547,14 +549,15 @@ const deleteClubImage = async( path ) => {
     const fullPath = resolve( path );
     fs.unlink( fullPath , ( err ) => {
         if( err ){
-            console.warn( err );
             console.log( `No se ha podido eliminar el fichero "${fullPath}"` );
-            return err;
         }
-        else console.log( `Fichero "${fullPath}" eliminado` );
+        else{
+            console.log( `Fichero "${fullPath}" eliminado` );
+            return true;
+        }
     } );
 
-    return null;
+    return false;
 }
 
 

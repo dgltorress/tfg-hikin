@@ -12,12 +12,13 @@ const { query , param , body } = require( 'express-validator' ); // body de Expr
 // Propio
 const { validateJWT } = require( '../middleware/jwt.js' ); // Validador de JSON Web Token
 const { validateFields } = require( '../middleware/validateFields.js' ); // Validador de JSON Web Token
-const { toUniversalPath } = require( '../helpers/metodos.js' );
-//const {  } = require( '../middleware/files' );
+const { uploadClubImage } = require( '../middleware/files' );
 const { getClubes, getClub,
     createClub, updateClub, deleteClub,
     inscribirseClub, desinscribirseClub,
-    invitarClub, desinvitarClub } = require( '../controllers/clubes.js' ); // Controller Clubes
+    invitarClub, desinvitarClub,
+    cambiarImagen, cambiarImagenResponse,
+    borrarImagen } = require( '../controllers/clubes.js' ); // Controller Clubes
 
 // ----------------
 
@@ -82,10 +83,18 @@ router.route( '/:id' )
 
 router.route( '/:id/imagen' )
     .post(
-        
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
+        validateFields,
+        cambiarImagen,
+        uploadClubImage,
+        cambiarImagenResponse
     )
     .delete(
-        
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
+        validateFields,
+        borrarImagen
     );
 
 router.route( '/:id/inscripcion' )

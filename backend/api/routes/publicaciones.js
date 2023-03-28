@@ -12,13 +12,13 @@ const { query , param , body } = require( 'express-validator' ); // body de Expr
 // Propio
 const { validateJWT } = require( '../middleware/jwt.js' ); // Validador de JSON Web Token
 const { validateFields } = require( '../middleware/validateFields.js' ); // Validador de JSON Web Token
-const { toUniversalPath } = require( '../helpers/metodos.js' );
 const { validateDateExpress } = require( '../middleware/validators.js' );
-//const {  } = require( '../middleware/files' );
+const { uploadPostImage } = require( '../middleware/files' );
 const { getPublicaciones, createPublicacion,
     getPublicacion, deletePublicacion,
     darKudos, quitarKudos,
-    getComentarios, createComentario, deleteComentario } = require( '../controllers/publicaciones.js' ); // Controller Publicaciones
+    getComentarios, createComentario, deleteComentario,
+    cambiarImagen, cambiarImagenResponse } = require( '../controllers/publicaciones.js' ); // Controller Publicaciones
 
 // ----------------
 
@@ -68,8 +68,13 @@ router.route( '/:id' )
 
 router.route( '/:id/imagen' )
     .post(
-        
-    )
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
+        validateFields,
+        cambiarImagen,
+        uploadPostImage,
+        cambiarImagenResponse
+    );
 
 router.route( '/:id/kudos' )
     .post(

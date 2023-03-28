@@ -15,7 +15,6 @@ DELETE FROM kudos;
 DELETE FROM comentarios;
 DELETE FROM salidas;
 DELETE FROM participa_en;
-DELETE FROM conjuntos_valoraciones;
 DELETE FROM valoraciones;
 DELETE FROM distintivos;
 DELETE FROM recibe_distintivo;
@@ -309,152 +308,115 @@ INSERT INTO participa_en( usuario , salida, pendiente ) VALUES
   ( 4 , 1 , false ),
   ( 5 , 1 , false );
 
--- Conjuntos de valoraciones
-INSERT INTO conjuntos_valoraciones (
-  id,
-  usuario, salida, 
-  fecha
-) VALUES (
-  1,
-  1, 1,
-  STR_TO_DATE( "2023-03-04 18:31" , "%Y-%m-%d %H:%i" )
-), (
-  2,
-  2, 1,
-  STR_TO_DATE( "2023-03-04 17:30" , "%Y-%m-%d %H:%i" )
-), (
-  3,
-  3, 1,
-  STR_TO_DATE( "2023-03-04 16:21" , "%Y-%m-%d %H:%i" )
-), (
-  4,
-  4, 1,
-  STR_TO_DATE( "2023-03-04 19:49" , "%Y-%m-%d %H:%i" )
-), (
-  5,
-  5, 1,
-  STR_TO_DATE( "2023-03-04 20:52" , "%Y-%m-%d %H:%i" )
-),
-
-(
-  6,
-  1, 3,
-  STR_TO_DATE( "2023-03-21 18:12" , "%Y-%m-%d %H:%i" )
-), (
-  7,
-  3, 3,
-  STR_TO_DATE( "2023-03-21 19:07" , "%Y-%m-%d %H:%i" )
-);
-
 -- Valoraciones
 INSERT INTO valoraciones (
-  id,
-  conjunto, valorado, acude, valoracion,
+  valorador, valorado, salida,
+  acude, valoracion,
   observaciones
 ) VALUES (
-  1,
-  1, 2, true, 5,
+  1, 2, 1,
+  true, 5,
   "Una excelente compañera de excursión. El pateo ha sido mucho más ameno gracias su presencia."
 ), (
-  2,
-  1, 3, true, 4,
+  1, 3, 1,
+  true, 4,
   "No lo conocía de antes, y me alegro de haberlo hecho ahora. También cuenta muy buenos chistes."
 ), (
-  3,
-  1, 4, false, 1,
+  1, 4, 1,
+  false, 1,
   NULL
 ), (
-  4,
-  1, 5, true, 3,
+  1, 5, 1,
+  true, 3,
   "Por lo general se ha comportado correctamente, aunque a veces ha mostrado una actitud un tanto antagonista respecto al resto del grupo."
 ),
 
 (
-  5,
-  2, 1, true, 5,
+  2, 1, 1,
+  true, 5,
   "Uno de los mejores organizadores de salidas que he visto. No le doy seis estrellas porque no puedo."
 ), (
-  6,
-  2, 3, true, 5,
+  2, 3, 1,
+  true, 5,
   "Un buen tío. Volvería a caminar con él."
 ), (
-  7,
-  2, 4, false, 1,
+  2, 4, 1,
+  false, 1,
   NULL
 ), (
-  8,
-  2, 5, true, 2,
+  2, 5, 1,
+  true, 2,
   NULL
 ), 
 
 (
-  9,
-  3, 1, true, 4,
+  3, 1, 1,
+  true, 4,
   NULL
 ), (
-  10,
-  3, 2, true, 5,
+  3, 2, 1,
+  true, 5,
   "Buena persona, mejor senderista."
 ), (
-  11,
-  3, 4, false, 1,
+  3, 4, 1,
+  false, 1,
   NULL
 ), (
-  12,
-  3, 5, true, 1,
+  3, 5, 1,
+  true, 1,
   NULL
 ), 
 
 ( -- Prueba de usuario conflictivo
-  13,
-  4, 1, false, 1,
+  4, 1, 1,
+  false, 1,
   "MAL COMPAÑERO"
 ), (
-  14,
-  4, 2, false, 1,
+  4, 2, 1,
+  false, 1,
   "MAL COMPAÑERA"
 ), (
-  15,
-  4, 4, false, 1,
+  4, 3, 1,
+  false, 1,
   "MAL COMPAÑERO"
 ), (
-  16,
-  4, 5, false, 1,
+  4, 5, 1,
+  false, 1,
   "MAL COMPAÑERO"
 ), 
 
 (
-  17,
-  5, 1, true, 5,
+  5, 1, 1,
+  true, 5,
   NULL
 ), (
-  18,
-  5, 2, true, 3,
+  5, 2, 1,
+  true, 3,
   NULL
 ), (
-  19,
-  5, 4, true, 3,
+  5, 4, 1,
+  true, 3,
   NULL
 ),
 
 
 (
-  20,
-  6, 2, true, 5,
+  1, 2, 3,
+  true, 5,
   NULL
 ), (
-  21,
-  6, 3, true, 4,
+  1, 3, 3,
+  true, 4,
   "Buen tipo."
 ), 
 
 (
-  22,
-  7, 1, true, 4,
+  3, 1, 3,
+  true, 4,
   NULL
 ), (
-  23,
-  7, 2, true, 3,
+  3, 2, 3,
+  true, 3,
   NULL
 );
 

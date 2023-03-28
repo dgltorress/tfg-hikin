@@ -5,13 +5,14 @@
 // === IMPORTAR ===
 
 // Librerias de terceros
-
+const { relative } = require( 'path' ); // Rutas relativas
 
 // Propio
 const { adminConnection } = require( '../services/database.js' ); // Base de datos
 const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
-const { resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
+const { resolveURL, toUniversalPath } = require( '../helpers/metodos.js' ); // Metodos generales
 const { logRequest } = require( '../helpers/log.js' ); // Registro
+const { deleteClubImage, clubURL } = require( '../middleware/files.js' );
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // ----------------
@@ -437,6 +438,131 @@ const invitarClub = async( req , res ) => {
     );
 }
 
+/**
+ * Prepara para cambiar la imagen de club.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const cambiarImagen = async( req , res , next ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+        'SELECT propietario FROM clubes WHERE propietario = ?' ,
+        [ idObjetivo ],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'cambiarImagen' , HTTP.error_server.internal , 'Error' );
+            } else {
+                // Si no ha habido coincidencias se indica
+                if( result.length === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'cambiarImagen' , HTTP.error_client.not_found );
+                    return;
+                }
+
+                // Si el usuario que tiene el recurso que se solicita cambiar no es el solicitante
+                // y el solicitante no es administrador, no se hace
+                if( ( result[ 0 ].propietario !== idSolicitante ) &&
+                    ( req.user.isAdmin !== true ) ){
+                    res.status( HTTP.error_client.forbidden ).json( { msg: 'No cuentas con los permisos necesarios para realizar esta acción' } );
+                    logRequest( req , 'cambiarImagen' , HTTP.error_client.forbidden , 'El solicitante no es el propietario del recurso o un administrador' );
+                    return;
+                }
+
+                next();
+            }
+        }
+    );
+}
+
+/**
+ * Maneja los eventos posteriores a la subida de imagen de club.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const cambiarImagenResponse = async( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+        'SELECT imagen FROM clubes WHERE id = ?' ,
+        [ idObjetivo ],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'cambiarImagenResponse' , HTTP.error_server.internal , 'Error' );
+            } else {
+                // Si no ha habido coincidencias se indica
+                if( result.length === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'cambiarImagenResponse' , HTTP.error_client.not_found );
+                    return;
+                }
+
+                // Si se ha subido una imagen,
+                if( req.file ){
+                    const newFileName = req.file.filename;
+                
+                    // se intenta borrar el archivo antiguo asignado (no se puede asumir que exista)
+                    if( result[ 0 ].imagen !== null ) deleteClubImage( result[ 0 ].imagen );
+                
+                    // Construye la URL de la imagen.
+                    let imageUniversalURL = toUniversalPath( relative( '.' , req.file.path ) );
+                
+                    // Se asigna el nuevo archivo
+                    adminConnection.query(
+                        'UPDATE clubes SET imagen = ? WHERE id = ?' ,
+                        [ imageUniversalURL , idObjetivo ],
+                        ( err , result ) => {
+                            if( err ){
+                                console.error( err );
+                                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                                logRequest( req , 'cambiarImagenResponse' , HTTP.error_server.internal , 'Error' );
+                            } else {
+                                // Si no ha habido coincidencias se indica
+                                if( result.length === 0 ){
+                                    res.status( HTTP.error_client.not_found ).send();
+                                    logRequest( req , 'cambiarImagenResponse' , HTTP.error_client.not_found , 'Club encontrado en SELECT pero no en UPDATE' );
+                                } else {
+                                    // Se resuelve la URL y se devuelve.
+                                    imageUniversalURL = resolveURL( imageUniversalURL, `${RUTAMASKFULL}${clubURL}`, -4 );
+
+                                    res.status( HTTP.success.ok ).json( { imagen: imageUniversalURL } );
+                                    logRequest( req , 'changeImageResponse' , HTTP.success.ok , `Foto de perfil actualizada ("${newFileName}")` );
+                                }
+                            }
+                        }
+                    );
+                }
+                // Si no se ha subido una imagen,
+                else{
+                    // y no era un error,
+                    if( !req.uploadErr ){
+                        // se indica.
+                        res.status( HTTP.error_client.bad_request ).json( { msg: 'El campo del formulario con la imagen está vacío' } );
+                        logRequest( req , 'changeImageResponse' , HTTP.error_client.bad_request , 'Imagen vacía' );
+                    }
+                    // y ha habido un error,
+                    else{
+                        // se indica.
+                        res.status( req.uploadErr.status ).json( { msg: req.uploadErr.msg } );
+                        logRequest( req , 'changeImageResponse' , req.uploadErr.status , req.uploadErr.msg );
+                    }
+                }
+            }
+        }
+    );
+}
+
 // -----------------------------------------------
 
 
@@ -743,6 +869,76 @@ const desinvitarClub = async( req , res ) => {
     );
 }
 
+/**
+ * Eliminar una imagen de club.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const borrarImagen = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+        'SELECT propietario, imagen FROM clubes WHERE id = ?' ,
+        [ idObjetivo ],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'borrarImagen' , HTTP.error_server.internal , 'Error' );
+            } else {
+                // Si no ha habido coincidencias se indica
+                if( result.length === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'borrarImagen' , HTTP.error_client.not_found );
+                    return;
+                }
+
+                // Si el usuario que tiene el recurso que se solicita cambiar no es el solicitante
+                // y el solicitante no es administrador, no se hace
+                if( ( result[ 0 ].propietario !== idSolicitante ) &&
+                    ( req.user.isAdmin !== true ) ){
+                    res.status( HTTP.error_client.forbidden ).json( { msg: 'No cuentas con los permisos necesarios para realizar esta acción' } );
+                    logRequest( req , 'borrarImagen' , HTTP.error_client.forbidden , 'El solicitante no es el propietario del recurso o un administrador' );
+                    return;
+                }
+
+                // No tiene imagen; se puede considerar un éxito
+                if( result[ 0 ].imagen === null ){
+                    res.status( HTTP.success.no_content ).send();
+                    logRequest( req , 'borrarImagen' , HTTP.success.no_content );
+                    return;
+                }
+
+                deleteClubImage( result[ 0 ].imagen );
+
+                adminConnection.query(
+                    'UPDATE clubes SET imagen = NULL WHERE id = ?' ,
+                    [ idObjetivo ],
+                    ( err , result ) => {
+                        if( err ){
+                            console.error( err );
+                            res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                            logRequest( req , 'borrarImagen' , HTTP.error_server.internal , 'Error' );
+                        } else {
+                            if( result.affectedRows === 0 ){
+                                res.status( HTTP.error_client.not_found ).send();
+                                logRequest( req , 'borrarImagen' , HTTP.success.not_found );
+                            } else {
+                                res.status( HTTP.success.no_content ).send();
+                                logRequest( req , 'borrarImagen' , HTTP.success.no_content );
+                            }
+                        }
+                    }
+                );
+            }
+        }
+    );
+}
+
 // -----------------------------------------------
 
 
@@ -755,4 +951,6 @@ const desinvitarClub = async( req , res ) => {
 module.exports = { getClubes, getClub,
     createClub, updateClub, deleteClub,
     inscribirseClub, desinscribirseClub,
-    invitarClub, desinvitarClub };
+    invitarClub, desinvitarClub,
+    cambiarImagen, cambiarImagenResponse,
+    borrarImagen };

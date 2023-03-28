@@ -26,7 +26,7 @@ CREATE TABLE usuarios (
   fecha_reg     DATETIME              NOT NULL ,
   ultimo_acceso DATETIME                       ,
   ipv4          INT UNSIGNED          NOT NULL ,
-  imagen        VARCHAR( 60 )                  ,
+  imagen        VARCHAR( 120 )                  ,
 
   PRIMARY KEY ( id ) ,
   UNIQUE ( email )
@@ -88,7 +88,7 @@ CREATE TABLE clubes (
   localidad   INT UNSIGNED   NOT NULL ,
   propietario INT UNSIGNED   NOT NULL ,
   privado     BOOLEAN        NOT NULL DEFAULT false ,
-  imagen      VARCHAR( 60 )           ,
+  imagen      VARCHAR( 120 )           ,
 
   PRIMARY KEY ( id ) ,
   FOREIGN KEY ( localidad )   REFERENCES localidades( id ) ON DELETE CASCADE ,
@@ -158,7 +158,7 @@ CREATE TABLE publicaciones (
   descripcion VARCHAR( 250 ) NOT NULL ,
   club        INT UNSIGNED            ,
   itinerario  INT UNSIGNED            ,
-  imagen      VARCHAR( 60 )           ,
+  imagen      VARCHAR( 120 )           ,
   fecha       DATETIME       NOT NULL ,
 
   PRIMARY KEY ( id ) ,
@@ -211,39 +211,27 @@ CREATE TABLE salidas (
 
 -- Participantes de salidas
 CREATE TABLE participa_en (
-  usuario INT UNSIGNED ,
-  salida  INT UNSIGNED ,
-  pendiente    BOOLEAN NOT NULL DEFAULT false ,
+  usuario   INT UNSIGNED ,
+  salida    INT UNSIGNED ,
+  pendiente BOOLEAN NOT NULL DEFAULT false ,
 
   PRIMARY KEY ( usuario , salida ) ,
   FOREIGN KEY ( usuario ) REFERENCES usuarios( id ) ON DELETE CASCADE ,
   FOREIGN KEY ( salida )  REFERENCES salidas( id ) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
--- Conjuntos de valoraciones
-CREATE TABLE conjuntos_valoraciones (
-  id      INT UNSIGNED auto_increment ,
-  usuario INT UNSIGNED NOT NULL ,
-  salida  INT UNSIGNED NOT NULL ,
-  fecha   DATETIME     NOT NULL ,
-
-  PRIMARY KEY ( id ) ,
-  UNIQUE ( usuario , salida ) ,
-  FOREIGN KEY ( usuario , salida ) REFERENCES participa_en( usuario , salida ) ON DELETE CASCADE
-) ENGINE = InnoDB;
-
 -- Valoraciones
 CREATE TABLE valoraciones (
-  id            INT UNSIGNED          auto_increment ,
-  conjunto      INT UNSIGNED                   ,
+  valorador     INT UNSIGNED          NOT NULL ,
   valorado      INT UNSIGNED          NOT NULL ,
+  salida        INT UNSIGNED          NOT NULL ,
   acude         BOOLEAN               NOT NULL ,
   valoracion    TINYINT( 1 ) UNSIGNED NOT NULL ,
   observaciones VARCHAR( 250 )                 ,
 
-  PRIMARY KEY ( id , conjunto ) ,
-  FOREIGN KEY ( conjunto ) REFERENCES conjuntos_valoraciones( id ) ON DELETE CASCADE ,
-  FOREIGN KEY ( valorado ) REFERENCES usuarios( id ) ON DELETE CASCADE
+  PRIMARY KEY ( valorador , valorado, salida ) ,
+  FOREIGN KEY ( valorador, salida ) REFERENCES participa_en( usuario, salida ) ON DELETE CASCADE ,
+  FOREIGN KEY ( valorado, salida ) REFERENCES participa_en( usuario, salida ) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 -- Distintivos
@@ -251,7 +239,7 @@ CREATE TABLE distintivos (
   id          INT UNSIGNED   auto_increment ,
   nombre      VARCHAR( 50 )  NOT NULL ,
   descripcion VARCHAR( 100 ) NOT NULL ,
-  imagen      VARCHAR( 60 )  NOT NULL ,
+  imagen      VARCHAR( 120 )  NOT NULL ,
 
   PRIMARY KEY ( id )
 ) ENGINE = InnoDB;

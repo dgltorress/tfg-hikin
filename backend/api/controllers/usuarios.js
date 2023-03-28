@@ -7,6 +7,7 @@
 // Librerias de terceros
 const bcrypt = require( 'bcrypt' ); // BcryptJS
 const { toLong } = require( 'ip' ); // Pasar IPs a version entera
+const { relative } = require( 'path' ); // Rutas relativas
 
 // Propio
 const { adminConnection } = require( '../services/database.js' ); // Base de datos
@@ -691,7 +692,6 @@ const cambiarImagen = async( req , res , next ) => {
  */
 const cambiarImagenResponse = async( req , res ) => {
     // Distingue los identificadores
-    const idSolicitante = req.user.id;
     const idObjetivo = req.params.id;
 
     // Query
@@ -715,8 +715,8 @@ const cambiarImagenResponse = async( req , res ) => {
                 if( req.file ){
                     const newFileName = req.file.filename;
                 
-                    // se intenta borrar el archivo antiguo asignado (no se puede asumir que exista, el usuario solo guarda el nombre).
-                    if( result[ 0 ].image !== null ) deletePfp( result[ 0 ].image );
+                    // se intenta borrar el archivo antiguo asignado (no se puede asumir que exista)
+                    if( result[ 0 ].imagen !== null ) deletePfp( result[ 0 ].imagen );
                 
                     // Construye la URL de la imagen.
                     let imageUniversalURL = toUniversalPath( relative( '.' , req.file.path ) );
@@ -735,17 +735,16 @@ const cambiarImagenResponse = async( req , res ) => {
                                 if( result.length === 0 ){
                                     res.status( HTTP.error_client.not_found ).send();
                                     logRequest( req , 'cambiarImagenResponse' , HTTP.error_client.not_found , 'Usuario encontrado en SELECT pero no en UPDATE' );
-                                    return;
+                                } else {
+                                    // Se resuelve la URL y se devuelve.
+                                    imageUniversalURL = resolveURL( imageUniversalURL, `${RUTAMASKFULL}${pfpURL}`, -4 );
+
+                                    res.status( HTTP.success.ok ).json( { imagen: imageUniversalURL } );
+                                    logRequest( req , 'changeImageResponse' , HTTP.success.ok , `Foto de perfil actualizada ("${newFileName}")` );
                                 }
                             }
                         }
                     );
-                
-                    // Se resuelve la URL y se devuelve.
-                    imageUniversalURL = resolveURL( imageUniversalURL, `${RUTAMASKFULL}${pfpURL}`, -4 );
-                
-                    res.status( HTTP.success.ok ).json( { image: imageUniversalURL } );
-                    logRequest( req , 'changeImageResponse' , HTTP.success.ok , `Foto de perfil actualizada ("${newFileName}")` );
                 }
                 // Si no se ha subido una imagen,
                 else{
@@ -969,12 +968,81 @@ WHERE seguidor = ? AND seguido = ?` , [
     );
 }
 
+
+/**
+ * Elimina la foto de perfil de un usuario.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+const borrarImagen = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+        'SELECT id, imagen FROM usuarios WHERE id = ?' ,
+        [ idObjetivo ],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                logRequest( req , 'borrarImagen' , HTTP.error_server.internal , 'Error' );
+            } else {
+                // Si no ha habido coincidencias se indica
+                if( result.length === 0 ){
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'borrarImagen' , HTTP.error_client.not_found );
+                    return;
+                }
+
+                // Si el usuario que tiene el recurso que se solicita cambiar no es el solicitante
+                // y el solicitante no es administrador, no se hace
+                if( ( result[ 0 ].id !== idSolicitante ) &&
+                    ( req.user.isAdmin !== true ) ){
+                    res.status( HTTP.error_client.forbidden ).json( { msg: 'No cuentas con los permisos necesarios para realizar esta acción' } );
+                    logRequest( req , 'borrarImagen' , HTTP.error_client.forbidden , 'El solicitante no es el propietario del recurso o un administrador' );
+                    return;
+                }
+
+                // No tiene imagen; se puede considerar un éxito
+                if( result[ 0 ].imagen === null ){
+                    res.status( HTTP.success.no_content ).send();
+                    logRequest( req , 'borrarImagen' , HTTP.success.no_content );
+                    return;
+                }
+
+                deletePfp( result[ 0 ].imagen );
+
+                adminConnection.query(
+                    'UPDATE usuarios SET imagen = NULL WHERE id = ?' ,
+                    [ idObjetivo ],
+                    ( err , result ) => {
+                        if( err ){
+                            console.error( err );
+                            res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                            logRequest( req , 'borrarImagen' , HTTP.error_server.internal , 'Error' );
+                        } else {
+                            if( result.affectedRows === 0 ){
+                                res.status( HTTP.error_client.not_found ).send();
+                                logRequest( req , 'borrarImagen' , HTTP.success.not_found );
+                            } else {
+                                res.status( HTTP.success.no_content ).send();
+                                logRequest( req , 'borrarImagen' , HTTP.success.no_content );
+                            }
+                        }
+                    }
+                );
+            }
+        }
+    );
+}
+
 // -----------------------------------------------
 
 
 
-const borrarImagen = () => {}
-const borrarImagenResponse = () => {}
 
 
 // Marcar los metodos para exportar
@@ -984,4 +1052,4 @@ module.exports = { getUsuariosBasicos, getUsuario, getUsuarioBasico,
     getSeguidores, getSeguidos, seguirUsuario, deseguirUsuario,
     getClubes, getSalidas, getResenas, getDistintivos,
     cambiarImagen, cambiarImagenResponse,
-    borrarImagen, borrarImagenResponse };
+    borrarImagen };

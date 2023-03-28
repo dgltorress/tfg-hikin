@@ -12,16 +12,15 @@ const { query , param , body } = require( 'express-validator' ); // body de Expr
 // Propio
 const { validateJWT } = require( '../middleware/jwt.js' ); // Validador de JSON Web Token
 const { validateFields } = require( '../middleware/validateFields.js' ); // Validador de JSON Web Token
-const { toUniversalPath } = require( '../helpers/metodos.js' );
 const { validateSensitiveActionUser, validateNotSelf } = require( '../middleware/validators.js' );
-const { uploadPfp, deletePfp } = require( '../middleware/files.js' );
+const { uploadPfp } = require( '../middleware/files.js' );
 const { getUsuariosBasicos, getUsuario, getUsuarioBasico,
     createUsuario, updateUsuario, deleteUsuario,
     getFeed, getValoraciones,
     getSeguidores, getSeguidos, seguirUsuario, deseguirUsuario,
     getClubes, getSalidas, getResenas, getDistintivos,
     cambiarImagen, cambiarImagenResponse,
-    borrarImagen, borrarImagenResponse } = require( '../controllers/usuarios.js' ); // Controller Usuarios
+    borrarImagen } = require( '../controllers/usuarios.js' ); // Controller Usuarios
 
 // ----------------
 
@@ -214,9 +213,7 @@ router.route( '/:id/imagen' )
         validateJWT,
         param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
-        borrarImagen,
-        deletePfp,
-        borrarImagenResponse
+        borrarImagen
     );
 
 
