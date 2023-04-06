@@ -1,0 +1,7 @@
+{
+  "name": "hikin",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}
