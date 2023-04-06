@@ -2,7 +2,6 @@
   "dependencies": {
     "@angular/cli": "^15.2.0",
     "@ionic/cli": "^6.20.9",
-    "@ionic/lab": "^3.2.15",
     "cordova": "^11.1.0",
     "cordova-res": "^0.15.4"
   }
