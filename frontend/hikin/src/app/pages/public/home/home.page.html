@@ -1,0 +1,8 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button *ngFor="let t of tabContents; let i = index" [tab]="t.url">
+      <ion-icon aria-hidden="true" [name]="t.icon"></ion-icon>
+      <ng-container *ngIf="t.title!==''">{{ t.title }}</ng-container>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

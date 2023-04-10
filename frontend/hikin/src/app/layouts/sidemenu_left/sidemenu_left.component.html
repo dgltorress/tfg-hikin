@@ -1,0 +1,21 @@
+<ion-list id="inbox-list">
+  <ion-list-header>[NOMBRE DE USUARIO]</ion-list-header>
+  <ion-note>[NOMBRE REAL]</ion-note>
+
+  <ion-menu-toggle auto-hide="false" *ngFor="let p of sidemenuLeftPages; let i = index">
+    <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
+      <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
+      <ion-label>{{ p.title }}</ion-label>
+    </ion-item>
+  </ion-menu-toggle>
+</ion-list>
+
+<ion-list id="labels-list">
+  <ion-list-header>Otros</ion-list-header>
+  <ion-menu-toggle auto-hide="false" *ngFor="let p2 of sidemenuLeftPages2; let i = index">
+    <ion-item routerDirection="root" [routerLink]="[p2.url]" lines="none" detail="false" routerLinkActive="selected">
+      <ion-icon aria-hidden="true" slot="start" [ios]="p2.icon + '-outline'" [md]="p2.icon + '-sharp'"></ion-icon>
+      <ion-label>{{ p2.title }}</ion-label>
+    </ion-item>
+  </ion-menu-toggle>
+</ion-list>
