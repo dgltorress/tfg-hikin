@@ -1,5 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button icon="arrow-back-outline" defaultHref="/home"></ion-back-button>
+    </ion-buttons>
     <ion-title>
       EJEMPLO
     </ion-title>
@@ -13,14 +16,6 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-menu contentId="container">
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Menu Content</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-padding">This is the menu content.</ion-content>
-  </ion-menu>
   <div id="container">
     <strong>AAAAAAAAAAAAAAAAAAAAA</strong>
     <p>

@@ -16,12 +16,12 @@ export class SidemenuLeftComponent implements OnInit {
 
   public sidemenuLeftPages = [
     { title: 'Perfil', url: '/home/feed', icon: 'person-circle' },
-    { title: 'Opciones', url: '/home/feed', icon: 'cog' },
-    { title: 'Cerrar sesión', url: '/home/feed', icon: 'log-out' },
-    { title: 'Acerca', url: '/home/feed', icon: 'information-circle' }
+    { title: 'Opciones', url: '/home/salidas', icon: 'cog' },
+    { title: 'Cerrar sesión', url: '/home/comunidad', icon: 'log-out' },
+    { title: 'Acerca', url: '/home/itinerarios', icon: 'information-circle' }
   ];
   public sidemenuLeftPages2 = [
-    { title: 'Desarrollador', url: '/home/feed', icon: 'code' }
+    { title: 'Desarrollador', url: '/ejemplo', icon: 'code' }
   ];
 
   constructor() {}

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
-import { ExploreContainerComponent } from '../../../../components/explore-container/explore-container.component';
+
+import { ExploreContainerComponent } from 'src/app/components/explore-container/explore-container.component';
 
 @Component({
   selector: 'app-feed',

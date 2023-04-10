@@ -1,18 +1,7 @@
 ion-menu-button {
   color: var(--ion-color-primary);
 }
-    
-ion-content {
-  --background: var(--ion-item-background, var(--ion-background-color, #fff));
-}
-    
-.md ion-content {
-  --padding-start: 8px;
-  --padding-end: 8px;
-  --padding-top: 20px;
-  --padding-bottom: 20px;
-}
-    
-.ios ion-content {
-  --padding-bottom: 20px;
+
+app-sidemenu-left, app-sidemenu-right{
+  height: 100%;
 }
