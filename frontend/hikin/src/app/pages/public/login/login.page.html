@@ -17,15 +17,28 @@
   </ion-header>
 
   <div id="container">
-    <strong>AAAAAAAAAAAAAAAAAAAAA</strong>
-    <p>
-      Explórame ésta
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://ionicframework.com/docs/components"
-        >UI Components</a
-      >
-    </p>
+    <form [formGroup]="loginForm">
+
+      <ion-input
+        id="first-name"
+        label="Email"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter text"
+        type="text"
+        formControlName="firstName">
+      </ion-input>
+    
+      <ion-input
+        id="last-name"
+        label="Contraseña"
+        label-placement="floating"
+        fill="outline"
+        placeholder="Enter text"
+        type="text"
+        formControlName="firstName">
+      </ion-input>
+    
+    </form>
   </div>
 </ion-content>

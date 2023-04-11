@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
+import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { ApiService } from 'src/app/services/api.service';
@@ -13,14 +13,21 @@ import { AlertService } from 'src/app/services/alert.service';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, ReactiveFormsModule]
 })
 export class LoginPage implements OnInit {
+
+  loginForm: FormGroup;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private alertService: AlertService
-  ){}
+  ){
+    this.loginForm = new FormGroup( {
+      firstName: new FormControl(''),
+      lastName: new FormControl(''),
+    } );
+  }
 
   ngOnInit(){
     this.activatedRoute.queryParamMap
