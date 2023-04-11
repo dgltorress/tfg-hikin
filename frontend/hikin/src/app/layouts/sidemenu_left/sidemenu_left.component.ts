@@ -21,7 +21,7 @@ export class SidemenuLeftComponent implements OnInit {
     { title: 'Acerca', url: '/home/itinerarios', icon: 'information-circle' }
   ];
   public sidemenuLeftPages2 = [
-    { title: 'Desarrollador', url: '/ejemplo', icon: 'code' }
+    { title: 'Desarrollador', url: '/login', icon: 'code' }
   ];
 
   constructor() {}

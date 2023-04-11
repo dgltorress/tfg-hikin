@@ -7,7 +7,7 @@
 <ion-content class="ion-padding">
   <ion-list id="main-list">
     <ion-menu-toggle auto-hide="false" *ngFor="let p of sidemenuLeftPages; let i = index">
-      <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
+      <ion-item routerDirection="forward" [routerLink]="p.url" lines="none" detail="false" routerLinkActive="selected">
         <ion-icon aria-hidden="true" slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-outline'"></ion-icon>
         <ion-label>{{ p.title }}</ion-label>
       </ion-item>
@@ -17,7 +17,7 @@
   <ion-list id="other-list">
     <ion-list-header>Otros</ion-list-header>
     <ion-menu-toggle auto-hide="false" *ngFor="let p2 of sidemenuLeftPages2; let i = index">
-      <ion-item routerDirection="root" [routerLink]="[p2.url]" lines="none" detail="false" routerLinkActive="selected">
+      <ion-item routerDirection="forward" [routerLink]="p2.url" lines="none" detail="false" routerLinkActive="selected">
         <ion-icon aria-hidden="true" slot="start" [ios]="p2.icon + '-outline'" [md]="p2.icon + '-outline'"></ion-icon>
         <ion-label>{{ p2.title }}</ion-label>
       </ion-item>

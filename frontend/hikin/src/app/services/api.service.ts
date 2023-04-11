@@ -4,12 +4,13 @@
 
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HttpClient, HttpHeaders, HttpParams, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { ApiModule } from './api.module';
 import { Injectable, isDevMode } from '@angular/core';
 import { Observable } from 'rxjs';
+
 import { environment } from 'src/environments/environment';
-//import { AuthGuard } from '../guards/auth.guard';
-//import { UserService } from './user.service';
+import { AuthService } from './auth.service';
+import { UsuarioService } from './usuario.service';
+//import { ApiModule } from './api.module';
 
 @Injectable( {
   providedIn: 'root'
@@ -52,7 +53,8 @@ export class ApiService {
  
   constructor(
     private httpClient: HttpClient,
-    // private userService: UserService
+    private usuarioService: UsuarioService,
+    private authService: AuthService
   ) {
   }
  
@@ -98,6 +100,10 @@ export class ApiService {
         }
       },
       error: ( errorResponse: HttpErrorResponse ) => {
+        if( errorResponse.status === 401 ){ // Token no válido: se elimina
+          this.authService.logout();
+          return;
+        }
         if( options.failedCallback ){
           options.failedCallback( errorResponse );
         }
