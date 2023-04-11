@@ -11,7 +11,7 @@ const bcrypt = require( 'bcrypt' ); // BcryptJS
 const { adminConnection } = require( '../services/database.js' ); // Base de datos
 const { COLOR , HTTP } = require( '../helpers/constantes.js' ); // Constantes
 const { logRequest } = require( '../helpers/log.js' ); // Registro
-const { generateJWT , JWTExpire } = require( '../helpers/jwt' ); // Generador de JSON Web Token
+const { generateJWT , JWTExpireMilliseconds } = require( '../helpers/jwt' ); // Generador de JSON Web Token
 const { pullFields, resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
 const { pfpURL } = require( '../middleware/files.js' );
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
@@ -32,10 +32,8 @@ const login = async( req , res ) => {
 
     // Se busca al usuario, su contraseña y si es administrador
     adminConnection.query(
-`SELECT u.*, (a.usuario IS NOT NULL) AS isAdmin
+`SELECT u.*, validar_usuario( u.id , TRUE ) AS isAdmin
 FROM usuarios AS u
-LEFT JOIN administradores AS a
-ON u.id = a.usuario
 WHERE email = ?` , [
     email
 ] ,
@@ -84,14 +82,14 @@ WHERE id = ?` , [
                 // Genera un token
                 generateJWT( result[ 0 ].id , result[ 0 ].isAdmin ).then( ( token ) => {
                     // Elimina campos que no conviene enviar
-                    pullFields( result[ 0 ] , [ 'contrasena' , 'ipv4' , 'isAdmin' ] );
+                    pullFields( result[ 0 ] , [ 'contrasena' , 'ipv4' ] );
 
                     // Responde con el objeto usuario, el token y su expiración
                     res.status( HTTP.success.ok ).json( {
                         usuario: result[ 0 ],
                         token: {
                             jwt: token,
-                            expires: JWTExpire
+                            expires: JWTExpireMilliseconds
                         }
                     } );
                     logRequest( req , 'login' , HTTP.success.ok );

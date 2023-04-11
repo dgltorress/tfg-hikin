@@ -14,7 +14,7 @@ const { adminConnection } = require( '../services/database.js' ); // Base de dat
 const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
 const { resolveURL, keepFields, toUniversalPath } = require( '../helpers/metodos.js' ); // Metodos generales
 const { logRequest } = require( '../helpers/log.js' ); // Registro
-const { generateJWT , JWTExpire } = require( '../helpers/jwt' ); // Generador de JSON Web Token
+const { generateJWT , JWTExpireMilliseconds } = require( '../helpers/jwt' ); // Generador de JSON Web Token
 const { deletePfp, pfpURL } = require( '../middleware/files.js' );
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
@@ -593,7 +593,7 @@ const createUsuario = async( req , res ) => {
                         usuario: insertedObject,
                         token: {
                             jwt: token,
-                            expires: JWTExpire
+                            expires: JWTExpireMilliseconds
                         }
                     } );
                     logRequest( req , 'createUsuario' , HTTP.success.ok );

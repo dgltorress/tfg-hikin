@@ -11,9 +11,17 @@ const { COLOR } = require( './constantes.js' );
 const JWTSecret = ( process.env.JWT_SECRET &&
                     process.env.JWT_SECRET.length > 0 ) ? process.env.JWT_SECRET : '' ; // Secreto JWT.
 
-const JWTExpire = ( process.env.JWT_EXPIRE &&
-                    process.env.JWT_EXPIRE.length > 0 &&
-                    ms( process.env.JWT_EXPIRE ) ) ? ms( process.env.JWT_EXPIRE ) : ms( '24h' ) ; // Tiempo para expirar. Por defecto 24h.
+let JWTExpire; // Tiempo para expirar. Por defecto 24h.
+let JWTExpireMilliseconds;
+const defaultExpireString = '24h';
+
+try{
+    JWTExpireMilliseconds = ms( process.env.JWT_EXPIRE );
+    JWTExpire = process.env.JWT_EXPIRE;
+} catch ( err ) {
+    JWTExpireMilliseconds = ms( defaultExpireString );
+    JWTExpire = defaultExpireString;
+}
 
 // Notifica de si se ha activado algún registro permanente.
 if( ( JWTSecret !== '' ) && ( JWTExpire !== '' ) ){
@@ -22,7 +30,7 @@ ${COLOR.texto.magenta}----------------------------------
 
 Opciones de JSON Web Token:
 Secreto detectado.
-Tiempo para expirar: ${COLOR.texto.cian}${JWTExpire} ms${COLOR.texto.magenta} (${COLOR.texto.cian}${ms( JWTExpire )}${COLOR.texto.magenta})
+Tiempo para expirar: ${COLOR.texto.cian}${ms( JWTExpire )} ms${COLOR.texto.magenta} (${COLOR.texto.cian}${JWTExpire}${COLOR.texto.magenta})
 
 ${COLOR.texto.magenta}----------------------------------${COLOR.reset}
 ` );
@@ -54,4 +62,4 @@ const generateJWT = ( id , isAdmin ) => {
         } );
     } );
 }
-module.exports = { generateJWT , JWTSecret , JWTExpire };
+module.exports = { generateJWT , JWTSecret , JWTExpire , JWTExpireMilliseconds };

@@ -297,8 +297,8 @@ if( isPfpSavingEnabled ){
     console.log( `
 ${COLOR.texto.magenta}----------------------------------
 
-Guardado de ${COLOR.texto.cian}imagenes de perfil${COLOR.texto.magenta} ACTIVADO (desde ${COLOR.texto.cian}.env${COLOR.texto.magenta}).
-Ruta de la carpeta de imagenes de perfil: ${COLOR.texto.cian}${pfpFilePath}${COLOR.texto.magenta}
+Guardado de ${COLOR.texto.cian}imágenes de perfil${COLOR.texto.magenta} ACTIVADO (desde ${COLOR.texto.cian}.env${COLOR.texto.magenta}).
+Ruta de la carpeta de imágenes de perfil: ${COLOR.texto.cian}${pfpFilePath}${COLOR.texto.magenta}
 Nombre del campo de formulario: ${COLOR.texto.cian}"${pfpFieldName}"${COLOR.texto.magenta}
 Tamaño máximo de imagen: ${COLOR.texto.cian}${pfpMaxSize} bytes${COLOR.texto.magenta} (${COLOR.texto.cian}${bytes( pfpMaxSize )}${COLOR.texto.magenta})
 
