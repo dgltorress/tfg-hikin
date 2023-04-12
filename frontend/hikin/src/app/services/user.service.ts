@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class UsuarioService {
+export class UserService {
   public user: any = null;
   public token: any = null;
 
   public isAdmin: boolean = false;
+  public jwt?: string = '';
 
-  public static readonly usuarioField: string = 'usuario';
+  public static readonly userField: string = 'usuario';
   public static readonly tokenField: string = 'token';
 
   constructor(){
@@ -18,8 +19,8 @@ export class UsuarioService {
   }
 
   public updateUserData( newUser: any = null ) : void {
-    const userStoredInSession: string | null = sessionStorage.getItem( UsuarioService.usuarioField );
-    const userStoredInLocal: string | null   = localStorage.getItem( UsuarioService.usuarioField );
+    const userStoredInSession: string | null = sessionStorage.getItem( UserService.userField );
+    const userStoredInLocal: string | null   = localStorage.getItem( UserService.userField );
 
     if( newUser === null ){
       if( userStoredInSession !== null )    this.user = JSON.parse( userStoredInSession );
@@ -29,18 +30,19 @@ export class UsuarioService {
     else{
       this.user = newUser;
 
-      if( userStoredInSession !== null )    sessionStorage.setItem( UsuarioService.usuarioField , JSON.stringify( newUser ) );
-      else if( userStoredInLocal !== null ) localStorage.setItem( UsuarioService.usuarioField , JSON.stringify( newUser ) );
+      if( userStoredInSession !== null )    sessionStorage.setItem( UserService.userField , JSON.stringify( newUser ) );
+      else if( userStoredInLocal !== null ) localStorage.setItem( UserService.userField , JSON.stringify( newUser ) );
     }
 
     if( this.user ){
       this.isAdmin = Boolean( this.user.isAdmin );
+      this.jwt = this.token.jwt;
     }
   }
 
   public updateTokenData( newToken: any = null ) : void {
-    const tokenStoredInSession: string | null = sessionStorage.getItem( UsuarioService.tokenField );
-    const tokenStoredInLocal: string | null   = localStorage.getItem( UsuarioService.tokenField );
+    const tokenStoredInSession: string | null = sessionStorage.getItem( UserService.tokenField );
+    const tokenStoredInLocal: string | null   = localStorage.getItem( UserService.tokenField );
 
     if( newToken === null ){
       if( tokenStoredInSession !== null )    this.token = JSON.parse( tokenStoredInSession );
@@ -50,8 +52,8 @@ export class UsuarioService {
     else{
       this.token = newToken;
 
-      if( tokenStoredInSession !== null )    sessionStorage.setItem( UsuarioService.tokenField , JSON.stringify( newToken ) );
-      else if( tokenStoredInLocal !== null ) localStorage.setItem( UsuarioService.tokenField , JSON.stringify( newToken ) );
+      if( tokenStoredInSession !== null )    sessionStorage.setItem( UserService.tokenField , JSON.stringify( newToken ) );
+      else if( tokenStoredInLocal !== null ) localStorage.setItem( UserService.tokenField , JSON.stringify( newToken ) );
     }
 
   }

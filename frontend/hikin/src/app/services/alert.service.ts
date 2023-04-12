@@ -18,7 +18,7 @@ export class AlertService {
    * @param icon Icono adicional a mostrar en el lado izquierdo.
    * @param position Posición de la notificación.
    */
-  async presentToast(
+  async showToast(
     message: string = 'Sin mensaje',
     duration: number = 1500,
     icon: string | null = null,

@@ -2,30 +2,19 @@
  * API SERVICE
  */
 
-import { NgModule } from '@angular/core';
-import { HttpClientModule, HttpClient, HttpHeaders, HttpParams, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams,
+  HttpResponse, HttpErrorResponse, HttpContext } from '@angular/common/http';
 import { Injectable, isDevMode } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, ObservableInput, of } from 'rxjs';
+import { timeout, catchError } from "rxjs/operators";
 
 import { environment } from 'src/environments/environment';
 import { AuthService } from './auth.service';
-import { UsuarioService } from './usuario.service';
-//import { ApiModule } from './api.module';
+import { UserService } from './user.service';
+import { AlertService } from './alert.service';
 
 @Injectable( {
   providedIn: 'root'
-} )
-
-@NgModule( {
-  declarations: [
-
-  ],
-  imports: [
-    HttpClientModule
-  ],
-  providers: [
-    HttpClient
-  ]
 } )
 
 export class ApiService {
@@ -50,19 +39,33 @@ export class ApiService {
     PATCH: 'PATCH',
     DELETE: 'DELETE'
   }
+
+  // Nombres fijos
+  public static readonly authHeaderName: string = 'Authorization';
+  public static readonly bearerTokenPrefix: string = 'Bearer ';
+
+  // Timeout en milisegundos
+  public static readonly timeoutMilliseconds: number = 1000;
  
   constructor(
     private httpClient: HttpClient,
-    private usuarioService: UsuarioService,
-    private authService: AuthService
+    private userService: UserService,
+    private authService: AuthService,
+    private alertService: AlertService
   ) {
   }
  
-  // Envía una petición al servidor
-  private sendRequest( options: RequestOptions ) : void {
+  /**
+   * Envía una petición al servidor.
+   * 
+   * @param options Opciones de la petición.
+   * @param includeAuth Si incluir el JWT del usuario en la cabecera como bearer token.
+   */
+  private sendRequest( options: TRequestOptions, includeAuth: boolean = true ) : void {
     // Establece las opciones de la petición
-    const httpOptions: any = {
-      observe: 'response'
+    const httpOptions: THttpOptions = {
+      observe: 'response',
+      responseType: 'json'
     };
 
     if( options.headers ){
@@ -74,22 +77,34 @@ export class ApiService {
         fromObject: options.params
       } );
     }
+
+    if( includeAuth === true ){
+      const bearerToken: string = `${ApiService.bearerTokenPrefix}${this.userService.jwt}`;
+
+      if( httpOptions.headers ){
+        (httpOptions.headers as HttpHeaders).append( ApiService.authHeaderName, bearerToken );
+      } else {
+        httpOptions.headers = new HttpHeaders( {
+          [ ApiService.authHeaderName ]: bearerToken
+        } );
+      }
+    }
  
     // Construye la URL.
     const url = `${environment.apiBaseUrl}/${options.endpoint}`;
 
-    if( isDevMode() === true ) console.log( `Enviando petición a "${url}"...` );
+    if( isDevMode() === true ) console.log( `[dev] Enviando petición a "${url}"...` );
  
     // Envía la petición
-    let observable: Observable<any>;
+    let observable: Observable<HttpResponse<Object>>;
     switch (options.method) {
-      case ApiService.methods.GET:    observable = this.httpClient.get(    url ,                httpOptions ); break;
-      case ApiService.methods.POST:   observable = this.httpClient.post(   url , options.body , httpOptions ); break;
-      case ApiService.methods.PUT:    observable = this.httpClient.put(    url , options.body , httpOptions ); break;
-      case ApiService.methods.PATCH:  observable = this.httpClient.patch(  url , options.body , httpOptions ); break;
-      case ApiService.methods.DELETE: observable = this.httpClient.delete( url ,                httpOptions ); break;
+      case ApiService.methods.GET:    observable = this.httpClient.get(    url ,                httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
+      case ApiService.methods.POST:   observable = this.httpClient.post(   url , options.body , httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
+      case ApiService.methods.PUT:    observable = this.httpClient.put(    url , options.body , httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
+      case ApiService.methods.PATCH:  observable = this.httpClient.patch(  url , options.body , httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
+      case ApiService.methods.DELETE: observable = this.httpClient.delete( url ,                httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
  
-      default: observable = this.httpClient.get( url , httpOptions ); break;
+      default: observable = this.httpClient.get( url , httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
     }
  
     // Espera a la respuesta y la devuelve
@@ -100,124 +115,146 @@ export class ApiService {
         }
       },
       error: ( errorResponse: HttpErrorResponse ) => {
-        if( errorResponse.status === 401 ){ // Token no válido: se elimina
-          this.authService.logout();
-          return;
-        }
         if( options.failedCallback ){
           options.failedCallback( errorResponse );
         }
       }
     } );
   }
+
+  /**
+   * Manejador de un error capturado por rxjs
+   * 
+   * @param err Error.
+   * @param caught Observable fuente.
+   * @returns Observable que continúa la cadena. Si es `caught` lo reintentará y entrará en bucle infinito.
+   */
+  handleError(
+    err: any,
+    caught: Observable<HttpResponse<Object>>
+  ) : ObservableInput<any> {
+    if( isDevMode() === true ){
+      console.error( `[dev] ERROR durante petición: ${err.message}` , err );
+    }
+
+    if( err.status === 401 ){ // Token no válido: se elimina y se devuelve al usuario a la página de login
+      this.authService.logout();
+    } else if( err.status >= 500 ){ // Error del servidor: se notifica
+      this.alertService.showToast( 'Ha habido un error' );
+    } else if( err.name === 'TimeoutError' ){ // Timeout: se notifica
+      this.alertService.showToast( 'No se puede conectar al servidor.\nInténtalo de nuevo más tarde.' );
+    }
+
+    return new Observable();
+  }
  
-  // === ENDPOINTS ===
+  // === ENDPOINTS PREDEFINIDOS ===
  
   // = USUARIOS =
  
-  getUsuarios( options: RequestOptions = {} ) : void {
+  getUsuarios( options: TRequestOptions = {} ) : void {
     options.endpoint = ApiService.endpoints.usuarios;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  createUsuario( options: RequestOptions = {} ) : void {
+  createUsuario( options: TRequestOptions = {} ) : void {
     options.endpoint = ApiService.endpoints.usuarios;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  getUsuario( id: number, options: RequestOptions = {} ) : void {
+  getUsuario( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  updateUsuario( id: number, options: RequestOptions = {} ) : void {
+  updateUsuario( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}`;
     options.method = ApiService.methods.PATCH;
     this.sendRequest( options );
   }
 
-  deleteUsuario( id: number, options: RequestOptions = {} ) : void {
+  deleteUsuario( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
   }
 
-  getUsuarioBasico( id: number, options: RequestOptions = {} ) : void {
+  getUsuarioBasico( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/basico`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  getUsuarioFeed( id: number, options: RequestOptions = {} ) : void {
+  getUsuarioFeed( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/feed`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  getUsuarioValoraciones( id: number, options: RequestOptions = {} ) : void {
+  getUsuarioValoraciones( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/valoraciones`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  getUsuarioSeguidores( id: number, options: RequestOptions = {} ) : void {
+  getUsuarioSeguidores( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/seguidores`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  getUsuarioSeguidos( id: number, options: RequestOptions = {} ) : void {
+  getUsuarioSeguidos( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/seguidos`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  seguirUsuario( id: number, options: RequestOptions = {} ) : void {
+  seguirUsuario( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/seguimiento`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  deseguirUsuario( id: number, options: RequestOptions = {} ) : void {
+  deseguirUsuario( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/seguimiento`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
   }
 
-  getUsuarioClubes( id: number, options: RequestOptions = {} ) : void {
+  getUsuarioClubes( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/clubes`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  getUsuarioSalidas( id: number, options: RequestOptions = {} ) : void {
+  getUsuarioSalidas( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/salidas`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  getUsuarioResenas( id: number, options: RequestOptions = {} ) : void {
+  getUsuarioResenas( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/resenas`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  getUsuarioDistintivos( id: number, options: RequestOptions = {} ) : void {
+  getUsuarioDistintivos( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/distintivos`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  subirPfp( id: number, options: RequestOptions = {} ) : void {
+  subirPfp( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/imagen`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  eliminarPfp( id: number, options: RequestOptions = {} ) : void {
+  eliminarPfp( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.usuarios}/${id}/imagen`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
@@ -227,61 +264,61 @@ export class ApiService {
 
   // = PUBLICACIONES =
 
-  getPublicaciones( options: RequestOptions = {} ) : void {
+  getPublicaciones( options: TRequestOptions = {} ) : void {
     options.endpoint = ApiService.endpoints.publicaciones;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  createPublicacion( options: RequestOptions = {} ) : void {
+  createPublicacion( options: TRequestOptions = {} ) : void {
     options.endpoint = ApiService.endpoints.publicaciones;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  getPublicacion( id: number, options: RequestOptions = {} ) : void {
+  getPublicacion( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.publicaciones}/${id}`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  eliminarPublicacion( id: number, options: RequestOptions = {} ) : void {
+  eliminarPublicacion( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.publicaciones}/${id}`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
   }
 
-  subirImagenPublicacion( id: number, options: RequestOptions = {} ) : void {
+  subirImagenPublicacion( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.publicaciones}/${id}/imagen`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  darKudos( id: number, options: RequestOptions = {} ) : void {
+  darKudos( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.publicaciones}/${id}/kudos`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  quitarKudos( id: number, options: RequestOptions = {} ) : void {
+  quitarKudos( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.publicaciones}/${id}/kudos`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
   }
 
-  getComentarios( id: number, options: RequestOptions = {} ) : void {
+  getComentarios( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.publicaciones}/${id}/comentarios`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  createComentario( id: number, options: RequestOptions = {} ) : void {
+  createComentario( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.publicaciones}/${id}/comentarios`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  deleteComentario( pubId: number, comId: number, options: RequestOptions = {} ) : void {
+  deleteComentario( pubId: number, comId: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.publicaciones}/${pubId}/comentarios/${comId}`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
@@ -291,31 +328,31 @@ export class ApiService {
 
   // = ITINERARIOS =
 
-  getItinerarios( options: RequestOptions = {} ) : void {
+  getItinerarios( options: TRequestOptions = {} ) : void {
     options.endpoint = ApiService.endpoints.itinerarios;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  getItinerario( id: number, options: RequestOptions = {} ) : void {
+  getItinerario( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.itinerarios}/${id}`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  getItinerarioResenas( id: number, options: RequestOptions = {} ) : void {
+  getItinerarioResenas( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.itinerarios}/${id}/resenas`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  subirItinerarioResenas( id: number, options: RequestOptions = {} ) : void {
+  subirItinerarioResenas( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.itinerarios}/${id}/resenas`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  deleteItinerarioResenas( itId: number, userId: number, options: RequestOptions = {} ) : void {
+  deleteItinerarioResenas( itId: number, userId: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.itinerarios}/${itId}/resenas/${userId}`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
@@ -325,67 +362,67 @@ export class ApiService {
 
   // = CLUBES =
 
-  getClubes( options: RequestOptions = {} ) : void {
+  getClubes( options: TRequestOptions = {} ) : void {
     options.endpoint = ApiService.endpoints.clubes;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  createClub( options: RequestOptions = {} ) : void {
+  createClub( options: TRequestOptions = {} ) : void {
     options.endpoint = ApiService.endpoints.clubes;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  getClub( id: number, options: RequestOptions = {} ) : void {
+  getClub( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.clubes}/${id}`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  updateClub( id: number, options: RequestOptions = {} ) : void {
+  updateClub( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.clubes}/${id}`;
     options.method = ApiService.methods.PATCH;
     this.sendRequest( options );
   }
 
-  deleteClub( id: number, options: RequestOptions = {} ) : void {
+  deleteClub( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.clubes}/${id}`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
   }
 
-  subirImagenClub( id: number, options: RequestOptions = {} ) : void {
+  subirImagenClub( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.clubes}/${id}/imagen`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  eliminarImagenClub( id: number, options: RequestOptions = {} ) : void {
+  eliminarImagenClub( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.clubes}/${id}/imagen`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
   }
 
-  inscribirseClub( id: number, options: RequestOptions = {} ) : void {
+  inscribirseClub( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.clubes}/${id}/inscripcion`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  desinscribirseClub( id: number, options: RequestOptions = {} ) : void {
+  desinscribirseClub( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.clubes}/${id}/inscripcion`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
   }
 
-  invitarClub( clubId: number, userId: number, options: RequestOptions = {} ) : void {
+  invitarClub( clubId: number, userId: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.clubes}/${clubId}/invitacion/${userId}`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  desinvitarClub( clubId: number, userId: number, options: RequestOptions = {} ) : void {
+  desinvitarClub( clubId: number, userId: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.clubes}/${clubId}/invitacion/${userId}`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
@@ -395,61 +432,61 @@ export class ApiService {
 
   // = SALIDAS =
 
-  getSalidas( options: RequestOptions = {} ) : void {
+  getSalidas( options: TRequestOptions = {} ) : void {
     options.endpoint = ApiService.endpoints.salidas;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  createSalida( options: RequestOptions = {} ) : void {
+  createSalida( options: TRequestOptions = {} ) : void {
     options.endpoint = ApiService.endpoints.salidas;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  getSalida( id: number, options: RequestOptions = {} ) : void {
+  getSalida( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.salidas}/${id}`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  updateSalida( id: number, options: RequestOptions = {} ) : void {
+  updateSalida( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.salidas}/${id}`;
     options.method = ApiService.methods.PATCH;
     this.sendRequest( options );
   }
 
-  deleteSalida( id: number, options: RequestOptions = {} ) : void {
+  deleteSalida( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.salidas}/${id}`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
   }
 
-  inscribirseSalida( id: number, options: RequestOptions = {} ) : void {
+  inscribirseSalida( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.salidas}/${id}/inscripcion`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  desinscribirseSalida( id: number, options: RequestOptions = {} ) : void {
+  desinscribirseSalida( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.salidas}/${id}/inscripcion`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
   }
 
-  valorarSalida( id: number, options: RequestOptions = {} ) : void {
+  valorarSalida( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.salidas}/${id}/valoraciones`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  invitarSalida( salId: number, userId: number, options: RequestOptions = {} ) : void {
+  invitarSalida( salId: number, userId: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.salidas}/${salId}/invitacion/${userId}`;
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
   }
 
-  desinvitarSalida( salId: number, userId: number, options: RequestOptions = {} ) : void {
+  desinvitarSalida( salId: number, userId: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.salidas}/${salId}/invitacion/${userId}`;
     options.method = ApiService.methods.DELETE;
     this.sendRequest( options );
@@ -459,19 +496,19 @@ export class ApiService {
 
   // = INFO =
 
-  getLocalidades( options: RequestOptions = {} ) : void {
+  getLocalidades( options: TRequestOptions = {} ) : void {
     options.endpoint = 'localidades';
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  getAutonomias( options: RequestOptions = {} ) : void {
+  getAutonomias( options: TRequestOptions = {} ) : void {
     options.endpoint = 'autonomias';
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  getProvincias( options: RequestOptions = {} ) : void {
+  getProvincias( options: TRequestOptions = {} ) : void {
     options.endpoint = 'provincias';
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
@@ -483,13 +520,13 @@ export class ApiService {
 
   // = OTROS =
 
-  ping( options: RequestOptions = {} ) {
+  ping( options: TRequestOptions = {} ) {
     options.endpoint = 'ping';
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
-  auth( options: RequestOptions = {} ) {
+  auth( options: TRequestOptions = {} ) {
     options.endpoint = 'auth';
     options.method = ApiService.methods.POST;
     this.sendRequest( options );
@@ -499,14 +536,33 @@ export class ApiService {
 
   // ------------------
 }
- 
-export interface RequestOptions {
+
+// Plantilla de opciones para recibir respuestas HTTP completas en JSON
+export interface THttpOptions {
+  headers?: HttpHeaders | {
+    [header: string]: string | string[];
+  };
+  observe: 'response';
+  context?: HttpContext;
+  params?: HttpParams | {
+      [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
+  };
+  reportProgress?: boolean;
+  responseType?: 'json';
+  withCredentials?: boolean;
+}
+
+// Parámetros para el envío de peticiones
+export interface TRequestOptions {
   endpoint?: string,
   method?: string,
-  params?: any,
-  headers?: any,
+  params?: {
+    [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean>;
+  },
+  headers?: {
+    [header: string]: string | string[];
+  },
   body?: any,
-  successCallback?: any,
-  failedCallback?: any,
-  request?: Request
+  successCallback?: ( response: HttpResponse<Object> ) => void,
+  failedCallback?: ( errorResponse: HttpErrorResponse ) => void
 }

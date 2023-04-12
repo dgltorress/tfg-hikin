@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { UsuarioService } from './usuario.service';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ export class AuthService {
   public isLoggedIn: boolean = false;
 
   constructor(
-    private usuarioService: UsuarioService,
+    private userService: UserService,
     private router: Router
   ){}
 
@@ -26,16 +26,16 @@ export class AuthService {
    */
   public login( data: any , remember: boolean = false ){
     if( remember === true ) {
-      localStorage.setItem( UsuarioService.usuarioField , JSON.stringify( data[ UsuarioService.usuarioField ] ) );
-      localStorage.setItem( UsuarioService.tokenField , JSON.stringify( data[ UsuarioService.tokenField ] ) );
+      localStorage.setItem( UserService.userField , JSON.stringify( data[ UserService.userField ] ) );
+      localStorage.setItem( UserService.tokenField , JSON.stringify( data[ UserService.tokenField ] ) );
       
     } else {
-      sessionStorage.setItem( UsuarioService.usuarioField , JSON.stringify( data[ UsuarioService.usuarioField ] ) );
-      sessionStorage.setItem( UsuarioService.tokenField , JSON.stringify( data[ UsuarioService.tokenField ] ) );
+      sessionStorage.setItem( UserService.userField , JSON.stringify( data[ UserService.userField ] ) );
+      sessionStorage.setItem( UserService.tokenField , JSON.stringify( data[ UserService.tokenField ] ) );
     }
 
-    this.usuarioService.updateUserData();
-    this.usuarioService.updateTokenData();
+    this.userService.updateUserData();
+    this.userService.updateTokenData();
 
     this.setLoginStatus();
 
@@ -48,14 +48,14 @@ export class AuthService {
    * Elimina toda la información del usuario y del token.
    */
   public logout(): void {
-    localStorage.removeItem( UsuarioService.usuarioField );
-    localStorage.removeItem( UsuarioService.tokenField );
+    localStorage.removeItem( UserService.userField );
+    localStorage.removeItem( UserService.tokenField );
 
-    sessionStorage.removeItem( UsuarioService.usuarioField );
-    sessionStorage.removeItem( UsuarioService.tokenField );
+    sessionStorage.removeItem( UserService.userField );
+    sessionStorage.removeItem( UserService.tokenField );
 
-    this.usuarioService.updateUserData();
-    this.usuarioService.updateTokenData();
+    this.userService.updateUserData();
+    this.userService.updateTokenData();
 
     this.setLoginStatus();
   }
@@ -64,8 +64,8 @@ export class AuthService {
    * Determina si el usuario está logueado, es decir, existen datos personales y de token.
    */
   public setLoginStatus(): void {
-    if( ( ( localStorage.getItem( UsuarioService.usuarioField ) !== null )   && ( localStorage.getItem( UsuarioService.tokenField ) !== null ) ) ||
-        ( ( sessionStorage.getItem( UsuarioService.usuarioField ) !== null ) && ( sessionStorage.getItem( UsuarioService.tokenField ) !== null ) ) ){
+    if( ( ( localStorage.getItem( UserService.userField ) !== null )   && ( localStorage.getItem( UserService.tokenField ) !== null ) ) ||
+        ( ( sessionStorage.getItem( UserService.userField ) !== null ) && ( sessionStorage.getItem( UserService.tokenField ) !== null ) ) ){
       this.isLoggedIn = true;
     } else {
       this.isLoggedIn = false;
