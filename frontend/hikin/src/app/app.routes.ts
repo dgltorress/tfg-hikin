@@ -9,7 +9,7 @@ export const routes: Routes = [
     loadChildren: () => import('./pages/public/home/home.routes').then((m) => m.routes),
   },
   {
-    path: 'perfil',
+    path: 'explore',
     canActivate: [ loggedInGuard ],
     loadComponent: () => import('./components/explore-container/explore-container.component').then((m) => m.ExploreContainerComponent),
   },

@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { TabsPage } from './home.page';
+import { HomePage } from './home.page';
 
 import { loggedInGuard, loggedOutGuard } from 'src/app/guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'home',
-    component: TabsPage,
+    component: HomePage,
     children: [
       {
         path: 'feed',

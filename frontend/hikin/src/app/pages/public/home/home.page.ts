@@ -12,7 +12,7 @@ import { SidemenuRightComponent } from 'src/app/layouts/sidemenu_right/sidemenu_
   standalone: true,
   imports: [IonicModule, CommonModule, SidemenuLeftComponent, SidemenuRightComponent],
 })
-export class TabsPage {
+export class HomePage {
   public environmentInjector = inject(EnvironmentInjector);
 
   public tabContents = [

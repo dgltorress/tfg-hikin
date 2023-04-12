@@ -23,7 +23,7 @@ export class AuthService {
    * @param remember Si guardar sólo para la sesión actual o en local.
    */
   public login( data: any , remember: boolean = false ) : void {
-    if( remember === true ) {
+    if( remember === true ){
       localStorage.setItem( UserService.userField , JSON.stringify( data[ UserService.userField ] ) );
       localStorage.setItem( UserService.tokenField , JSON.stringify( data[ UserService.tokenField ] ) );
       

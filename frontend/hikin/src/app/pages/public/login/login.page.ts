@@ -77,7 +77,7 @@ export class LoginPage implements OnInit {
       const options: TRequestOptions = {
         body: loginFormValue,
         successCallback: ( response ) => {
-          const responseBody: any = response.body;console.log(responseBody);
+          const responseBody: any = response.body;
 
           if( responseBody &&
               responseBody[ UserService.userField ] &&
