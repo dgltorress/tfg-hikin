@@ -3,6 +3,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
+import { AuthService } from 'src/app/services/auth.service';
+
 @Component({
   selector: 'app-sidemenu-left',
   templateUrl: './sidemenu_left.component.html',
@@ -17,16 +19,22 @@ export class SidemenuLeftComponent implements OnInit {
   public sidemenuLeftPages = [
     { title: 'Perfil', url: '/home/feed', icon: 'person-circle' },
     { title: 'Opciones', url: '/home/salidas', icon: 'cog' },
-    { title: 'Cerrar sesión', url: '/home/comunidad', icon: 'log-out' },
-    { title: 'Acerca', url: '/home/itinerarios', icon: 'information-circle' }
+    { title: '¿Cerrar sesión?', url: '/home/comunidad', icon: 'log-in' }
   ];
   public sidemenuLeftPages2 = [
+    { title: 'Acerca', url: '/home/itinerarios', icon: 'information-circle' },
     { title: 'Desarrollador', url: '/login', icon: 'code' }
   ];
 
-  constructor() {}
+  constructor(
+    private authService: AuthService
+  ){}
 
   ngOnInit() {
     this.folder = this.activatedRoute.snapshot.paramMap.get('id') as string;
+  }
+
+  logout(){
+    this.authService.logout();
   }
 }

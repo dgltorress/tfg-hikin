@@ -5,8 +5,7 @@
 import { HttpClient, HttpHeaders, HttpParams,
   HttpResponse, HttpErrorResponse, HttpContext } from '@angular/common/http';
 import { Injectable, isDevMode } from '@angular/core';
-import { Observable, ObservableInput, of } from 'rxjs';
-import { timeout, catchError } from "rxjs/operators";
+import { Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { AuthService } from './auth.service';
@@ -45,7 +44,7 @@ export class ApiService {
   public static readonly bearerTokenPrefix: string = 'Bearer ';
 
   // Timeout en milisegundos
-  public static readonly timeoutMilliseconds: number = 1000;
+  public static readonly timeoutMilliseconds: number = 10000;
  
   constructor(
     private httpClient: HttpClient,
@@ -98,13 +97,13 @@ export class ApiService {
     // Envía la petición
     let observable: Observable<HttpResponse<Object>>;
     switch (options.method) {
-      case ApiService.methods.GET:    observable = this.httpClient.get(    url ,                httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
-      case ApiService.methods.POST:   observable = this.httpClient.post(   url , options.body , httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
-      case ApiService.methods.PUT:    observable = this.httpClient.put(    url , options.body , httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
-      case ApiService.methods.PATCH:  observable = this.httpClient.patch(  url , options.body , httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
-      case ApiService.methods.DELETE: observable = this.httpClient.delete( url ,                httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
+      case ApiService.methods.GET:    observable = this.httpClient.get(    url ,                httpOptions ); break;
+      case ApiService.methods.POST:   observable = this.httpClient.post(   url , options.body , httpOptions ); break;
+      case ApiService.methods.PUT:    observable = this.httpClient.put(    url , options.body , httpOptions ); break;
+      case ApiService.methods.PATCH:  observable = this.httpClient.patch(  url , options.body , httpOptions ); break;
+      case ApiService.methods.DELETE: observable = this.httpClient.delete( url ,                httpOptions ); break;
  
-      default: observable = this.httpClient.get( url , httpOptions ).pipe( timeout( ApiService.timeoutMilliseconds ) , catchError( this.handleError ) ); break;
+      default: observable = this.httpClient.get( url , httpOptions ); break;
     }
  
     // Espera a la respuesta y la devuelve
@@ -115,37 +114,18 @@ export class ApiService {
         }
       },
       error: ( errorResponse: HttpErrorResponse ) => {
+        // ! NO FUNCIONAN LOS TOASTS SI SE LLAMAN DESDE UN SERVICIO
+        if( errorResponse.status === 401 ){ // Token no válido: se elimina y se devuelve al usuario a la página de login
+          this.authService.logout();
+        } else if( errorResponse.status >= 500 ){ // Error del servidor: se notifica
+          this.alertService.showToast( 'Ha habido un error' );
+        }
+
         if( options.failedCallback ){
           options.failedCallback( errorResponse );
         }
       }
     } );
-  }
-
-  /**
-   * Manejador de un error capturado por rxjs
-   * 
-   * @param err Error.
-   * @param caught Observable fuente.
-   * @returns Observable que continúa la cadena. Si es `caught` lo reintentará y entrará en bucle infinito.
-   */
-  handleError(
-    err: any,
-    caught: Observable<HttpResponse<Object>>
-  ) : ObservableInput<any> {
-    if( isDevMode() === true ){
-      console.error( `[dev] ERROR durante petición: ${err.message}` , err );
-    }
-
-    if( err.status === 401 ){ // Token no válido: se elimina y se devuelve al usuario a la página de login
-      this.authService.logout();
-    } else if( err.status >= 500 ){ // Error del servidor: se notifica
-      this.alertService.showToast( 'Ha habido un error' );
-    } else if( err.name === 'TimeoutError' ){ // Timeout: se notifica
-      this.alertService.showToast( 'No se puede conectar al servidor.\nInténtalo de nuevo más tarde.' );
-    }
-
-    return new Observable();
   }
  
   // === ENDPOINTS PREDEFINIDOS ===

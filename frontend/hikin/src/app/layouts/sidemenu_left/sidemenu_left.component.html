@@ -12,6 +12,12 @@
         <ion-label>{{ p.title }}</ion-label>
       </ion-item>
     </ion-menu-toggle>
+    <ion-menu-toggle auto-hide="false">
+      <ion-item (click)="logout()">
+        <ion-icon aria-hidden="true" slot="start" name="log-out-outline"></ion-icon>
+        <ion-label>Cerrar sesión</ion-label>
+      </ion-item>
+    </ion-menu-toggle>
   </ion-list>
   
   <ion-list id="other-list">

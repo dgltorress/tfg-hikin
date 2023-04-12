@@ -8,7 +8,9 @@ export class UserService {
   public token: any = null;
 
   public isAdmin: boolean = false;
-  public jwt?: string = '';
+
+  public jwt?: string;
+  public expires?: Date;
 
   public static readonly userField: string = 'usuario';
   public static readonly tokenField: string = 'token';
@@ -36,7 +38,6 @@ export class UserService {
 
     if( this.user ){
       this.isAdmin = Boolean( this.user.isAdmin );
-      this.jwt = this.token.jwt;
     }
   }
 
@@ -54,6 +55,17 @@ export class UserService {
 
       if( tokenStoredInSession !== null )    sessionStorage.setItem( UserService.tokenField , JSON.stringify( newToken ) );
       else if( tokenStoredInLocal !== null ) localStorage.setItem( UserService.tokenField , JSON.stringify( newToken ) );
+    }
+
+    if( this.token ){
+      this.jwt = this.token.jwt;
+      try{
+        this.token.expires = new Date( Date.now() + Number( this.token.expires ) );
+      } catch( err ){
+        this.expires = undefined;
+        console.warn( 'No se ha podido establecer la fecha de caducidad del token' );
+      }
+      
     }
 
   }

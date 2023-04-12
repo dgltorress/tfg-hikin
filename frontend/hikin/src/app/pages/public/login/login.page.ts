@@ -24,7 +24,7 @@ export class LoginPage implements OnInit {
   loginForm: FormGroup;
 
   readonly emailFormControlName: string = 'email';
-  readonly passwordFormControlName: string = 'password';
+  readonly passwordFormControlName: string = 'contrasena';
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -41,7 +41,7 @@ export class LoginPage implements OnInit {
       ] ),
       [ this.passwordFormControlName ]: new FormControl( '' , [
         Validators.required,
-        Validators.minLength( 8 ),
+        //Validators.minLength( 8 ),
       ] )
     } );
   }
@@ -55,7 +55,7 @@ export class LoginPage implements OnInit {
         if( caughtError !== null ){
           const caughtErrorStatus: number = parseInt( caughtError );
           if( caughtErrorStatus === 401 ){
-            this.alertService.showToast( 'Error al autenticar', 1500 );
+            this.alertService.showToast( 'Error al autenticar' );
           }
         }
       }
@@ -75,12 +75,24 @@ export class LoginPage implements OnInit {
 
       // Se envía una petición al endpoint de autenticación
       const options: TRequestOptions = {
+        body: loginFormValue,
         successCallback: ( response ) => {
-          console.log( response );
+          const responseBody: any = response.body;console.log(responseBody);
+
+          if( responseBody &&
+              responseBody[ UserService.userField ] &&
+              responseBody[ UserService.tokenField ] ){
+            this.authService.login( responseBody, true );
+          } else {
+            this.alertService.showToast( 'Ha habido un error. Inténtalo de nuevo más tarde.' ); // Información errónea del servidor
+          }
+        },
+        failedCallback: ( errorResponse ) => {
+          this.alertService.showToast( 'Email o contraseña incorrectos' ); // Credenciales erróneas
         }
       };
 
-      this.apiService.ping( options );
+      this.apiService.auth( options );
     }
   }
 

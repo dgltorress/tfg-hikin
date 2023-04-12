@@ -25,8 +25,8 @@ const router = Router();
 
 router.route( '/' )
     .post(
-        body( 'email' , 'Campo obligatorio (email válido, máx. 60 caracteres)' ).exists().isEmail().isLength( { max: 60 } ),
-        body( 'contrasena' , 'Campo obligatorio (más de 7 caracteres)' ).exists().isString().isLength( { min: 8 } ),
+        body( 'email' , 'Campo obligatorio' ).exists(),
+        body( 'contrasena' , 'Campo obligatorio' ).exists(),
         validateFields,
         login
     );

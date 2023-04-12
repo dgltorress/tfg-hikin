@@ -7,8 +7,6 @@ import { UserService } from './user.service';
   providedIn: 'root'
 })
 export class AuthService {
-  public isLoggedIn: boolean = false;
-
   constructor(
     private userService: UserService,
     private router: Router
@@ -24,7 +22,7 @@ export class AuthService {
    * @param data Información. Debe tener un campo con el objeto usuario y otro con el objeto token, cuyos nombres se especifican en el servicio Usuario.
    * @param remember Si guardar sólo para la sesión actual o en local.
    */
-  public login( data: any , remember: boolean = false ){
+  public login( data: any , remember: boolean = false ) : void {
     if( remember === true ) {
       localStorage.setItem( UserService.userField , JSON.stringify( data[ UserService.userField ] ) );
       localStorage.setItem( UserService.tokenField , JSON.stringify( data[ UserService.tokenField ] ) );
@@ -37,17 +35,13 @@ export class AuthService {
     this.userService.updateUserData();
     this.userService.updateTokenData();
 
-    this.setLoginStatus();
-
-    this.router.navigate( [ 'home' ] ).then( () => {
-      window.location.reload();
-    } );
+    this.router.navigate( [ 'home' ] );
   }
 
   /**
    * Elimina toda la información del usuario y del token.
    */
-  public logout(): void {
+  public logout() : void {
     localStorage.removeItem( UserService.userField );
     localStorage.removeItem( UserService.tokenField );
 
@@ -57,18 +51,20 @@ export class AuthService {
     this.userService.updateUserData();
     this.userService.updateTokenData();
 
-    this.setLoginStatus();
+    this.router.navigate( [ 'login' ] );
   }
 
   /**
    * Determina si el usuario está logueado, es decir, existen datos personales y de token.
+   * 
+   * @returns Si el usuario está logueado.
    */
-  public setLoginStatus(): void {
+  public isLoggedIn() : boolean {
     if( ( ( localStorage.getItem( UserService.userField ) !== null )   && ( localStorage.getItem( UserService.tokenField ) !== null ) ) ||
         ( ( sessionStorage.getItem( UserService.userField ) !== null ) && ( sessionStorage.getItem( UserService.tokenField ) !== null ) ) ){
-      this.isLoggedIn = true;
+      return true;
     } else {
-      this.isLoggedIn = false;
+      return false;
     }
   }
 }
