@@ -1,0 +1,72 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <!-- Menú izquierdo -->
+    <ion-buttons slot="start">
+      <ion-menu-button menu="sidemenuLeft"></ion-menu-button>
+    </ion-buttons>
+    <!-- Logo si no se solicita barra de búsqueda -->
+    <ion-img *ngIf="!search" src="assets/logos/hikin_isotipo.jpg" alt="Isotipo de HikIn"></ion-img>
+    <!-- Salidas -->
+    <ion-accordion-group *ngIf="search === searchBars.Salidas">
+      <ion-accordion value="first">
+        <ion-item slot="header" color="light">
+          <ion-input
+            form="searchSalidasForm"
+            type="search"
+            inputmode="search"
+            enterkeyhint="search"
+            fill="none"
+            aria-label="Campo de texto para buscar salidas"
+            placeholder="Busca salidas&mldr;">
+          </ion-input>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <form id="searchSalidasForm">
+            <ion-list>
+              <ion-item>
+                <ion-select label="Comunidad autónoma" label-placement="floating" fill="solid">
+                  <ion-select-option value="apple">Apple</ion-select-option>
+                  <ion-select-option value="banana">Banana</ion-select-option>
+                  <ion-select-option value="orange">Orange</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-select label="Provincia" label-placement="floating" fill="solid">
+                  <ion-select-option value="apple">Apple</ion-select-option>
+                  <ion-select-option value="banana">Banana</ion-select-option>
+                  <ion-select-option value="orange">Orange</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-label>Inicio</ion-label>
+                <ion-datetime-button id="startDateButton" datetime="startDate"></ion-datetime-button>
+              </ion-item>
+              <ion-item>
+                <ion-label>Fin</ion-label>
+                <ion-datetime-button id="endDateButton" datetime="endDate"></ion-datetime-button>
+              </ion-item>
+            </ion-list>
+          </form>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    <!-- Menú derecho -->
+    <ion-buttons slot="end">
+      <ion-menu-button menu="sidemenuRight">
+        <ion-icon name="notifications-outline"></ion-icon>
+      </ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-modal [keepContentsMounted]="true">
+  <ng-template>
+    <ion-datetime id="startDate"></ion-datetime>
+  </ng-template>
+</ion-modal>
+
+<ion-modal [keepContentsMounted]="true">
+  <ng-template>
+    <ion-datetime id="endDate"></ion-datetime>
+  </ng-template>
+</ion-modal>

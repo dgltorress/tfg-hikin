@@ -1,0 +1,46 @@
+ion-toolbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+
+    --background: var(--hikin-primario);
+}
+ion-buttons{
+    align-self: flex-start;
+    margin-top: .3em;
+}
+ion-img{
+    height: 40px;
+}
+ion-input.custom {
+
+}
+
+
+ion-list, ion-accordion, ion-accordion div.ion-padding{
+    background: transparent;
+}
+ion-accordion div.ion-padding{
+    padding: 0;
+    padding-top: 1em;
+}
+ion-list > *{
+    margin-bottom: .5em;
+}
+
+ion-list, ion-item{
+    padding: 0;
+}
+ion-item{
+    border-radius: 4px;
+}
+
+ion-datetime-button{
+    display: block;
+    margin: auto;
+}
+
+ion-label{
+    display: block;
+}

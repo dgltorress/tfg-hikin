@@ -34,7 +34,8 @@ export class LoginPage implements OnInit {
   ){
     this.loginForm = new FormGroup( {
       [ this.emailFormControlName ]: new FormControl( '' , [
-        Validators.required
+        Validators.required,
+        Validators.email
       ] ),
       [ this.passwordFormControlName ]: new FormControl( '' , [
         Validators.required
@@ -119,6 +120,7 @@ export class LoginPage implements OnInit {
             // se indica el error.
             switch( emailKeys[ i ] ){
               case 'required': errEmailElement.innerText = 'Campo requerido'; break;
+              case 'email': errEmailElement.innerText = 'Email no válido'; break;
             }
           }
         // Si no hay errores de email,

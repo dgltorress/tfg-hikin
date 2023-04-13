@@ -4,13 +4,14 @@ import { IonicModule } from '@ionic/angular';
 import { ExploreContainerComponent } from 'src/app/components/explore-container/explore-container.component';
 import { ApiService } from 'src/app/services/api.service';
 
+import { MainheaderComponent } from 'src/app/layouts/mainheader/mainheader.component';
+
 @Component({
   selector: 'app-feed',
   templateUrl: 'feed.page.html',
   styleUrls: ['feed.page.scss','../home.page.scss'],
   standalone: true,
-  imports: [IonicModule, ExploreContainerComponent],
-  providers: [ApiService]
+  imports: [IonicModule, MainheaderComponent, ExploreContainerComponent]
 })
 export class FeedPage {
   constructor(
