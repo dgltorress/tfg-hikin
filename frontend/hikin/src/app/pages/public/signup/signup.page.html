@@ -1,11 +1,21 @@
 <ion-content [fullscreen]="true">
   <div id="container">
     <header>
-      <h1>INICIA SESIÓN</h1>
+      <h1>REGÍSTRATE</h1>
       <img src="assets/logos/hikin_imagotipo.jpg" alt="Imagotipo de HikIn">
     </header>
 
-    <form [formGroup]="loginForm" (ngSubmit)="login()">
+    <form [formGroup]="signupForm" (ngSubmit)="signup()">
+      <label>
+        <span>Nombre de usuario</span>
+        <input
+          id="username"
+          type="text"
+          [formControlName]="usernameFormControlName"
+          required>
+        <span #errUsername class="errMsg"></span>
+      </label>
+
       <label>
         <span>Email</span>
         <input
@@ -26,11 +36,18 @@
         <span #errPassword class="errMsg"></span>
       </label>
 
-      <button type="submit">INICIAR SESIÓN</button>
+      <button type="submit">REGISTRARSE</button>
     </form>
 
     <p>
-      ¿Aún no tienes una cuenta? <a routerLink="../signup" routerDirection="root">Regístrate</a>.
+      ¿Ya tienes una cuenta? <a routerLink="../login" routerDirection="root">Inicia sesión</a>.
+    </p>
+
+    <p>
+      Al registrarte, aceptas las
+      <a routerLink="">condiciones de uso</a>
+      y la
+      <a routerLink="">política de privacidad</a>
     </p>
   </div>
 </ion-content>

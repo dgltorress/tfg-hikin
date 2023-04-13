@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { UserService } from './user.service';
@@ -23,6 +23,17 @@ export class AuthService {
    * @param remember Si guardar sólo para la sesión actual o en local.
    */
   public login( data: any , remember: boolean = false ) : void {
+    // Calcula la fecha en la que caducará el token y la modifica
+    if( data[ UserService.tokenField ] && 
+        data[ UserService.tokenField ].expires ){
+      try{
+        data[ UserService.tokenField ].expires = new Date( Date.now() + Number( data[ UserService.tokenField ].expires ) );
+      } catch( err ){
+        data[ UserService.tokenField ].expires = undefined;
+        if( isDevMode() === true ) console.warn( '(AuthService) No se ha podido almacenar la fecha de caducidad del token' );
+      }
+    }
+
     if( remember === true ){
       localStorage.setItem( UserService.userField , JSON.stringify( data[ UserService.userField ] ) );
       localStorage.setItem( UserService.tokenField , JSON.stringify( data[ UserService.tokenField ] ) );

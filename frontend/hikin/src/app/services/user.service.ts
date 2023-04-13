@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -60,10 +60,10 @@ export class UserService {
     if( this.token ){
       this.jwt = this.token.jwt;
       try{
-        this.token.expires = new Date( Date.now() + Number( this.token.expires ) );
+        this.expires = new Date( this.token.expires );
       } catch( err ){
         this.expires = undefined;
-        console.warn( 'No se ha podido establecer la fecha de caducidad del token' );
+        if( isDevMode() === true ) console.warn( '(UserService) No se ha podido obtener la fecha de caducidad del token' );
       }
       
     }

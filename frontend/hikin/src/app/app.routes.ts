@@ -23,4 +23,9 @@ export const routes: Routes = [
     canActivate: [ loggedOutGuard ],
     loadComponent: () => import('./pages/public/login/login.page').then( m => m.LoginPage)
   },
+  {
+    path: 'signup',
+    canActivate: [ loggedOutGuard ],
+    loadComponent: () => import('./pages/public/signup/signup.page').then( m => m.SignupPage)
+  },
 ];

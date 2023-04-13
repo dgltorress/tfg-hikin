@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 
 import { ApiService, TRequestOptions } from 'src/app/services/api.service';
@@ -10,68 +10,65 @@ import { AuthService } from 'src/app/services/auth.service';
 import { AlertService } from 'src/app/services/alert.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
+  selector: 'app-signup',
+  templateUrl: './signup.page.html',
+  styleUrls: ['signup.page.scss','../login/login.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule, ReactiveFormsModule]
 })
-export class LoginPage implements OnInit {
+export class SignupPage implements OnInit {
 
   @ViewChild( 'errEmail' ) errEmail?: ElementRef;
   @ViewChild( 'errPassword' ) errPassword?: ElementRef;
+  @ViewChild( 'errUsername' ) errUsername?: ElementRef;
 
-  loginForm: FormGroup;
+  signupForm: FormGroup;
 
   readonly emailFormControlName: string = 'email';
   readonly passwordFormControlName: string = 'contrasena';
+  readonly usernameFormControlName: string = 'usuario';
 
   constructor(
-    private activatedRoute: ActivatedRoute,
     private apiService: ApiService,
     private authService: AuthService,
     private alertService: AlertService
   ){
-    this.loginForm = new FormGroup( {
+    this.signupForm = new FormGroup( {
       [ this.emailFormControlName ]: new FormControl( '' , [
-        Validators.required
+        Validators.required,
+        Validators.email,
+        Validators.maxLength( 60 )
       ] ),
       [ this.passwordFormControlName ]: new FormControl( '' , [
-        Validators.required
+        Validators.required,
+        Validators.minLength( 8 )
+      ] ),
+      [ this.usernameFormControlName ]: new FormControl( '' , [
+        Validators.required,
+        Validators.minLength( 3 ),
+        Validators.maxLength( 25 )
       ] )
     } );
   }
 
   ngOnInit(){
-    // Notificar error de autenticación (p. ej. Si el token caduca o se han borrado las cookies)
-    this.activatedRoute.queryParamMap
-      .subscribe( ( paramMap ) => {
-        const caughtError: string | null = paramMap.get( 'err' );
-
-        if( caughtError !== null ){
-          const caughtErrorStatus: number = parseInt( caughtError );
-          if( caughtErrorStatus === 401 ){
-            this.alertService.showToast( 'Error al autenticar' );
-          }
-        }
-      }
-    );
+    
   }
 
   /**
-   * Envía las credenciales del usuario a la base de datos,
-   * almacena el token y la fecha de caducidad del token recibido
+   * Intenta crear un usuario en la base de datos.
+   * Si lo consigue, guarda las credenciales
    * y redirige a la página de inicio.
    */
-  login() : void {
+  signup() : void {
     // Si los campos contienen valores correctos,
-    if( this.validateLogin() === true ){
+    if( this.validateSignup() === true ){
       // Se obtienen los valores del formulario
-      const loginFormValue = this.loginForm.value;
+      const signupFormValue = this.signupForm.value;
 
       // Se envía una petición al endpoint de autenticación
       const options: TRequestOptions = {
-        body: loginFormValue,
+        body: signupFormValue,
         successCallback: ( response ) => {
           const responseBody: any = response.body;
 
@@ -84,11 +81,11 @@ export class LoginPage implements OnInit {
           }
         },
         failedCallback: ( errorResponse ) => {
-          this.alertService.showToast( 'Email o contraseña incorrectos' ); // Credenciales erróneas
+          this.alertService.errorToToast( errorResponse.error );
         }
       };
 
-      this.apiService.auth( options );
+      this.apiService.createUsuario( options );
     }
   }
 
@@ -97,16 +94,41 @@ export class LoginPage implements OnInit {
    * 
    * @returns Si todos los campos contienen valores correctos.
    */
-  validateLogin() : boolean {
+  validateSignup() : boolean {
     // Obtiene los controles del grupo de formulario
-    const loginFormControls = this.loginForm.controls;
+    const signupFormControls = this.signupForm.controls;
 
     // Obtiene los errores de cada control
-    const emailErrors = loginFormControls[ this.emailFormControlName ].errors;
-    const passwordErrors = loginFormControls[ this.passwordFormControlName ].errors;
+    const usernameErrors = signupFormControls[ this.usernameFormControlName ].errors;
+    const emailErrors = signupFormControls[ this.emailFormControlName ].errors;
+    const passwordErrors = signupFormControls[ this.passwordFormControlName ].errors;
 
     // Si hay algún error,
-    if( emailErrors || passwordErrors ){
+    if( usernameErrors || emailErrors || passwordErrors ){
+      // y hay un lugar donde colocar un mensaje de error para el nombre de usuario,
+      if( this.errUsername ){
+        const errUsernameElement = this.errUsername.nativeElement;
+
+        // Si hay errores de nombre de usuario,
+        if( usernameErrors ){
+          const usernameKeys = Object.keys( usernameErrors );
+
+          for( let i = 0 ; i < usernameKeys.length ; ++i ){
+            // se indica el error.
+            switch( usernameKeys[ i ] ){
+              case 'required': errUsernameElement.innerText = 'Campo requerido'; break;
+              case 'minlength':
+              case 'maxlength':
+                errUsernameElement.innerText = 'Entre 3 y 25 caracteres';
+              break;
+            }
+          }
+        // Si no hay errores de email,
+        } else {
+          // se quita el mensaje de error.
+          errUsernameElement.innerText = '';
+        }
+      }
       // y hay un lugar donde colocar un mensaje de error para el email,
       if( this.errEmail ){
         const errEmailElement = this.errEmail.nativeElement;
@@ -119,6 +141,8 @@ export class LoginPage implements OnInit {
             // se indica el error.
             switch( emailKeys[ i ] ){
               case 'required': errEmailElement.innerText = 'Campo requerido'; break;
+              case 'email': errEmailElement.innerText = 'Email no válido'; break;
+              case 'maxlength': errEmailElement.innerText = 'Máx. 60 caracteres'; break;
             }
           }
         // Si no hay errores de email,
@@ -139,6 +163,7 @@ export class LoginPage implements OnInit {
             // se indica el error.
             switch( passwordKeys[ i ] ){
               case 'required': errPasswordElement.innerText = 'Campo requerido'; break;
+              case 'minlength': errPasswordElement.innerText = 'Mín. 8 caracteres'; break;
             }
           }
         // Si no hay errores de contraseña,
@@ -152,6 +177,7 @@ export class LoginPage implements OnInit {
     // Si no hay ningún error,
     } else {
       // se quitan los mensajes de error si se pueden localizar.
+      if( this.errUsername ) this.errUsername.nativeElement.innerText = '';
       if( this.errEmail ) this.errEmail.nativeElement.innerText = '';
       if( this.errPassword ) this.errPassword.nativeElement.innerText = '';
 
