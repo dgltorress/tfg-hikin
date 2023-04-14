@@ -7,7 +7,10 @@
     <!-- Logo si no se solicita barra de búsqueda -->
     <ion-img *ngIf="!search" src="assets/logos/hikin_isotipo.jpg" alt="Isotipo de HikIn"></ion-img>
     <!-- Comunidad -->
-    <form *ngIf="search === searchBars.Comunidad" [formGroup]="buscarComunidadForm" (ngSubmit)="buscarComunidad()">
+    <form
+      *ngIf="search === searchBars.Comunidad"
+      [formGroup]="buscarComunidadForm"
+      (ngSubmit)="buscarComunidad()">
       <ion-input
         formControlName="texto"
         type="search"
@@ -19,13 +22,16 @@
         </ion-input>
     </form>
     <!-- Salidas -->
-    <form id="searchSalidasForm" [formGroup]="buscarSalidasForm" (ngSubmit)="buscarSalidas()">
-      <ion-accordion-group *ngIf="search === searchBars.Salidas" (ionChange)="comprobarYPedirAutonomias()">
+    <form
+      *ngIf="search === searchBars.Salidas"
+      id="searchSalidasForm"
+      [formGroup]="buscarSalidasForm"
+      (ngSubmit)="buscarSalidas()">
+      <ion-accordion-group  (ionChange)="comprobarYPedirAutonomias()">
         <ion-accordion value="first">
           <ion-item slot="header" color="light">
             <ion-input
               formControlName="texto"
-              form="searchSalidasForm"
               type="search"
               inputmode="search"
               enterkeyhint="search"
@@ -42,6 +48,7 @@
                   label="Comunidad autónoma"
                   label-placement="floating"
                   fill="solid"
+                  cancelText="Cancelar"
                   (ionChange)="manejarAutonomia($event)">
                   <ion-select-option *ngFor="let autonomia of autonomias" [value]="autonomia.cod">{{ autonomia.nombre }}</ion-select-option>
                 </ion-select>
@@ -51,7 +58,8 @@
                   formControlName="cpro"
                   label="Provincia"
                   label-placement="floating"
-                  fill="solid">
+                  fill="solid"
+                  cancelText="Cancelar">
                   <ion-select-option *ngFor="let provincia of provincias" [value]="provincia.cod">{{ provincia.nombre }}</ion-select-option>
                 </ion-select>
               </ion-item>
@@ -87,6 +95,66 @@
                 <ion-datetime formControlName="hasta" id="endDate"></ion-datetime>
               </ng-template>
             </ion-modal>
+            <ion-button type="submit">BUSCAR</ion-button>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+    </form>
+    <!-- Itinerarios -->
+    <form
+      *ngIf="search === searchBars.Itinerarios"
+      id="searchItinerariosForm"
+      [formGroup]="buscarItinerariosForm"
+      (ngSubmit)="buscarItinerarios()">
+      <ion-accordion-group (ionChange)="comprobarYPedirAutonomias()">
+        <ion-accordion value="first">
+          <ion-item slot="header" color="light">
+            <ion-input
+              formControlName="texto"
+              type="search"
+              inputmode="search"
+              enterkeyhint="search"
+              fill="none"
+              aria-label="Campo de texto para buscar itinerarios"
+              placeholder="Busca itinerarios&mldr;">
+            </ion-input>
+          </ion-item>
+          <div class="ion-padding" slot="content">
+            <ion-list>
+              <ion-item>
+                <ion-select
+                  formControlName="codauto"
+                  label="Comunidad autónoma"
+                  label-placement="floating"
+                  fill="solid"
+                  cancelText="Cancelar"
+                  (ionChange)="manejarAutonomia($event)">
+                  <ion-select-option *ngFor="let autonomia of autonomias" [value]="autonomia.cod">{{ autonomia.nombre }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-select
+                  formControlName="cpro"
+                  label="Provincia"
+                  label-placement="floating"
+                  fill="solid"
+                  cancelText="Cancelar">
+                  <ion-select-option *ngFor="let provincia of provincias" [value]="provincia.cod">{{ provincia.nombre }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-select
+                  formControlName="dificultad"
+                  label="Dificultad"
+                  label-placement="floating"
+                  fill="solid"
+                  cancelText="Cancelar">
+                  <ion-select-option [value]="1">Fácil</ion-select-option>
+                  <ion-select-option [value]="2">Media</ion-select-option>
+                  <ion-select-option [value]="3">Difícil</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-list>
             <ion-button type="submit">BUSCAR</ion-button>
           </div>
         </ion-accordion>

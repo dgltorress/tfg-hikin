@@ -24,7 +24,7 @@ export class MainheaderComponent implements OnInit {
 
   buscarComunidadForm: FormGroup;
   buscarSalidasForm: FormGroup;
-  //buscarItinerariosForm: FormGroup;
+  buscarItinerariosForm: FormGroup;
 
   public isProvinciasReadonly: boolean = true;
 
@@ -34,14 +34,25 @@ export class MainheaderComponent implements OnInit {
   ){
     this.buscarComunidadForm = new FormGroup( {
       texto: new FormControl(),
-    } );
+    } ),
     this.buscarSalidasForm = new FormGroup( {
       texto: new FormControl(),
       codauto: new FormControl(),
       cpro: new FormControl( { value: '', disabled: true } ),
       desde: new FormControl(),
       hasta: new FormControl(),
-    } );
+    } ),
+    this.buscarItinerariosForm = new FormGroup( {
+      texto: new FormControl(),
+      cod: new FormControl(),
+      codauto: new FormControl(),
+      cpro: new FormControl( { value: '', disabled: true } ),
+      dificultad: new FormControl(),
+      distancia: new FormControl(),
+      desnivel: new FormControl(),
+      tiempo: new FormControl(),
+      circular: new FormControl(),
+    } )
   }
 
   ngOnInit(){
@@ -57,7 +68,7 @@ export class MainheaderComponent implements OnInit {
   }
 
   buscarItinerarios() : void {
-
+    console.log(this.buscarItinerariosForm.value);
   }
 
   comprobarYPedirAutonomias() : void {
@@ -68,6 +79,7 @@ export class MainheaderComponent implements OnInit {
 
   manejarAutonomia( ev: any ) : void {
     const provinciaControl = this.buscarSalidasForm.get( 'cpro' ) as FormControl;
+    provinciaControl.reset();
 
     if( ev.detail &&
         ev.detail.value ){
