@@ -2,6 +2,14 @@ ion-menu-button {
   color: var(--ion-color-primary);
 }
 
+ion-tab-button.tab-selected ion-icon{
+  color: var(--hikin-texto-claro);
+}
+
 app-sidemenu-left, app-sidemenu-right{
   height: 100%;
+}
+
+ion-tab-bar{
+  --background: var(--hikin-primario);
 }

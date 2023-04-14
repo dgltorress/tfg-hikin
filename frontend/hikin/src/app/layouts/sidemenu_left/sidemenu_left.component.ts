@@ -19,7 +19,7 @@ export class SidemenuLeftComponent implements OnInit {
   public sidemenuLeftPages = [
     { title: 'Perfil', url: '/home/feed', icon: 'person-circle' },
     { title: 'Opciones', url: '/home/salidas', icon: 'cog' },
-    { title: '¿Cerrar sesión?', url: '/home/comunidad', icon: 'log-in' }
+    { title: 'COMUNIDAD', url: '/home/comunidad', icon: 'log-in' }
   ];
   public sidemenuLeftPages2 = [
     { title: 'Acerca', url: '/home/itinerarios', icon: 'information-circle' },

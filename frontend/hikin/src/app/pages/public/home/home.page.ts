@@ -16,10 +16,10 @@ export class HomePage {
   public environmentInjector = inject(EnvironmentInjector);
 
   public tabContents = [
-    { title: '', url: 'feed', icon: 'triangle' },
-    { title: '', url: 'salidas', icon: 'ellipse' },
-    { title: '', url: 'comunidad', icon: 'square' },
-    { title: '', url: 'itinerarios', icon: 'book' }
+    { title: '', url: 'feed', icon: 'home', src: '' },
+    { title: '', url: 'salidas', icon: '', src: 'assets/svg/climber-svgrepo-com.svg' },
+    { title: '', url: 'comunidad', icon: 'people', src: '' },
+    { title: '', url: 'itinerarios', icon: 'trail-sign', src: '' }
   ];
 
   constructor() {}

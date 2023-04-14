@@ -16,9 +16,6 @@ ion-img{
     height: 40px;
 }
 
-/** ion-input.custom {
-
-} **/
 
 
 ion-list, ion-accordion, ion-accordion div.ion-padding{
@@ -30,11 +27,11 @@ ion-accordion div.ion-padding{
     padding: 0;
     padding-top: 1em;
 }
+
+
 ion-list, ion-list > *{
     margin-bottom: .5em;
 }
-
-
 ion-list, ion-item{
     padding: 0;
 }
@@ -67,15 +64,18 @@ ion-grid{
     font-size: 12px;
 }
 
-ion-checkbox{
-    font-size: 12px;
-}
-
 ion-range{
     padding: 0;
 }
 
 ion-icon{
+    font-size: 20px;
+
     cursor: pointer;
     align-self: center;
+}
+
+
+ion-checkbox{
+    font-size: 12px;
 }
