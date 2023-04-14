@@ -4,6 +4,8 @@ ion-toolbar{
     justify-content: space-around;
     align-items: flex-start;
 
+    overflow-y: scroll;
+
     --background: var(--hikin-primario);
 }
 ion-buttons{
@@ -23,12 +25,15 @@ ion-list, ion-accordion, ion-accordion div.ion-padding{
     background: transparent;
 }
 ion-accordion div.ion-padding{
+    position: relative;
+
     padding: 0;
     padding-top: 1em;
 }
 ion-list, ion-list > *{
     margin-bottom: .5em;
 }
+
 
 ion-list, ion-item{
     padding: 0;
@@ -54,4 +59,23 @@ form ion-button{
 }
 ion-button::part(native){ /* Color del Shadow DOM */
     color: var(--hikin-texto-claro);
+}
+
+ion-grid{
+    padding: .5em 1em;
+
+    font-size: 12px;
+}
+
+ion-checkbox{
+    font-size: 12px;
+}
+
+ion-range{
+    padding: 0;
+}
+
+ion-icon{
+    cursor: pointer;
+    align-self: center;
 }

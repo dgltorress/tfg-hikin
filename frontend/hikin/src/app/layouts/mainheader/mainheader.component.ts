@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, isDevMode, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms'
+import { ReactiveFormsModule, FormGroup, FormControl, RangeValueAccessor } from '@angular/forms'
 import { IonicModule } from '@ionic/angular';
+import { RangeValue } from '@ionic/core';
 
 import { ApiService, TRequestOptions } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
@@ -15,30 +16,51 @@ import { AlertService } from 'src/app/services/alert.service';
 })
 export class MainheaderComponent implements OnInit {
 
+  // Tipo de barra de búsqueda (si hay)
   @Input() search?: number;
 
+  // Tipos de barras de búsqueda disponibles
   public searchBars = SearchBars;
 
+  // Autonomías y provincias devueltas por la API
   public autonomias: any[] | null = null;
   public provincias: any[] | null = null;
 
+  // Formularios y controles
   buscarComunidadForm: FormGroup;
   buscarSalidasForm: FormGroup;
   buscarItinerariosForm: FormGroup;
 
-  public isProvinciasReadonly: boolean = true;
+  provinciaSalidasControl: FormControl;
+  provinciaItinerariosControl: FormControl;
+
+  distanciaRangeControl: FormControl;
+  desnivelRangeControl: FormControl;
+  tiempoRangeControl: FormControl;
+
+  // Valores de rangos
+  public distanciaRange: RangeValue | null = null;
+  public desnivelRange: RangeValue | null = null;
+  public tiempoRange: RangeValue | null = null;
 
   constructor(
     private api: ApiService,
     private alertService: AlertService
   ){
+    this.provinciaSalidasControl = new FormControl( { value: '', disabled: true } );
+    this.provinciaItinerariosControl = new FormControl( { value: '', disabled: true } );
+
+    this.distanciaRangeControl = new FormControl();
+    this.desnivelRangeControl = new FormControl();
+    this.tiempoRangeControl = new FormControl();
+
     this.buscarComunidadForm = new FormGroup( {
       texto: new FormControl(),
     } ),
     this.buscarSalidasForm = new FormGroup( {
       texto: new FormControl(),
       codauto: new FormControl(),
-      cpro: new FormControl( { value: '', disabled: true } ),
+      cpro: this.provinciaSalidasControl,
       desde: new FormControl(),
       hasta: new FormControl(),
     } ),
@@ -46,11 +68,11 @@ export class MainheaderComponent implements OnInit {
       texto: new FormControl(),
       cod: new FormControl(),
       codauto: new FormControl(),
-      cpro: new FormControl( { value: '', disabled: true } ),
+      cpro: this.provinciaItinerariosControl,
       dificultad: new FormControl(),
-      distancia: new FormControl(),
-      desnivel: new FormControl(),
-      tiempo: new FormControl(),
+      distancia: this.distanciaRangeControl,
+      desnivel: this.desnivelRangeControl,
+      tiempo: this.tiempoRangeControl,
       circular: new FormControl(),
     } )
   }
@@ -78,7 +100,15 @@ export class MainheaderComponent implements OnInit {
   }
 
   manejarAutonomia( ev: any ) : void {
-    const provinciaControl = this.buscarSalidasForm.get( 'cpro' ) as FormControl;
+    let provinciaControl: FormControl;
+    
+    switch( this.search ){
+      case SearchBars.Salidas: provinciaControl = this.provinciaSalidasControl; break;
+      case SearchBars.Itinerarios: provinciaControl = this.provinciaItinerariosControl; break;
+
+      default: if( isDevMode() === true ) console.warn( 'No se ha podido actualizar las provincias: control no reconocido' ); return;
+    }
+    
     provinciaControl.reset();
 
     if( ev.detail &&

@@ -17,7 +17,7 @@
         inputmode="search"
         enterkeyhint="search"
         fill="solid"
-        aria-label="Campo de texto para buscar usuarios y clubes"
+        aria-label="Nombre"
         placeholder="Busca usuarios y clubes&mldr;">
         </ion-input>
     </form>
@@ -27,7 +27,7 @@
       id="searchSalidasForm"
       [formGroup]="buscarSalidasForm"
       (ngSubmit)="buscarSalidas()">
-      <ion-accordion-group  (ionChange)="comprobarYPedirAutonomias()">
+      <ion-accordion-group (ionChange)="comprobarYPedirAutonomias()">
         <ion-accordion value="first">
           <ion-item slot="header" color="light">
             <ion-input
@@ -36,7 +36,7 @@
               inputmode="search"
               enterkeyhint="search"
               fill="none"
-              aria-label="Campo de texto para buscar salidas"
+              aria-label="Nombre o descripción"
               placeholder="Busca salidas&mldr;">
             </ion-input>
           </ion-item>
@@ -50,6 +50,7 @@
                   fill="solid"
                   cancelText="Cancelar"
                   (ionChange)="manejarAutonomia($event)">
+                  <ion-select-option [value]="null">-</ion-select-option>
                   <ion-select-option *ngFor="let autonomia of autonomias" [value]="autonomia.cod">{{ autonomia.nombre }}</ion-select-option>
                 </ion-select>
               </ion-item>
@@ -60,6 +61,7 @@
                   label-placement="floating"
                   fill="solid"
                   cancelText="Cancelar">
+                  <ion-select-option [value]="null">-</ion-select-option>
                   <ion-select-option *ngFor="let provincia of provincias" [value]="provincia.cod">{{ provincia.nombre }}</ion-select-option>
                 </ion-select>
               </ion-item>
@@ -115,12 +117,24 @@
               inputmode="search"
               enterkeyhint="search"
               fill="none"
-              aria-label="Campo de texto para buscar itinerarios"
+              aria-label="Nombre o descripción"
               placeholder="Busca itinerarios&mldr;">
             </ion-input>
           </ion-item>
           <div class="ion-padding" slot="content">
             <ion-list>
+              <ion-item>
+                <ion-input
+                  formControlName="cod"
+                  type="text"
+                  inputmode="text"
+                  enterkeyhint="text"
+                  fill="solid"
+                  label="Rotulación"
+                  label-placement="floating"
+                  placeholder="SL/PR/GR-...">
+                </ion-input>
+              </ion-item>
               <ion-item>
                 <ion-select
                   formControlName="codauto"
@@ -129,6 +143,7 @@
                   fill="solid"
                   cancelText="Cancelar"
                   (ionChange)="manejarAutonomia($event)">
+                  <ion-select-option [value]="null">-</ion-select-option>
                   <ion-select-option *ngFor="let autonomia of autonomias" [value]="autonomia.cod">{{ autonomia.nombre }}</ion-select-option>
                 </ion-select>
               </ion-item>
@@ -139,6 +154,7 @@
                   label-placement="floating"
                   fill="solid"
                   cancelText="Cancelar">
+                  <ion-select-option [value]="null">-</ion-select-option>
                   <ion-select-option *ngFor="let provincia of provincias" [value]="provincia.cod">{{ provincia.nombre }}</ion-select-option>
                 </ion-select>
               </ion-item>
@@ -149,10 +165,87 @@
                   label-placement="floating"
                   fill="solid"
                   cancelText="Cancelar">
+                  <ion-select-option [value]="null">-</ion-select-option>
                   <ion-select-option [value]="1">Fácil</ion-select-option>
                   <ion-select-option [value]="2">Media</ion-select-option>
                   <ion-select-option [value]="3">Difícil</ion-select-option>
                 </ion-select>
+              </ion-item>
+              <ion-item>
+                <ion-grid>
+                  <ion-row>
+                    <ion-label>Distancia en km. (SL y PR)</ion-label>
+                    <ion-icon
+                      name="close-outline"
+                      (click)="distanciaRangeControl.reset()">
+                    </ion-icon>
+                  </ion-row>
+                  <ion-row>
+                    <ion-range
+                      formControlName="distancia"
+                      aria-label="Distancia en kilómetros (SL y PR)"
+                      fill="solid"
+                      [min]="1"
+                      [max]="50"
+                      [dualKnobs]="true"
+                      [value]="distanciaRange"
+                      [pin]="true">
+                    </ion-range>
+                  </ion-row>
+                </ion-grid>
+              </ion-item>
+              <ion-item>
+                <ion-grid>
+                  <ion-row>
+                    <ion-label>Desnivel absoluto en metros</ion-label>
+                    <ion-icon
+                      name="close-outline"
+                      (click)="desnivelRangeControl.reset()">
+                    </ion-icon>
+                  </ion-row>
+                  <ion-row>
+                    <ion-range
+                      formControlName="desnivel"
+                      aria-label="Desnivel absoluto en metros"
+                      fill="solid"
+                      [min]="1"
+                      [max]="1000"
+                      [dualKnobs]="true"
+                      [value]="desnivelRange"
+                      [pin]="true">
+                    </ion-range>
+                  </ion-row>
+                </ion-grid>
+              </ion-item>
+              <ion-item>
+                <ion-grid>
+                  <ion-row>
+                    <ion-label>Duración en minutos</ion-label>
+                    <ion-icon
+                      name="close-outline"
+                      (click)="tiempoRangeControl.reset()">
+                    </ion-icon>
+                  </ion-row>
+                  <ion-row>
+                    <ion-range
+                      formControlName="tiempo"
+                      aria-label="Duración en minutos"
+                      fill="solid"
+                      [min]="30"
+                      [max]="840"
+                      [dualKnobs]="true"
+                      [value]="tiempoRange"
+                      [pin]="true">
+                    </ion-range>
+                  </ion-row>
+                </ion-grid>
+              </ion-item>
+              <ion-item>
+                <ion-checkbox
+                  formControlName="circular"
+                  labelPlacement="start">
+                  Circular
+                </ion-checkbox>
               </ion-item>
             </ion-list>
             <ion-button type="submit">BUSCAR</ion-button>
