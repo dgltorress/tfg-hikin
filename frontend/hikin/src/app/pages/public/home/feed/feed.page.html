@@ -9,7 +9,6 @@
       </ion-toolbar>
     </ion-header>
 
-    <app-explore-container name="FEED"></app-explore-container>
-    <!--<ion-button (click)="testApi()"></ion-button>-->
+    <app-hikin-publicacion *ngFor="let publicacion of publicaciones" [publicacion]="publicacion"></app-hikin-publicacion>
   </ion-content>
 </div>

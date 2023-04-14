@@ -15,7 +15,7 @@ const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
 const { resolveURL, keepFields, toUniversalPath } = require( '../helpers/metodos.js' ); // Metodos generales
 const { logRequest } = require( '../helpers/log.js' ); // Registro
 const { generateJWT , JWTExpireMilliseconds } = require( '../helpers/jwt' ); // Generador de JSON Web Token
-const { deletePfp, pfpURL } = require( '../middleware/files.js' );
+const { deletePfp, pfpURL, postURL } = require( '../middleware/files.js' );
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // ----------------
@@ -224,22 +224,31 @@ const getFeed = async( req , res ) => {
     // Distingue los identificadores
     const idObjetivo = req.params.id;
     parameters.push( idObjetivo );
+    parameters.push( idObjetivo );
 
     // Paginación
     let pagFilter = '';
     if( req.query.p ){ // Se espera validado y procesado como entero
-        pagFilter += `LIMIT ?, ${elementosPorPagina}`;
+        pagFilter += ` ORDER BY fecha DESC LIMIT ?, ${elementosPorPagina}`;
         parameters.push( req.query.p * elementosPorPagina );
     } else {
-        pagFilter += `LIMIT 0, ${elementosPorPagina}`;
+        pagFilter += ` ORDER BY fecha DESC LIMIT 0, ${elementosPorPagina}`;
     }
 
     // Query
     adminConnection.query(
-`SELECT * FROM publicaciones AS p
+`SELECT p.*, u.nombre AS autornombre, u.imagen AS autorimagen,
+(SELECT denominacion FROM itinerarios WHERE id = p.itinerario) AS itinerariodenominacion,
+(SELECT nombre FROM clubes WHERE id = p.club) AS clubnombre,
+(k.publicacion IS NOT NULL) AS is_kudos,
+(SELECT COUNT(*) FROM kudos WHERE p.id = publicacion) AS n_kudos,
+(SELECT COUNT(*) FROM comentarios WHERE p.id = publicacion) AS n_comentarios
+FROM publicaciones AS p
 INNER JOIN sigue_a AS s ON s.seguido = p.autor
+INNER JOIN usuarios AS u ON u.id = p.autor
+LEFT JOIN kudos AS k
+ON p.id = k.publicacion AND k.usuario = ?
 WHERE s.seguidor = ?
-ORDER BY fecha DESC
 ${pagFilter}`, parameters,
         ( err , result ) => {
             if( err ){
@@ -249,7 +258,26 @@ ${pagFilter}`, parameters,
                 } );
                 logRequest( req , 'getFeed' , HTTP.error_server.internal , 'Error al obtener los recursos' );
             } else {
-                res.status( HTTP.success.ok ).json( result );
+                // Resolver URLs de imagen de publicación
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].imagen ){
+                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}${postURL}` , -4 );
+                    }
+                }
+
+                // Resolver URLs de fotos de perfil
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].autorimagen ){
+                        result[ i ].autorimagen = resolveURL( result[ i ].autorimagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
+                    }
+                }
+
+                res.status( HTTP.success.ok ).json( {
+                    publicaciones: result,
+                    paginado: {
+                        actual: ( req.query.p ) ? req.query.p : 0
+                    }
+                } );
                 logRequest( req , 'getFeed' , HTTP.success.ok );
             }
         }

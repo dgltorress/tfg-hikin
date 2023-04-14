@@ -1,3 +1,41 @@
-<p>
-  publicacion works!
-</p>
+<article class="publicacion">
+  <header>
+    <div class="pubMeta">
+      <div class="pubAuthor">
+        <ion-img [src]="publicacion.autorimagen" alt="" (ionError)="setDefaultPfp($event)"></ion-img>
+        <span>{{ publicacion.autornombre }}</span>
+      </div>
+      <div>
+        <span>{{ publicacion.fecha }}</span>
+      </div>
+    </div>
+    <div class="pubAssoc">
+      <div *ngIf="publicacion.itinerario">
+        <ion-icon name="trail-sign"></ion-icon>
+        <span>{{ publicacion.itinerariodenominacion }}</span>
+      </div>
+      <div *ngIf="publicacion.club">
+        <ion-icon name="people"></ion-icon>
+        <span>{{ publicacion.clubnombre }}</span>
+      </div>
+    </div>
+  </header>
+  <section>
+    <h2>{{ publicacion.titulo }}</h2>
+    <p>{{ publicacion.descripcion }}</p>
+  </section>
+  <ion-img *ngIf="publicacion.imagen" [src]="publicacion.imagen" alt="" (ionError)="setDefaultImage($event)"></ion-img>
+  <footer>
+    <div>
+      <ion-icon name="chatbox-outline"></ion-icon>
+      <span>{{ publicacion.n_comentarios }}</span>
+    </div>
+    <div>
+      <ion-icon name="thumbs-up-outline"></ion-icon>
+      <span>{{ publicacion.n_kudos }}</span>
+    </div>
+    <div>
+      <ion-icon name="share-social-outline"></ion-icon>
+    </div>
+  </footer>
+</article>
