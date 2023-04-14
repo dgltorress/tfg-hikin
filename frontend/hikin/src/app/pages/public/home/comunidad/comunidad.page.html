@@ -1,20 +1,6 @@
 <!--Contenido-->
 <div id="main-content">
-  <ion-header [translucent]="true">
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-menu-button menu="sidemenuLeft"></ion-menu-button>
-      </ion-buttons>
-      <ion-title>
-        COMUNIDAD
-      </ion-title>
-      <ion-buttons slot="end">
-        <ion-menu-button menu="sidemenuRight">
-          <ion-icon name="notifications-outline"></ion-icon>
-        </ion-menu-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
+  <app-hikin-mainheader [search]="searchBars.Comunidad"></app-hikin-mainheader>
   
   <ion-content [fullscreen]="true">
     <ion-header collapse="condense">

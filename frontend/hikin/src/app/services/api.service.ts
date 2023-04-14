@@ -477,19 +477,19 @@ export class ApiService {
   // = INFO =
 
   getLocalidades( options: TRequestOptions = {} ) : void {
-    options.endpoint = 'localidades';
+    options.endpoint = `${ApiService.endpoints.info}/localidades`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
   getAutonomias( options: TRequestOptions = {} ) : void {
-    options.endpoint = 'autonomias';
+    options.endpoint = `${ApiService.endpoints.info}/autonomias`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
 
   getProvincias( options: TRequestOptions = {} ) : void {
-    options.endpoint = 'provincias';
+    options.endpoint = `${ApiService.endpoints.info}/provincias`;
     options.method = ApiService.methods.GET;
     this.sendRequest( options );
   }
