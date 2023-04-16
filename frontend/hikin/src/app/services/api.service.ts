@@ -92,7 +92,7 @@ export class ApiService {
     // Construye la URL.
     const url = `${environment.apiBaseUrl}/${options.endpoint}`;
 
-    if( isDevMode() === true ) console.log( `[dev] Enviando petición a "${url}"...` );
+    if( isDevMode() === true ) console.log( `[dev] Enviando petición ${options.method} a "${url}"...` );
  
     // Envía la petición
     let observable: Observable<HttpResponse<Object>>;

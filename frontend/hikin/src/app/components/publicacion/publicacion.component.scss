@@ -1,7 +1,8 @@
 article{
+    width: 100%;
+    
     background-color: var(--ion-color-step-50);
 
-    margin-bottom: 1em;
     border-block: 1px solid var(--ion-color-step-100);
 }
 article>header,article>section{
@@ -10,11 +11,16 @@ article>header,article>section{
 article>header{
     padding-top: 1em;
 }
+article>section{
+    cursor: pointer;
+}
 article>ion-img{
+    width: 100%;
+    
     padding: 0;
 }
 
-article>footer, div.pubMeta, div.pubAuthor, div.pubAssoc{
+article>footer, div.meta, div.author, div.pubAssoc{
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -26,19 +32,22 @@ article>footer>div, div.pubAssoc>div{
 
     padding: .4em 0;
 }
-article>footer>div>span, div.pubAssoc>div:not(:first-child), div.pubAssoc>div>span, div.pubAuthor>span{
+article>footer>div>span, div.pubAssoc>div:not(:first-child), div.pubAssoc>div>span, div.author>span{
     margin-left: .5em;
 }
 
-div.pubMeta{
+div.meta{
     justify-content: space-between;
 }
-div.pubAuthor>ion-img{
+div.author{
+    cursor: pointer;
+}
+div.author>ion-img{
     object-fit: cover;
     width: 28px;
     height: 28px;
 }
-div.pubAuthor>ion-img::part(image){
+div.author>ion-img::part(image){
     border-radius: 100%;
 }
 

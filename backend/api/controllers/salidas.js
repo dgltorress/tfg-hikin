@@ -11,6 +11,10 @@
 const { adminConnection } = require( '../services/database.js' ); // Base de datos
 const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
 const { logRequest } = require( '../helpers/log.js' ); // Registro
+const { resolveURL, toUniversalPath } = require( '../helpers/metodos.js' ); // Metodos generales
+const { deletePostImage, pfpURL } = require( '../middleware/files.js' );
+const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
+
 
 // ----------------
 
@@ -142,8 +146,9 @@ const elementosPorPagina = 10;
 
     // Query
     adminConnection.query(
-`SELECT s.id, s.nombre, s.organizador,
-s.itinerario, s.club,
+`SELECT s.id, s.nombre, s.organizador, u.usuario AS organizadornombre, u.imagen AS organizadorimagen,
+s.itinerario, i.denominacion AS itinerariodenominacion,
+s.club, (SELECT nombre FROM clubes WHERE id = s.club) AS clubnombre,
 s.fecha_inicio, s.fecha_fin,
 s.privada, s.cancelada,
 l.codauto, l.cpro,
@@ -152,6 +157,7 @@ a.nombre AS nombreauto, pro.nombre AS nombrepro,
 NOT(p.pendiente IS NULL || p.pendiente = 0) AS is_invitado,
 (SELECT COUNT(*) FROM participa_en AS p WHERE s.id = p.salida) AS n_participantes
 FROM salidas AS s
+INNER JOIN usuarios AS u ON s.organizador = u.id
 INNER JOIN itinerarios AS i ON s.itinerario = i.id
 INNER JOIN localidades AS l ON i.localidad = l.id
 INNER JOIN autonomias AS a ON l.codauto = a.cod
@@ -167,6 +173,13 @@ parameters ,
                 } );
                 logRequest( req , 'getSalidas' , HTTP.error_server.internal , 'Error al obtener las salidas' );
             } else {
+                // Resolver URLs de fotos de perfil
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].organizadorimagen ){
+                        result[ i ].organizadorimagen = resolveURL( result[ i ].organizadorimagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
+                    }
+                }
+
                 res.status( HTTP.success.ok ).json( {
                     salidas: result,
                     paginado: {
@@ -192,8 +205,9 @@ const getSalida = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT s.id, s.nombre, s.organizador,
-s.itinerario, s.club,
+`SELECT s.id, s.nombre, s.organizador, u.usuario AS organizadornombre, u.imagen AS organizadorimagen,
+s.itinerario, i.denominacion AS itinerariodenominacion,
+s.club, (SELECT nombre FROM clubes WHERE id = s.club) AS clubnombre,
 s.fecha_inicio, s.fecha_fin,
 s.privada, s.cancelada,
 l.codauto, l.cpro,
@@ -202,6 +216,7 @@ a.nombre AS nombreauto, pro.nombre AS nombrepro,
 NOT(p.pendiente IS NULL || p.pendiente = 0) AS is_invitado,
 (SELECT COUNT(*) FROM participa_en AS p WHERE s.id = p.salida) AS n_participantes
 FROM salidas AS s
+INNER JOIN usuarios AS u ON s.organizador = u.id
 INNER JOIN itinerarios AS i ON s.itinerario = i.id
 INNER JOIN localidades AS l ON i.localidad = l.id
 INNER JOIN autonomias AS a ON l.codauto = a.cod
@@ -220,6 +235,13 @@ WHERE s.id = ?`,
                     res.status( HTTP.error_client.not_found ).send();
                     logRequest( req , 'getSalida', HTTP.error_client.not_found );
                     return;
+                }
+
+                // Resolver URLs de fotos de perfil
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ 0 ].organizadorimagen ){
+                        result[ 0 ].organizadorimagen = resolveURL( result[ 0 ].organizadorimagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
+                    }
                 }
 
                 res.status( HTTP.success.ok ).json( result[ 0 ] );

@@ -234,7 +234,9 @@ const getComentarios = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT * FROM comentarios
+`SELECT c.*, u.usuario AS autornombre, u.imagen AS autorimagen
+FROM comentarios AS c
+INNER JOIN usuarios AS u ON c.autor = u.id
 WHERE publicacion = ?
 ORDER BY fecha DESC`,
         [  idObjetivo ],
@@ -246,6 +248,13 @@ ORDER BY fecha DESC`,
                 } );
                 logRequest( req , 'getComentarios' , HTTP.error_server.internal , 'Error al obtener el recurso' );
             } else {
+                // Resolver URLs de fotos de perfil
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].autorimagen ){
+                        result[ i ].autorimagen = resolveURL( result[ i ].autorimagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
+                    }
+                }
+
                 res.status( HTTP.success.ok ).json( result );
                 logRequest( req , 'getComentarios', HTTP.success.ok );
             }

@@ -1,0 +1,78 @@
+article{
+    width: 100%;
+    
+    background-color: var(--ion-color-step-50);
+
+    border-block: 1px solid var(--ion-color-step-100);
+}
+article>header{
+    cursor: pointer;
+    font-weight: bold;
+}
+article>header,article>section,article>footer{
+    padding: .5em 1.2em;
+}
+article>header,article>footer{
+    padding-top: 1em;
+}
+article>section,div.fechas{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+article>footer>div{
+    cursor: pointer;
+
+    margin-bottom: .5em;
+}
+
+h2{
+    font-family: 'Inter', 'Franklin Gothic Medium', 'Arial Narrow', fantasy;
+    font-size: 22px;
+
+    margin-top: 0;
+}
+
+article>section>div{
+    margin-bottom: .5em;
+}
+
+div.meta, div.author{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+div.meta,article>footer{
+    justify-content: space-between;
+}
+div.author{
+    cursor: pointer;
+}
+article>section>div>span, footer>div>span, div.author>span{
+    margin-left: .5em;
+}
+div.author>ion-img{
+    object-fit: cover;
+    width: 28px;
+    height: 28px;
+}
+div.author>ion-img::part(image){
+    border-radius: 100%;
+}
+
+ion-icon{
+    font-size: 24px;
+    vertical-align: middle;
+}
+
+div.fechas{
+    align-items: center;
+
+    font-size: 18px;
+
+    margin-top: .5em;
+}
+div.fechas>span{
+    margin: 0;
+}

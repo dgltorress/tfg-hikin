@@ -1,0 +1,35 @@
+<article class="salida">
+  <header>
+    <h2 [routerLink]="'/salidas/'+salida.id" routerDirection="forward">{{ salida.nombre }}</h2>
+  </header>
+  <section>
+    <div style="cursor: pointer;">
+      <ion-icon name="trail-sign"></ion-icon>
+      <span [routerLink]="'/itinerarios/'+salida.itinerario" routerDirection="forward">{{ salida.itinerariodenominacion }}</span>
+    </div>
+    <div>
+      <ion-icon name="location"></ion-icon>
+      <span>{{ ( (salida.nombrepro) ? salida.nombrepro + ', ' : '' )  + salida.nombreauto }}</span>
+    </div>
+    <div class="fechas">
+      <span>{{ salida.fecha_inicio }}</span>
+      <span style="margin-inline: .5em;">&mdash;</span>
+      <span>{{ salida.fecha_fin }}</span>
+    </div>
+  </section>
+  <footer>
+    <div class="meta">
+      <div class="author" [routerLink]="'/usuarios/'+salida.organizador" routerDirection="forward">
+        <ion-img [src]="salida.organizadorimagen" [alt]="'Foto de perfil de '+salida.autornombre" (ionError)="setDefaultPfp($event)"></ion-img>
+        <span>{{ salida.organizadornombre }}</span>
+      </div>
+      <div>
+        <span>{{ salida.fecha }}</span>
+      </div>
+    </div>
+    <div *ngIf="salida.club">
+      <ion-icon name="people"></ion-icon>
+      <span [routerLink]="'/clubes/'+salida.club" routerDirection="forward">{{ salida.clubnombre }}</span>
+    </div>
+  </footer>
+</article>

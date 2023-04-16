@@ -1,8 +1,8 @@
 <article class="publicacion">
   <header>
-    <div class="pubMeta">
-      <div class="pubAuthor">
-        <ion-img [src]="publicacion.autorimagen" alt="" (ionError)="setDefaultPfp($event)"></ion-img>
+    <div class="meta">
+      <div class="author" [routerLink]="'/usuarios/'+publicacion.autor" routerDirection="forward">
+        <ion-img [src]="publicacion.autorimagen" [alt]="'Foto de perfil de '+publicacion.autornombre" (ionError)="setDefaultPfp($event)"></ion-img>
         <span>{{ publicacion.autornombre }}</span>
       </div>
       <div>
@@ -12,26 +12,26 @@
     <div class="pubAssoc">
       <div *ngIf="publicacion.itinerario">
         <ion-icon name="trail-sign"></ion-icon>
-        <span>{{ publicacion.itinerariodenominacion }}</span>
+        <span [routerLink]="'/itinerarios/'+publicacion.itinerario" routerDirection="forward">{{ publicacion.itinerariodenominacion }}</span>
       </div>
       <div *ngIf="publicacion.club">
         <ion-icon name="people"></ion-icon>
-        <span>{{ publicacion.clubnombre }}</span>
+        <span [routerLink]="'/clubes/'+publicacion.club" routerDirection="forward">{{ publicacion.clubnombre }}</span>
       </div>
     </div>
   </header>
-  <section>
+  <section [routerLink]="'/publicaciones/'+publicacion.id" routerDirection="forward">
     <h2>{{ publicacion.titulo }}</h2>
     <p>{{ publicacion.descripcion }}</p>
   </section>
   <ion-img *ngIf="publicacion.imagen" [src]="publicacion.imagen" alt="" (ionError)="setDefaultImage($event)"></ion-img>
   <footer>
-    <div>
+    <div [routerLink]="'/publicaciones/'+publicacion.id" routerDirection="forward">
       <ion-icon name="chatbox-outline"></ion-icon>
       <span>{{ publicacion.n_comentarios }}</span>
     </div>
     <div>
-      <ion-icon name="thumbs-up-outline"></ion-icon>
+      <ion-icon [name]="( publicacion.is_kudos ) ? 'thumbs-up' : 'thumbs-up-outline'" (click)="toggleKudos($event)"></ion-icon>
       <span>{{ publicacion.n_kudos }}</span>
     </div>
     <div>

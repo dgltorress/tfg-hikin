@@ -1,0 +1,17 @@
+<article class="comentario">
+  <header>
+    <div class="meta">
+      <div class="author" [routerLink]="'/usuarios/'+comentario.autor" routerDirection="forward">
+        <ion-img [src]="comentario.autorimagen" [alt]="'Foto de perfil de '+comentario.autornombre" (ionError)="setDefaultPfp($event)"></ion-img>
+        <span>{{ comentario.autornombre }}</span>
+      </div>
+      <div>
+        <span>{{ comentario.fecha }}</span>
+      </div>
+    </div>
+  </header>
+  <section>
+    <p>{{ comentario.texto }}</p>
+  </section>
+  
+</article>

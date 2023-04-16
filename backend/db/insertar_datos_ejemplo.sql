@@ -61,7 +61,7 @@ INSERT INTO usuarios(
   2, STR_TO_DATE( "1996-08-09" , "%Y-%m-%d" ), true, false,
   STR_TO_DATE( "2023-02-05 18:41" , "%Y-%m-%d %H:%i" ),
   STR_TO_DATE( "2023-03-17 19:20" , "%Y-%m-%d %H:%i" ),
-  1387731500 , "../assets/img/pfp/2023/3/1/janesmith.jpg"
+  1387731500 , NULL
 ), (
   5, "dickroe", "dickroe@mail.com",
   "$2b$10$9KvDd6lRmed.iEJ/qZ1lAuTT5zwH5UWEwk2xvUETU1/gye8x2uwH6",
@@ -69,7 +69,7 @@ INSERT INTO usuarios(
   0, STR_TO_DATE( "1990-12-01" , "%Y-%m-%d" ), true, true,
   STR_TO_DATE( "2023-01-04 18:41" , "%Y-%m-%d %H:%i" ),
   STR_TO_DATE( "2023-03-17 19:20" , "%Y-%m-%d %H:%i" ),
-  1875640622 , "../assets/img/pfp/2023/3/1/dickroe.jpg"
+  1875640622 , NULL
 );
 
 -- Seguimientos entre usuarios

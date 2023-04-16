@@ -1,0 +1,3 @@
+club1.jpg: https://commons.wikimedia.org/wiki/File:Aragon_in_Spain_(including_Canarias).svg
+club2.jpg: https://www.fcdme.es/pagina/tipos-senderos-homologados
+club3.jpg: https://www.casasrurales.net/blog/los-20-pueblos-mas-bonitos-de-madrid

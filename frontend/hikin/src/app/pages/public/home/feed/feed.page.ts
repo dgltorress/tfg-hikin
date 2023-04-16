@@ -1,6 +1,6 @@
 import { Component, OnInit, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, InfiniteScrollCustomEvent  } from '@ionic/angular';
 
 import { ExploreContainerComponent } from 'src/app/components/explore-container/explore-container.component';
 import { ApiService } from 'src/app/services/api.service';
@@ -10,13 +10,14 @@ import { AlertService } from 'src/app/services/alert.service';
 import { MainheaderComponent } from 'src/app/layouts/mainheader/mainheader.component';
 
 import { PublicacionComponent } from 'src/app/components/publicacion/publicacion.component';
+import { SalidaprevComponent } from 'src/app/components/salidaprev/salidaprev.component';
 
 @Component({
   selector: 'app-feed',
   templateUrl: 'feed.page.html',
   styleUrls: ['feed.page.scss','../home.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, MainheaderComponent, PublicacionComponent, ExploreContainerComponent]
+  imports: [IonicModule, CommonModule, MainheaderComponent, PublicacionComponent, SalidaprevComponent, ExploreContainerComponent]
 })
 export class FeedPage implements OnInit {
 
@@ -30,7 +31,8 @@ export class FeedPage implements OnInit {
   ){}
 
   ngOnInit(): void {
-    this.getFeed();
+    // this.getFeed(); <-------------------- DESCOMENTAR
+    this.testAPI();
   }
 
   getFeed(): void {
@@ -56,7 +58,7 @@ export class FeedPage implements OnInit {
                 try{
                   publicacionActual.fecha = new Intl.DateTimeFormat( 'es', {
                     dateStyle: 'medium', timeStyle: 'short'
-                  } ).format( new Date( publicacionActual.fecha ),  );console.log(publicacionActual.fecha);
+                  } ).format( new Date( publicacionActual.fecha ) );
                 } catch( err ){
                   if( isDevMode() === true ) console.warn( '[getFeed()] ERROR al traducir la fecha de la publicación: ', err );
                 }
@@ -74,5 +76,53 @@ export class FeedPage implements OnInit {
     } else {
       if( isDevMode() === true ) console.warn( '[getFeed()] No se ha podido extraer el identificador del usuario desde el servicio' );
     }
+  }
+
+  testAPI(): void {
+    this.api.getSalidas( {
+      successCallback: ( response: any ) => {
+        if( this.publicaciones === null ) this.publicaciones = [];
+
+        const responseBody: any = response.body;
+
+        if( Array.isArray( responseBody.salidas ) === true ){
+          const responsePublicaciones = responseBody.salidas;
+
+          for( let i = 0; i < responsePublicaciones.length; ++i ){
+            const publicacionActual = responsePublicaciones[ i ];
+            
+            if( publicacionActual &&
+                publicacionActual.fecha_inicio &&
+                publicacionActual.fecha_fin ){
+              try{
+                publicacionActual.fecha_inicio = new Intl.DateTimeFormat( 'es', {
+                  dateStyle: 'medium', timeStyle: 'short'
+                } ).format( new Date( publicacionActual.fecha_inicio ) );
+                publicacionActual.fecha_fin = new Intl.DateTimeFormat( 'es', {
+                  dateStyle: 'medium', timeStyle: 'short'
+                } ).format( new Date( publicacionActual.fecha_fin ) );
+              } catch( err ){
+                if( isDevMode() === true ) console.warn( '[getFeed()] ERROR al traducir la fecha de la publicación: ', err );
+              }
+            }
+            this.publicaciones.push( publicacionActual );
+          }
+        } else {
+          this.alertService.showToast( 'Ha habido un error. Inténtalo de nuevo más tarde.' ); // Información errónea del servidor
+        }
+      },
+      failedCallback: ( errorResponse: any ) => {
+        this.alertService.errorToToast( errorResponse.error );
+      }
+    } );
+  }
+
+  onIonInfinite( ev: any ) {
+    // this.getFeed(); <-------------------- DESCOMENTAR
+    this.testAPI();
+
+    setTimeout( () => {
+      ( ev as InfiniteScrollCustomEvent ).target.complete();
+    }, 2000 );
   }
 }
