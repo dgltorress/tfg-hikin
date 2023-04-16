@@ -1,0 +1,15 @@
+<article class="usuarioprev">
+  <div class="meta">
+    <div class="author" [routerLink]="'/usuarios/'+usuario.id" routerDirection="forward">
+      <ion-img [src]="usuario.imagen" [alt]="'Foto de perfil de '+usuario.usuario" (ionError)="setDefaultPfp($event)"></ion-img>
+      <span>{{ usuario.usuario }}</span>
+    </div>
+    <div>
+      <ion-button [fill]="( usuario.is_siguiendo ) ? 'outline' : 'solid'" (click)="toggleSeguimiento($event)">
+        {{ ( usuario.is_siguiendo ) ? UsuarioPrev.textoSiguiendo : UsuarioPrev.textoSeguir }}
+      </ion-button>
+    </div>
+  </div>
+</article>
+
+<!--*ngIf="( userService.user && ( userService.user.id !== usuario.id ) )" MODAL COMPARTIIIIIIIIIIIIIIIIR-->

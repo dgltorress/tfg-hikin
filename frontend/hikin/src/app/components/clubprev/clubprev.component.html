@@ -1,0 +1,22 @@
+<article class="clubprev">
+  <div class="meta">
+    <div class="author" [routerLink]="'/clubes/'+club.id" routerDirection="forward">
+      <ion-img [src]="club.imagen" [alt]="'Foto de club de '+club.nombre" (ionError)="setDefaultClub($event)"></ion-img>
+      <ion-label text-wrap>
+        <h2>{{ club.nombre }}</h2>
+        <p>{{ club.n_miembros + ' miembro' + ( ( club.n_miembros !== 1 ) ? 's' : '' ) }}</p>
+      </ion-label>
+    </div>
+    <div slot="end">
+      <ion-button *ngIf="club.privado && !club.is_miembro && club.is_invitado" [fill]="( club.is_miembro ) ? 'outline' : 'solid'" (click)="toggleMembresia($event)">
+        {{ ( club.is_miembro ) ? ClubPrev.textoMiembro : ClubPrev.textoInvitacion }}
+      </ion-button>
+      <ion-icon *ngIf="club.privado && !club.is_miembro && !club.is_invitado" name="lock-closed"></ion-icon>
+      <ion-button *ngIf="( !club.privado ) || ( club.privado && club.is_miembro )" [fill]="( club.is_miembro ) ? 'outline' : 'solid'" (click)="toggleMembresia($event)">
+        {{ ( club.is_miembro ) ? ClubPrev.textoMiembro : ClubPrev.textoUnirse }}
+      </ion-button>
+    </div>
+  </div>
+</article>
+
+<!--*ngIf="( userService.user && ( userService.user.id !== usuario.id ) )" MODAL COMPARTIIIIIIIIIIIIIIIIR Y BOTONES ADMIN-->

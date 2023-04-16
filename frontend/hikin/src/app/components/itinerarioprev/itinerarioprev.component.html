@@ -1,0 +1,26 @@
+<article class="itinerarioprev" [routerLink]="'/itinerarios/'+itinerario.id" routerDirection="forward">
+  <header>
+    <ion-label text-wrap>
+      <h2>{{ itinerario.denominacion }}</h2>
+      <p>{{ itinerario.cod }}</p>
+    </ion-label>
+    <div class="author">
+      <ion-icon name="location" title="Ubicación"></ion-icon>
+      <span>{{ ( ( itinerario.provincia ) ? itinerario.provincia + ', ' : '' )  + itinerario.autonomia }}</span>
+    </div>
+  </header>
+  <footer>
+    <div class="author">
+      <ion-icon src="assets/svg/distance-svgrepo-com.svg" title="Distancia"></ion-icon>
+      <span [innerHTML]="itinerario.distanciakm"></span>
+    </div>
+    <div class="author">
+      <ion-icon src="assets/svg/altitude-svgrepo-com.svg" title="Desnivel"></ion-icon>
+      <span [innerHTML]="itinerario.desnivelm"></span>
+    </div>
+    <div class="author">
+      <ion-icon src="assets/svg/levels-svgrepo-com.svg" title="Dificultad"></ion-icon>
+      <span>{{ itinerario.dificultadnombre }}</span>
+    </div>
+  </footer>
+</article>

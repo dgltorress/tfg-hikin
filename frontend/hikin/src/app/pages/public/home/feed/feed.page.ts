@@ -10,14 +10,14 @@ import { AlertService } from 'src/app/services/alert.service';
 import { MainheaderComponent } from 'src/app/layouts/mainheader/mainheader.component';
 
 import { PublicacionComponent } from 'src/app/components/publicacion/publicacion.component';
-import { SalidaprevComponent } from 'src/app/components/salidaprev/salidaprev.component';
+import { ItinerarioprevComponent } from 'src/app/components/itinerarioprev/itinerarioprev.component';
 
 @Component({
   selector: 'app-feed',
   templateUrl: 'feed.page.html',
   styleUrls: ['feed.page.scss','../home.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, MainheaderComponent, PublicacionComponent, SalidaprevComponent, ExploreContainerComponent]
+  imports: [IonicModule, CommonModule, MainheaderComponent, PublicacionComponent, ItinerarioprevComponent, ExploreContainerComponent]
 })
 export class FeedPage implements OnInit {
 
@@ -79,32 +79,28 @@ export class FeedPage implements OnInit {
   }
 
   testAPI(): void {
-    this.api.getSalidas( {
+    this.api.getItinerarios( {
       successCallback: ( response: any ) => {
         if( this.publicaciones === null ) this.publicaciones = [];
 
         const responseBody: any = response.body;
 
-        if( Array.isArray( responseBody.salidas ) === true ){
-          const responsePublicaciones = responseBody.salidas;
+        if( Array.isArray( responseBody.itinerarios ) === true ){
+          const responsePublicaciones = responseBody.itinerarios;
 
           for( let i = 0; i < responsePublicaciones.length; ++i ){
             const publicacionActual = responsePublicaciones[ i ];
             
-            if( publicacionActual &&
-                publicacionActual.fecha_inicio &&
-                publicacionActual.fecha_fin ){
+            /*if( publicacionActual &&
+                publicacionActual.fecha ){
               try{
-                publicacionActual.fecha_inicio = new Intl.DateTimeFormat( 'es', {
+                publicacionActual.fecha = new Intl.DateTimeFormat( 'es', {
                   dateStyle: 'medium', timeStyle: 'short'
-                } ).format( new Date( publicacionActual.fecha_inicio ) );
-                publicacionActual.fecha_fin = new Intl.DateTimeFormat( 'es', {
-                  dateStyle: 'medium', timeStyle: 'short'
-                } ).format( new Date( publicacionActual.fecha_fin ) );
+                } ).format( new Date( publicacionActual.fecha ) );
               } catch( err ){
                 if( isDevMode() === true ) console.warn( '[getFeed()] ERROR al traducir la fecha de la publicación: ', err );
               }
-            }
+            }*/
             this.publicaciones.push( publicacionActual );
           }
         } else {

@@ -1,0 +1,20 @@
+<article class="comentario">
+  <header>
+    <div class="meta">
+      <div class="author" [routerLink]="'/usuarios/'+resena.usuario" routerDirection="forward">
+        <ion-img [src]="resena.autorimagen" [alt]="'Foto de perfil de '+resena.autornombre" (ionError)="setDefaultPfp($event)"></ion-img>
+        <span>{{ resena.autornombre }}</span>
+      </div>
+      <div>
+        <span>{{ resena.fecha }}</span>
+      </div>
+    </div>
+  </header>
+  <div>
+    <div class="estrellas">
+      <ion-icon *ngFor="let v of valoracion" name="star" color="warning"></ion-icon>
+      <ion-icon *ngFor="let r of resto" name="star"></ion-icon>
+    </div>
+    <p>{{ resena.observaciones }}</p>
+  </div>
+</article>

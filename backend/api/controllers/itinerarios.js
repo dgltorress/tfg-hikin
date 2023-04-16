@@ -10,7 +10,10 @@
 // Propio
 const { adminConnection } = require( '../services/database.js' ); // Base de datos
 const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
+const { resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
 const { logRequest } = require( '../helpers/log.js' ); // Registro
+const { pfpURL } = require( '../middleware/files.js' );
+const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // ----------------
 
@@ -185,7 +188,7 @@ const getItinerarios = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT i.id, i.cod, i.denominacion,
+`SELECT i.id, i.cod, i.denominacion, i.distancia, i.desnivel, i.dificultad,
 l.codauto, l.cpro,
 a.nombre AS autonomia, p.nombre AS provincia
 FROM itinerarios AS i
@@ -267,10 +270,13 @@ const getResenas = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT * FROM resenas
+`SELECT r.*, u.nombre AS autornombre, u.imagen AS autorimagen
+
+FROM resenas AS r
+INNER JOIN usuarios AS u ON r.usuario = u.id
 WHERE itinerario = ?
 ORDER BY fecha DESC`,
-        [  idObjetivo ],
+        [ idObjetivo ],
         ( err , result ) => {
             if( err ){
                 console.error( err );
@@ -279,6 +285,13 @@ ORDER BY fecha DESC`,
                 } );
                 logRequest( req , 'getResenas' , HTTP.error_server.internal , 'Error al obtener el recurso' );
             } else {
+                // Resolver URLs de fotos de perfil
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].autorimagen ){
+                        result[ i ].autorimagen = resolveURL( result[ i ].autorimagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
+                    }
+                }
+
                 res.status( HTTP.success.ok ).json( result );
                 logRequest( req , 'getResenas', HTTP.success.ok );
             }

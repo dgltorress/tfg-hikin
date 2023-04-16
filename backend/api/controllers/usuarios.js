@@ -23,7 +23,7 @@ const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // === INICIALIZAR
 
-const elementosPorPagina = 2;
+const elementosPorPagina = 20;
 
 // --------------------------------
 
@@ -37,10 +37,15 @@ const elementosPorPagina = 2;
  * @param {*} res Respuesta del servidor.
  */
 const getUsuariosBasicos = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+
     // Construir filtro SQL
     let filter = '';
     let parameters = [];
     let firstQuery = true;
+
+    parameters.push( idSolicitante );
     
     if( req.query.usuario ){
         req.query.usuario = `%${req.query.usuario}%`;
@@ -75,7 +80,14 @@ const getUsuariosBasicos = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT id, usuario, nombre, imagen, privado FROM usuarios ${filter}` ,
+`SELECT u.id, u.usuario, u.nombre, u.imagen, u.privado,
+(seguidor IS NOT NULL) AS is_siguiendo,
+(SELECT COUNT(*) FROM sigue_a WHERE seguido = u.id) AS n_seguidores
+
+FROM usuarios AS u
+LEFT JOIN sigue_a AS s
+ON u.id = s.seguido AND s.seguidor = ?
+${filter}` ,
 parameters ,
         ( err , result ) => {
             if( err ){

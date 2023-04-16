@@ -5,56 +5,63 @@ import { RouterModule } from '@angular/router';
 
 import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
+import { UserService } from 'src/app/services/user.service';
 
 import { commonMethods } from '../commonMethods';
 
 @Component({
-  selector: 'app-hikin-publicacion',
-  templateUrl: './publicacion.component.html',
-  styleUrls: ['../commonStyle.scss','./publicacion.component.scss'],
+  selector: 'app-hikin-usuarioprev',
+  templateUrl: './usuarioprev.component.html',
+  styleUrls: ['../commonStyle.scss','./usuarioprev.component.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule]
 })
-export class PublicacionComponent implements OnInit {
+export class UsuarioprevComponent  implements OnInit {
 
-  @Input() publicacion: any;
+  @Input() usuario: any;
+
+  public static readonly textoSeguir: string = 'Seguir';
+  public static readonly textoSiguiendo: string = 'Siguiendo';
+
+  public UsuarioPrev: typeof UsuarioprevComponent = UsuarioprevComponent;
 
   constructor(
     private api: ApiService,
     private alertService: AlertService,
+    public userService: UserService
   ){
   }
 
   ngOnInit(){}
 
   /**
-   * Da o quita kudos a la publicación.
+   * Sigue o deja de seguir a un usuario
    * 
    * @param ev 
    */
-  toggleKudos( ev: any ): void {
+   toggleSeguimiento( ev: any ): void {
     try{
-      // Tiene kudos: quitar
-      if( this.publicacion.is_kudos ){
-        this.api.quitarKudos( this.publicacion.id, {
+      // Está siguiendo: dejar de seguir
+      if( this.usuario.is_siguiendo ){
+        this.api.deseguirUsuario( this.usuario.id, {
           successCallback: ( response: any ) => {
-            this.publicacion.is_kudos = 0;
-            --this.publicacion.n_kudos;
+            this.usuario.is_siguiendo = 0;
+            --this.usuario.n_seguidores;
 
-            ev.target.name = 'thumbs-up-outline';
+            ev.target.fill = 'solid';
           },
           failedCallback: ( errorResponse: any ) => {
             this.alertService.errorToToast( errorResponse.error );
           }
         } );
-      // No tiene kudos: dar
+      // No está siguiendo: seguir
       } else{
-        this.api.darKudos( this.publicacion.id, {
+        this.api.seguirUsuario( this.usuario.id, {
           successCallback: ( response: any ) => {
-            this.publicacion.is_kudos = 1;
-            ++this.publicacion.n_kudos;
+            this.usuario.is_siguiendo = 1;
+            ++this.usuario.n_seguidores;
 
-            ev.target.name = 'thumbs-up';
+            ev.target.fill = 'outline';
           },
           failedCallback: ( errorResponse: any ) => {
             this.alertService.errorToToast( errorResponse.error );
@@ -69,6 +76,5 @@ export class PublicacionComponent implements OnInit {
     }
   }
 
-  setDefaultImage( ev: any ) : void { commonMethods.setDefaultImage( ev ) }
   setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ) }
 }

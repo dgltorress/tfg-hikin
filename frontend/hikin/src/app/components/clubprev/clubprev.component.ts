@@ -5,56 +5,67 @@ import { RouterModule } from '@angular/router';
 
 import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
+import { UserService } from 'src/app/services/user.service';
 
 import { commonMethods } from '../commonMethods';
 
 @Component({
-  selector: 'app-hikin-publicacion',
-  templateUrl: './publicacion.component.html',
-  styleUrls: ['../commonStyle.scss','./publicacion.component.scss'],
+  selector: 'app-hikin-clubprev',
+  templateUrl: './clubprev.component.html',
+  styleUrls: ['../commonStyle.scss','./clubprev.component.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule]
 })
-export class PublicacionComponent implements OnInit {
+export class ClubprevComponent  implements OnInit {
 
-  @Input() publicacion: any;
+  @Input() club: any;
+
+  public static readonly textoUnirse: string = 'Unirse';
+  public static readonly textoMiembro: string = 'Miembro';
+
+  public static readonly textoInvitacion: string = 'Aceptar invitación';
+
+  public ClubPrev: typeof ClubprevComponent = ClubprevComponent;
 
   constructor(
     private api: ApiService,
     private alertService: AlertService,
+    public userService: UserService
   ){
   }
 
   ngOnInit(){}
 
   /**
-   * Da o quita kudos a la publicación.
+   * Se une o sale de un club
    * 
    * @param ev 
    */
-  toggleKudos( ev: any ): void {
+   toggleMembresia( ev: any ): void {
     try{
-      // Tiene kudos: quitar
-      if( this.publicacion.is_kudos ){
-        this.api.quitarKudos( this.publicacion.id, {
+      // Es miembro: desinscribirse
+      if( this.club.is_miembro ){
+        this.api.desinscribirseClub( this.club.id, {
           successCallback: ( response: any ) => {
-            this.publicacion.is_kudos = 0;
-            --this.publicacion.n_kudos;
+            this.club.is_miembro = 0;
+            this.club.is_invitado = 0;
+            --this.club.n_miembros;
 
-            ev.target.name = 'thumbs-up-outline';
+            ev.target.fill = 'solid';
           },
           failedCallback: ( errorResponse: any ) => {
             this.alertService.errorToToast( errorResponse.error );
           }
         } );
-      // No tiene kudos: dar
+      // No es miembro: inscribirse
       } else{
-        this.api.darKudos( this.publicacion.id, {
+        this.api.inscribirseClub( this.club.id, {
           successCallback: ( response: any ) => {
-            this.publicacion.is_kudos = 1;
-            ++this.publicacion.n_kudos;
+            this.club.is_miembro = 1;
+            this.club.is_invitado = 0;
+            ++this.club.n_miembros;
 
-            ev.target.name = 'thumbs-up';
+            ev.target.fill = 'outline';
           },
           failedCallback: ( errorResponse: any ) => {
             this.alertService.errorToToast( errorResponse.error );
@@ -69,6 +80,5 @@ export class PublicacionComponent implements OnInit {
     }
   }
 
-  setDefaultImage( ev: any ) : void { commonMethods.setDefaultImage( ev ) }
-  setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ) }
+  setDefaultClub( ev: any ) : void { commonMethods.setDefaultClub( ev ) }
 }

@@ -11,10 +11,10 @@
     </div>
     <div class="pubAssoc">
       <div *ngIf="publicacion.itinerario">
-        <ion-icon name="trail-sign"></ion-icon>
+        <ion-icon name="trail-sign" title="Itinerario asociado"></ion-icon>
         <span [routerLink]="'/itinerarios/'+publicacion.itinerario" routerDirection="forward">{{ publicacion.itinerariodenominacion }}</span>
       </div>
-      <div *ngIf="publicacion.club">
+      <div *ngIf="publicacion.club" title="Club asociado">
         <ion-icon name="people"></ion-icon>
         <span [routerLink]="'/clubes/'+publicacion.club" routerDirection="forward">{{ publicacion.clubnombre }}</span>
       </div>
@@ -27,15 +27,15 @@
   <ion-img *ngIf="publicacion.imagen" [src]="publicacion.imagen" alt="" (ionError)="setDefaultImage($event)"></ion-img>
   <footer>
     <div [routerLink]="'/publicaciones/'+publicacion.id" routerDirection="forward">
-      <ion-icon name="chatbox-outline"></ion-icon>
+      <ion-icon name="chatbox-outline" title="Comentarios"></ion-icon>
       <span>{{ publicacion.n_comentarios }}</span>
     </div>
     <div>
-      <ion-icon [name]="( publicacion.is_kudos ) ? 'thumbs-up' : 'thumbs-up-outline'" (click)="toggleKudos($event)"></ion-icon>
+      <ion-icon [name]="( publicacion.is_kudos ) ? 'thumbs-up' : 'thumbs-up-outline'" (click)="toggleKudos($event)" title="Kudos"></ion-icon>
       <span>{{ publicacion.n_kudos }}</span>
     </div>
     <div>
-      <ion-icon name="share-social-outline"></ion-icon>
+      <ion-icon name="share-social-outline" title="Compartir"></ion-icon>
     </div>
   </footer>
 </article>

@@ -6,19 +6,22 @@ import { RouterModule } from '@angular/router';
 import { commonMethods } from '../commonMethods';
 
 @Component({
-  selector: 'app-hikin-salidaprev',
-  templateUrl: './salidaprev.component.html',
-  styleUrls: ['../commonStyle.scss','./salidaprev.component.scss'],
+  selector: 'app-resena',
+  templateUrl: './resena.component.html',
+  styleUrls: ['../commonStyle.scss','./resena.component.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule]
 })
-export class SalidaprevComponent implements OnInit {
+export class ResenaComponent  implements OnInit {
 
-  @Input() salida: any;
+  @Input() resena: any;
 
-  constructor(){}
+  public valoracion: number[] = Array( 0 ).fill( 0 );
+  public resto: number[] = Array( 0 ).fill( 0 );
 
-  ngOnInit(){}
+  constructor() { }
+
+  ngOnInit() {}
 
   setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ) }
 }

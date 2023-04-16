@@ -1,0 +1,39 @@
+article{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    cursor: pointer;
+
+    padding-bottom: .75em;
+}
+article>*{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+h2{
+    font-size: 20px;
+
+    margin-top: .5em;
+}
+
+header{
+    max-width: 60%;
+}
+footer{
+    max-width: 40%;
+}
+footer ion-icon{
+    font-size: 20px;
+}
+footer>*:not(:first-child){
+    margin-top: .75em;
+}
+
+ion-label{
+    margin-bottom: .5em;
+}

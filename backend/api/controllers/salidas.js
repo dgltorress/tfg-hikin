@@ -11,8 +11,8 @@
 const { adminConnection } = require( '../services/database.js' ); // Base de datos
 const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
 const { logRequest } = require( '../helpers/log.js' ); // Registro
-const { resolveURL, toUniversalPath } = require( '../helpers/metodos.js' ); // Metodos generales
-const { deletePostImage, pfpURL } = require( '../middleware/files.js' );
+const { resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
+const { pfpURL } = require( '../middleware/files.js' );
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 
