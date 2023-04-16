@@ -1,0 +1,9 @@
+<article class="comentario">
+  <header>
+    <ion-img [src]="distintivo.imagen" [alt]="'Imagen del distintivo '+distintivo.id" [class.locked]="bloqueado" (ionError)="setDefaultDistintivo($event)"></ion-img>
+    <section>
+      <h2>{{ distintivo.nombre }}</h2>
+    </section>
+  </header>
+  <p>{{ distintivo.descripcion }}</p>
+</article>

@@ -471,8 +471,11 @@ const getResenas = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT * FROM resenas
-WHERE usuario = ?
+`SELECT r.*, u.usuario AS autornombre, u.imagen AS autorimagen
+
+FROM resenas AS r
+INNER JOIN usuarios AS u ON r.usuario = u.id
+WHERE itinerario = ?
 ORDER BY fecha DESC`, [
     idObjetivo
 ],
@@ -484,6 +487,13 @@ ORDER BY fecha DESC`, [
                 } );
                 logRequest( req , 'getResenas' , HTTP.error_server.internal , 'Error al obtener los recursos' );
             } else {
+                // Resolver URLs de fotos de perfil
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].autorimagen ){
+                        result[ i ].autorimagen = resolveURL( result[ i ].autorimagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
+                    }
+                }
+
                 res.status( HTTP.success.ok ).json( result );
                 logRequest( req , 'getResenas' , HTTP.success.ok );
             }
@@ -503,9 +513,12 @@ const getDistintivos = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT d.* FROM distintivos AS d
-INNER JOIN recibe_distintivo AS r ON d.id = r.distintivo
-WHERE r.usuario = ?`, [
+`SELECT d.*, ISNULL(r.usuario) AS bloqueado
+
+FROM distintivos AS d
+LEFT JOIN recibe_distintivo AS r
+ON d.id = r.distintivo
+AND r.usuario = ?`, [
     idObjetivo
 ],
         ( err , result ) => {

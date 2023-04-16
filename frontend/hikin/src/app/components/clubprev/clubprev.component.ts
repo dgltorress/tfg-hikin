@@ -80,5 +80,5 @@ export class ClubprevComponent  implements OnInit {
     }
   }
 
-  setDefaultClub( ev: any ) : void { commonMethods.setDefaultClub( ev ) }
+  setDefaultClub( ev: any ) : void { commonMethods.setDefaultClub( ev ); }
 }

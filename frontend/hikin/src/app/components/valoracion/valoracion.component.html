@@ -1,0 +1,16 @@
+<article class="comentario">
+  <header>
+    <div class="meta">
+      <div class="estrellas">
+        <ion-icon *ngFor="let v of valoracion" name="star" class="rellena"></ion-icon>
+        <ion-icon *ngFor="let r of resto" name="star" class="vacia"></ion-icon>
+      </div>
+      <div>
+        <ion-checkbox [disabled]="true" [checked]="valoracionUsuario.acude">Ha acudido</ion-checkbox>
+      </div>
+    </div>
+  </header>
+  <div *ngIf="valoracionUsuario.observaciones">
+    <p>{{ valoracionUsuario.observaciones }}</p>
+  </div>
+</article>

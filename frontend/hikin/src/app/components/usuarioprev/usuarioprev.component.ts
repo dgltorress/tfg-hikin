@@ -76,5 +76,5 @@ export class UsuarioprevComponent  implements OnInit {
     }
   }
 
-  setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ) }
+  setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ); }
 }

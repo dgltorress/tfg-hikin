@@ -25,7 +25,9 @@ export class PublicacionComponent implements OnInit {
   ){
   }
 
-  ngOnInit(){}
+  ngOnInit(){
+    this.publicacion.fecha = commonMethods.fechaISOALegible( this.publicacion.fecha );
+  }
 
   /**
    * Da o quita kudos a la publicación.
@@ -69,6 +71,6 @@ export class PublicacionComponent implements OnInit {
     }
   }
 
-  setDefaultImage( ev: any ) : void { commonMethods.setDefaultImage( ev ) }
-  setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ) }
+  setDefaultImage( ev: any ) : void { commonMethods.setDefaultImage( ev ); }
+  setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ); }
 }

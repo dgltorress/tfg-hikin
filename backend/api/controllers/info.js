@@ -11,6 +11,8 @@
 const { adminConnection } = require( '../services/database.js' ); // Base de datos
 const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
 const { logRequest } = require( '../helpers/log.js' ); // Registro
+const { resolveURL } = require( '../helpers/metodos.js' ); // Metodos generales
+const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // ----------------
 
@@ -110,6 +112,41 @@ const getProvincias = async( req , res ) => {
     );
 }
 
+/**
+ * Obtiene los distintivos que hay en la base de datos.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+ const getDistintivos = async( req , res ) => {
+    // Distingue los identificadores
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+        'SELECT * FROM distintivos', [],
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getDistintivos' , HTTP.error_server.internal , 'Error al obtener los recursos' );
+            } else {
+                // Resolver URLs de imágenes de distintivos
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].imagen ){
+                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}/assets/img/distintivo/` , -4 );
+                    }
+                }
+
+                res.status( HTTP.success.ok ).json( result );
+                logRequest( req , 'getDistintivos' , HTTP.success.ok );
+            }
+        }
+    );
+}
+
 // -----------------------------------------------
 
 
@@ -118,4 +155,4 @@ const getProvincias = async( req , res ) => {
 
 
 // Marcar los metodos para exportar
-module.exports = { getLocalidades, getAutonomias, getProvincias };
+module.exports = { getLocalidades, getAutonomias, getProvincias, getDistintivos };

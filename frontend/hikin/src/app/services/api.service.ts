@@ -494,6 +494,12 @@ export class ApiService {
     this.sendRequest( options );
   }
 
+  getDistintivos( options: TRequestOptions = {} ) : void {
+    options.endpoint = `${ApiService.endpoints.info}/distintivos`;
+    options.method = ApiService.methods.GET;
+    this.sendRequest( options );
+  }
+
   // ----------
 
 

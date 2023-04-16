@@ -12,8 +12,8 @@
   </header>
   <div>
     <div class="estrellas">
-      <ion-icon *ngFor="let v of valoracion" name="star" color="warning"></ion-icon>
-      <ion-icon *ngFor="let r of resto" name="star"></ion-icon>
+      <ion-icon *ngFor="let v of valoracion" name="star" class="rellena"></ion-icon>
+      <ion-icon *ngFor="let r of resto" name="star" class="vacia"></ion-icon>
     </div>
     <p>{{ resena.observaciones }}</p>
   </div>

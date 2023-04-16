@@ -270,7 +270,7 @@ const getResenas = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT r.*, u.nombre AS autornombre, u.imagen AS autorimagen
+`SELECT r.*, u.usuario AS autornombre, u.imagen AS autorimagen
 
 FROM resenas AS r
 INNER JOIN usuarios AS u ON r.usuario = u.id

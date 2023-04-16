@@ -10,14 +10,14 @@ import { AlertService } from 'src/app/services/alert.service';
 import { MainheaderComponent } from 'src/app/layouts/mainheader/mainheader.component';
 
 import { PublicacionComponent } from 'src/app/components/publicacion/publicacion.component';
-import { ItinerarioprevComponent } from 'src/app/components/itinerarioprev/itinerarioprev.component';
+import { DistintivoComponent } from 'src/app/components/distintivo/distintivo.component';
 
 @Component({
   selector: 'app-feed',
   templateUrl: 'feed.page.html',
   styleUrls: ['feed.page.scss','../home.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, MainheaderComponent, PublicacionComponent, ItinerarioprevComponent, ExploreContainerComponent]
+  imports: [IonicModule, CommonModule, MainheaderComponent, PublicacionComponent, DistintivoComponent, ExploreContainerComponent]
 })
 export class FeedPage implements OnInit {
 
@@ -79,14 +79,14 @@ export class FeedPage implements OnInit {
   }
 
   testAPI(): void {
-    this.api.getItinerarios( {
+    this.api.getUsuarioDistintivos( 1, {
       successCallback: ( response: any ) => {
         if( this.publicaciones === null ) this.publicaciones = [];
 
         const responseBody: any = response.body;
 
-        if( Array.isArray( responseBody.itinerarios ) === true ){
-          const responsePublicaciones = responseBody.itinerarios;
+        if( Array.isArray( responseBody ) === true ){
+          const responsePublicaciones = responseBody;
 
           for( let i = 0; i < responsePublicaciones.length; ++i ){
             const publicacionActual = responsePublicaciones[ i ];

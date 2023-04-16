@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { commonMethods } from '../commonMethods';
 
 @Component({
-  selector: 'app-resena',
+  selector: 'app-hikin-resena',
   templateUrl: './resena.component.html',
   styleUrls: ['../commonStyle.scss','./resena.component.scss'],
   standalone: true,
@@ -16,12 +16,17 @@ export class ResenaComponent  implements OnInit {
 
   @Input() resena: any;
 
-  public valoracion: number[] = Array( 0 ).fill( 0 );
-  public resto: number[] = Array( 0 ).fill( 0 );
+  public valoracion: number[] = Array( 0 );
+  public resto: number[] = Array( 0 );
 
-  constructor() { }
+  constructor(){}
 
-  ngOnInit() {}
+  ngOnInit(){
+    this.valoracion = Array( this.resena.valoracion ).fill( 0 );
+    this.resto = Array( 5 - this.resena.valoracion ).fill( 0 );
 
-  setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ) }
+    this.resena.fecha = commonMethods.fechaISOALegible( this.resena.fecha );
+  }
+
+  setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ); }
 }

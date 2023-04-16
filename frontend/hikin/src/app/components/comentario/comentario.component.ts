@@ -20,5 +20,5 @@ export class ComentarioComponent implements OnInit {
 
   ngOnInit(){}
 
-  setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ) }
+  setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ); }
 }
