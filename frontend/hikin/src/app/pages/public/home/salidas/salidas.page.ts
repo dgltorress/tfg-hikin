@@ -11,7 +11,7 @@ import { SalidaprevComponent } from 'src/app/components/salidaprev/salidaprev.co
 @Component({
   selector: 'app-salidas',
   templateUrl: 'salidas.page.html',
-  styleUrls: ['../commonStyle.scss','../home.page.scss','salidas.page.scss',],
+  styleUrls: ['../../commonStyle.scss','../home.page.scss','salidas.page.scss',],
   standalone: true,
   imports: [IonicModule, CommonModule, MainheaderComponent, SalidaprevComponent]
 })

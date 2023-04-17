@@ -13,7 +13,7 @@ import { PublicacionComponent } from 'src/app/components/publicacion/publicacion
 @Component({
   selector: 'app-feed',
   templateUrl: 'feed.page.html',
-  styleUrls: ['../commonStyle.scss','../home.page.scss','feed.page.scss'],
+  styleUrls: ['../../commonStyle.scss','../home.page.scss','feed.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, MainheaderComponent, PublicacionComponent]
 })

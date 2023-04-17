@@ -1,0 +1,11 @@
+<app-hikin-detailsheader titulo="Publicación"></app-hikin-detailsheader>
+
+<ion-content [fullscreen]="true" class="clean">
+  <app-hikin-publicacion *ngIf="publicacion" [publicacion]="publicacion"></app-hikin-publicacion>
+
+  <ion-list>
+    <ion-item *ngFor="let comentario of comentarios">
+      <app-hikin-comentario [comentario]="comentario"></app-hikin-comentario>
+    </ion-item>
+  </ion-list>
+</ion-content>

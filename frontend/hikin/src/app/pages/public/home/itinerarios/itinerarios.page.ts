@@ -11,7 +11,7 @@ import { ItinerarioprevComponent } from 'src/app/components/itinerarioprev/itine
 @Component({
   selector: 'app-itinerarios',
   templateUrl: 'itinerarios.page.html',
-  styleUrls: ['../commonStyle.scss','../home.page.scss','itinerarios.page.scss'],
+  styleUrls: ['../../commonStyle.scss','../home.page.scss','itinerarios.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, MainheaderComponent, ItinerarioprevComponent]
 })

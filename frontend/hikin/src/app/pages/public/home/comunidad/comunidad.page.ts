@@ -9,7 +9,7 @@ import { MainheaderComponent, SearchBars } from 'src/app/layouts/mainheader/main
 @Component({
   selector: 'app-comunidad',
   templateUrl: 'comunidad.page.html',
-  styleUrls: ['comunidad.page.scss','../home.page.scss'],
+  styleUrls: ['../../commonStyle.scss','../home.page.scss','comunidad.page.scss'],
   standalone: true,
   imports: [IonicModule, MainheaderComponent, ExploreContainerComponent]
 })

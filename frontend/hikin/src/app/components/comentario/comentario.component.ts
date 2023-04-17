@@ -18,7 +18,9 @@ export class ComentarioComponent implements OnInit {
 
   constructor(){}
 
-  ngOnInit(){}
+  ngOnInit(){
+    this.comentario.fecha = commonMethods.fechaISOALegible( this.comentario.fecha );
+  }
 
   setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ); }
 }

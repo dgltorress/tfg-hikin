@@ -1,14 +1,18 @@
 ion-content[role=feed] ion-list,
-ion-content[role=feed] ion-item{
+ion-content[role=feed] ion-item,
+ion-content.clean ion-list,
+ion-content.clean ion-item{
     margin: 0;
     padding: 0;
 }
 
-ion-content[role=feed] ion-list{
+ion-content[role=feed] ion-list,
+ion-content.clean ion-list{
     --background: transparent;
 }
 
-ion-content[role=feed] ion-item{
+ion-content[role=feed] ion-item,
+ion-content.clean ion-item{
     --background: transparent;
 
     --padding-start: 0;
