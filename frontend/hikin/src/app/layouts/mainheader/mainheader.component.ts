@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, isDevMode } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms'
 import { IonicModule, IonAccordionGroup  } from '@ionic/angular';

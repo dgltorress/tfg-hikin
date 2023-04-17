@@ -1,14 +1,22 @@
 <!--Contenido-->
 <div id="main-content">
-  <app-hikin-mainheader [search]="searchBars.Itinerarios"></app-hikin-mainheader>
+  <app-hikin-mainheader [search]="searchBars.Itinerarios" (paramsItinerarios)="buscarItinerarios($event)"></app-hikin-mainheader>
 
-  <ion-content [fullscreen]="true">
+  <ion-content [fullscreen]="true" role="feed">
     <ion-header collapse="condense">
       <ion-toolbar>
         <ion-title size="large">ITINERARIOS</ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <app-explore-container name="ITINERARIOS"></app-explore-container>
+    <ion-list>
+      <ion-item *ngFor="let itinerario of itinerarios" role="article">
+        <app-hikin-itinerarioprev [itinerario]="itinerario"></app-hikin-itinerarioprev>
+      </ion-item>
+    </ion-list>
+
+    <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+      <ion-infinite-scroll-content loadingSpinner="dots"></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
   </ion-content>
 </div>

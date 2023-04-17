@@ -1,4 +1,4 @@
-import { Component, OnInit, isDevMode } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, InfiniteScrollCustomEvent } from '@ionic/angular';
 
@@ -68,7 +68,10 @@ export class SalidasPage implements OnInit {
     this.paginaActual = 0;
 
     Object.keys( ev ).forEach( ( key ) => {
-      if( ev[ key ] === null ){
+      const param = ev[ key ];
+
+      if( ( param === null ) ||
+          ( param === '' ) ){
         delete ev[ key ];
       }
     } );
@@ -81,8 +84,6 @@ export class SalidasPage implements OnInit {
   onIonInfinite( ev: any ) {
     this.getSalidas();
 
-    setTimeout( () => {
-      ( ev as InfiniteScrollCustomEvent ).target.complete();
-    }, 2000 );
+    ( ev as InfiniteScrollCustomEvent ).target.complete();
   }
 }
