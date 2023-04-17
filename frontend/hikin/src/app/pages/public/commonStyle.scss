@@ -31,3 +31,22 @@ ion-content.clean ion-item{
     --border-width: 0;
     --inner-border-width: 0;
 }
+
+ion-button[fill=solid]{
+    --background: var(--hikin-secundario);
+}
+ion-button[fill=outline]{
+    --color: var(--hikin-secundario);
+    --border-color: var(--hikin-secundario);
+}
+
+ion-segment-button{
+    --background: var(--hikin-secundario);
+}
+ion-segment-button{
+    --background-checked: var(--hikin-secundario-side);
+
+    --color: var(--hikin-texto-claro);
+    --color-checked: var(--hikin-texto-claro);
+    --border-color-checked: var(--hikin-texto-claro);
+}

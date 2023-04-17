@@ -32,5 +32,5 @@ export const routes: Routes = [
     path: 'publicaciones/:id',
     canActivate: [ loggedInGuard ],
     loadComponent: () => import('./pages/public/publicacion/publicacion.page').then( m => m.PublicacionPage)
-  },
+  }
 ];

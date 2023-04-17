@@ -1,14 +1,27 @@
 <!--Contenido-->
 <div id="main-content">
-  <app-hikin-mainheader [search]="searchBars.Comunidad"></app-hikin-mainheader>
+  <app-hikin-mainheader [search]="searchBars.Comunidad" (paramsComunidad)="buscarComunidad($event)"></app-hikin-mainheader>
   
-  <ion-content [fullscreen]="true">
-    <ion-header collapse="condense">
-      <ion-toolbar>
-        <ion-title size="large">COMUNIDAD</ion-title>
-      </ion-toolbar>
-    </ion-header>
-  
-    <app-explore-container name="COMUNIDAD"></app-explore-container>
+  <ion-content [fullscreen]="true" role="feed">
+    <ion-segment [scrollable]="true" [value]="currentSegment" (ionChange)="setSegment($event)">
+      <ion-segment-button value="usuarios">Usuarios</ion-segment-button>
+      <ion-segment-button value="clubes">Clubes</ion-segment-button>
+    </ion-segment>
+
+    <div *ngIf="(currentSegment === 'usuarios')">
+      <ion-list>
+        <ion-item *ngFor="let usuario of usuarios" role="article">
+          <app-hikin-usuarioprev [usuario]="usuario"></app-hikin-usuarioprev>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <div *ngIf="(currentSegment === 'clubes')">
+      <ion-list>
+        <ion-item *ngFor="let club of clubes" role="article">
+          <app-hikin-clubprev [club]="club"></app-hikin-clubprev>
+        </ion-item>
+      </ion-list>
+    </div>
   </ion-content>
 </div>

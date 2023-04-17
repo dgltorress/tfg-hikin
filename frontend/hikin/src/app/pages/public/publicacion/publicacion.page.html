@@ -3,7 +3,27 @@
 <ion-content [fullscreen]="true" class="clean">
   <app-hikin-publicacion *ngIf="publicacion" [publicacion]="publicacion"></app-hikin-publicacion>
 
+  <section>
+    <h2>Comentarios</h2>
+    <form
+      [formGroup]="publicarComentarioForm"
+      (ngSubmit)="publicarComentario()">
+      <ion-textarea
+        [formControl]="publicarComentarioControl"
+        enterkeyhint="send"
+        fill="outline"
+        [autoGrow]="true"
+        aria-label="Texto del comentario"
+        placeholder="Haz un comentario&mldr;">
+        </ion-textarea>
+        <ion-button type="submit" fill="solid">Enviar</ion-button>
+    </form>
+  </section>
+
   <ion-list>
+    <ion-item *ngFor="let comentarioPropio of comentariosPropios">
+      <app-hikin-comentario [comentario]="comentarioPropio"></app-hikin-comentario>
+    </ion-item>
     <ion-item *ngFor="let comentario of comentarios">
       <app-hikin-comentario [comentario]="comentario"></app-hikin-comentario>
     </ion-item>
