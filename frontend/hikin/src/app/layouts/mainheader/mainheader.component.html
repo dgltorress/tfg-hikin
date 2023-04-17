@@ -27,7 +27,7 @@
       id="searchSalidasForm"
       [formGroup]="buscarSalidasForm"
       (ngSubmit)="buscarSalidas()">
-      <ion-accordion-group (ionChange)="comprobarYPedirAutonomias()">
+      <ion-accordion-group #acordeonSalidas (ionChange)="comprobarYPedirAutonomias()">
         <ion-accordion value="first">
           <ion-item slot="header" color="light">
             <ion-input
@@ -69,6 +69,10 @@
                 <ion-grid>
                   <ion-row>
                     <ion-label>Comienza después de</ion-label>
+                    <ion-icon
+                      name="close-outline"
+                      (click)="desdeControl.reset()">
+                    </ion-icon>
                   </ion-row>
                   <ion-row>
                     <ion-datetime-button id="startDateButton" datetime="startDate"></ion-datetime-button>
@@ -79,6 +83,10 @@
                 <ion-grid>
                   <ion-row>
                     <ion-label>Comienza antes de</ion-label>
+                    <ion-icon
+                      name="close-outline"
+                      (click)="hastaControl.reset()">
+                    </ion-icon>
                   </ion-row>
                   <ion-row>
                     <ion-datetime-button id="endDateButton" datetime="endDate"></ion-datetime-button>
@@ -108,7 +116,7 @@
       id="searchItinerariosForm"
       [formGroup]="buscarItinerariosForm"
       (ngSubmit)="buscarItinerarios()">
-      <ion-accordion-group (ionChange)="comprobarYPedirAutonomias()">
+      <ion-accordion-group #acordeonItinerarios (ionChange)="comprobarYPedirAutonomias()">
         <ion-accordion value="first">
           <ion-item slot="header" color="light">
             <ion-input

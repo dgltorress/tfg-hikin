@@ -1,7 +1,7 @@
-import { Component, Input, isDevMode, OnInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormControl, RangeValueAccessor } from '@angular/forms'
-import { IonicModule } from '@ionic/angular';
+import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms'
+import { IonicModule, IonAccordionGroup  } from '@ionic/angular';
 import { RangeValue } from '@ionic/core';
 
 import { ApiService, TRequestOptions } from 'src/app/services/api.service';
@@ -19,6 +19,15 @@ export class MainheaderComponent implements OnInit {
   // Tipo de barra de búsqueda (si hay)
   @Input() search?: number;
 
+  // Parámetros de búsqueda
+  @Output() paramsSalidas = new EventEmitter<any>();
+  @Output() paramsComunidad = new EventEmitter<any>();
+  @Output() paramsItinerarios = new EventEmitter<any>();
+
+  // Acordeones
+  @ViewChild( 'acordeonSalidas' ) acordeonSalidas?: IonAccordionGroup ;
+  @ViewChild( 'acordeonItinerarios' ) acordeonItinerarios?: IonAccordionGroup ;
+
   // Tipos de barras de búsqueda disponibles
   public searchBars = SearchBars;
 
@@ -33,6 +42,9 @@ export class MainheaderComponent implements OnInit {
 
   provinciaSalidasControl: FormControl;
   provinciaItinerariosControl: FormControl;
+
+  desdeControl: FormControl;
+  hastaControl: FormControl;
 
   distanciaRangeControl: FormControl;
   desnivelRangeControl: FormControl;
@@ -50,6 +62,9 @@ export class MainheaderComponent implements OnInit {
     this.provinciaSalidasControl = new FormControl( { value: '', disabled: true } );
     this.provinciaItinerariosControl = new FormControl( { value: '', disabled: true } );
 
+    this.desdeControl = new FormControl();
+    this.hastaControl = new FormControl();
+
     this.distanciaRangeControl = new FormControl();
     this.desnivelRangeControl = new FormControl();
     this.tiempoRangeControl = new FormControl();
@@ -61,8 +76,8 @@ export class MainheaderComponent implements OnInit {
       texto: new FormControl(),
       codauto: new FormControl(),
       cpro: this.provinciaSalidasControl,
-      desde: new FormControl(),
-      hasta: new FormControl(),
+      desde: this.desdeControl,
+      hasta: this.hastaControl,
     } ),
     this.buscarItinerariosForm = new FormGroup( {
       texto: new FormControl(),
@@ -81,16 +96,24 @@ export class MainheaderComponent implements OnInit {
 
   }
 
-  buscarComunidad() : void {
-    console.log(this.buscarComunidadForm.value);
+  buscarSalidas() : void {console.log(this.acordeonSalidas)
+    if( this.acordeonSalidas ){
+      this.acordeonSalidas.value = undefined;
+    }
+    
+    this.paramsSalidas.emit( this.buscarSalidasForm.value );
   }
 
-  buscarSalidas() : void {
-    console.log(this.buscarSalidasForm.value);
+  buscarComunidad() : void {
+    this.paramsComunidad.emit( this.buscarComunidadForm.value );
   }
 
   buscarItinerarios() : void {
-    console.log(this.buscarItinerariosForm.value);
+    if( this.acordeonItinerarios ){
+      this.acordeonItinerarios.value = undefined;
+    }
+
+    this.paramsItinerarios.emit( this.buscarItinerariosForm.value );
   }
 
   comprobarYPedirAutonomias() : void {

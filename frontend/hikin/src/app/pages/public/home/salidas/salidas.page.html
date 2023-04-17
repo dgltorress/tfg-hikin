@@ -1,14 +1,22 @@
 <!--Contenido-->
 <div id="main-content">
-  <app-hikin-mainheader [search]="searchBars.Salidas"></app-hikin-mainheader>
+  <app-hikin-mainheader [search]="searchBars.Salidas" (paramsSalidas)="buscarSalidas($event)"></app-hikin-mainheader>
 
-  <ion-content [fullscreen]="true">
+  <ion-content [fullscreen]="true" role="feed">
     <ion-header collapse="condense">
       <ion-toolbar>
         <ion-title size="large">SALIDAS</ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <app-explore-container name="SALIDAS"></app-explore-container>
+    <ion-list>
+      <ion-item *ngFor="let salida of salidas" role="article">
+        <app-hikin-salidaprev [salida]="salida"></app-hikin-salidaprev>
+      </ion-item>
+    </ion-list>
+
+    <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+      <ion-infinite-scroll-content loadingSpinner="dots"></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
   </ion-content>
 </div>

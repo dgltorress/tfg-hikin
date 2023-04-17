@@ -132,7 +132,7 @@ const elementosPorPagina = 10;
         } else {
             filter += ' AND ';
         }
-        filter += "p.cod = ?";
+        filter += "pro.cod = ?";
         parameters.push( req.query.cpro );
     }
 
