@@ -251,6 +251,57 @@ WHERE s.id = ?`,
     );
 }
 
+/**
+ * Obtiene información básica de los participantes de una salida.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+ const getParticipantes = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`SELECT u.id, u.usuario, u.nombre, u.imagen, u.privado,
+(s.seguidor IS NOT NULL) AS is_siguiendo,
+(SELECT COUNT(*) FROM sigue_a WHERE seguido = u.id) AS n_seguidores
+
+FROM participa_en AS p
+
+INNER JOIN usuarios AS u
+ON p.usuario = u.id
+
+LEFT JOIN sigue_a AS s
+ON u.id = s.seguido AND s.seguidor = ?
+
+WHERE p.salida = ? AND p.pendiente = 0` , [
+    idSolicitante,
+    idObjetivo
+] ,
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getUsuariosBasicos' , HTTP.error_server.internal , 'Error al obtener los usuarios' );
+            } else {
+                // Resolver URLs de fotos de perfil
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].imagen ){
+                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
+                    }
+                }
+
+                res.status( HTTP.success.ok ).json( result );
+                logRequest( req , 'getUsuariosBasicos', HTTP.success.ok );
+            }
+        }
+    );
+}
+
 
 // -----------------------------------------------
 
@@ -954,7 +1005,7 @@ const desinvitarSalida = async( req , res ) => {
 
 
 // Marcar los metodos para exportar
-module.exports = { getSalidas, getSalida,
+module.exports = { getSalidas, getSalida, getParticipantes,
     createSalida, updateSalida, deleteSalida,
     inscribirseSalida, desinscribirseSalida,
     createValoraciones,

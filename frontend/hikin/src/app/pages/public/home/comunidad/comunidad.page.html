@@ -23,5 +23,9 @@
         </ion-item>
       </ion-list>
     </div>
+
+    <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+      <ion-infinite-scroll-content loadingSpinner="dots"></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
   </ion-content>
 </div>

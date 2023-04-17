@@ -15,7 +15,7 @@ const { validateFields } = require( '../middleware/validateFields.js' ); // Vali
 const { toUniversalPath } = require( '../helpers/metodos.js' );
 const { validateDateExpress } = require( '../middleware/validators.js' );
 //const {  } = require( '../middleware/files' );
-const { getSalidas, getSalida,
+const { getSalidas, getSalida, getParticipantes,
     createSalida, updateSalida, deleteSalida,
     inscribirseSalida, desinscribirseSalida,
     createValoraciones,
@@ -87,6 +87,14 @@ router.route( '/:id' )
         param( 'id' , 'Número natural mayor que 1' ).exists().isInt( { min: 1 } ).toInt(),
         validateFields,
         deleteSalida
+    );
+
+router.route( '/:id/participantes' )
+    .get(
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
+        validateFields,
+        getParticipantes
     );
 
 router.route( '/:id/inscripcion' )

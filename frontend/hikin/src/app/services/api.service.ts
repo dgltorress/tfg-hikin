@@ -442,6 +442,12 @@ export class ApiService {
     this.sendRequest( options );
   }
 
+  getSalidaParticipantes( id: number, options: TRequestOptions = {} ) : void {
+    options.endpoint = `${ApiService.endpoints.salidas}/${id}/participantes`;
+    options.method = ApiService.methods.GET;
+    this.sendRequest( options );
+  }
+
   inscribirseSalida( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.salidas}/${id}/inscripcion`;
     options.method = ApiService.methods.POST;

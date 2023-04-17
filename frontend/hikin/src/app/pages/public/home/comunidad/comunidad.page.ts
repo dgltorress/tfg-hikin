@@ -132,7 +132,7 @@ export class ComunidadPage implements OnInit {
   onIonInfinite( ev: any ) {
     switch( this.currentSegment ){
       case 'usuarios': this.getUsuarios(); break;
-      case 'usuarios': this.getClubes(); break;
+      case 'clubes': this.getClubes(); break;
 
       default:
         if( isDevMode() === true ){

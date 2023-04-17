@@ -35,7 +35,7 @@ export class PublicacionPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     private api: ApiService,
     private alertService: AlertService,
-    private userService: UserService,
+    private userService: UserService
   ){
     this.publicarComentarioControl = new FormControl();
 
