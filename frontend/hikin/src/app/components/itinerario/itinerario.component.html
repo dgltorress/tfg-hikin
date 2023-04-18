@@ -1,19 +1,14 @@
 <article class="itinerarioprev" [routerLink]="'/itinerarios/'+itinerario.id" routerDirection="forward">
-  <header *ngIf="itinerario.googlemapssrc">
+  <header *ngIf="itinerario.openstreetmapSource">
     <!--<iframe
-      width="425"
-      height="300"
+      [src]="itinerario.openstreetmapSource"
       frameborder="0"
       scrolling="no"
       marginheight="0"
-      marginwidth="0"
-      [src]="itinerario.openmapsrc">
-    </iframe> OPENMAP-->
+      marginwidth="0">
+    </iframe>-->
     <!--<iframe
-      [src]="itinerario.googlemapssrc"
-      width="600"
-      height="450"
-      style="border:0;"
+      [src]="googlemapsSource"
       allowfullscreen=""
       loading="lazy"
       referrerpolicy="no-referrer-when-downgrade">

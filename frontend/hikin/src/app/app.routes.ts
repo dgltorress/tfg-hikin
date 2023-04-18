@@ -9,11 +9,6 @@ export const routes: Routes = [
     loadChildren: () => import('./pages/public/home/home.routes').then((m) => m.routes),
   },
   {
-    path: 'explore',
-    canActivate: [ loggedInGuard ],
-    loadComponent: () => import('./components/explore-container/explore-container.component').then((m) => m.ExploreContainerComponent),
-  },
-  {
     path: 'ejemplo',
     canActivate: [ loggedInGuard ],
     loadComponent: () => import('./pages/public/ejemplo/ejemplo.page').then((m) => m.EjemploPage),
@@ -42,5 +37,9 @@ export const routes: Routes = [
     path: 'itinerarios/:id',
     canActivate: [ loggedInGuard ],
     loadComponent: () => import('./pages/public/itinerario/itinerario.page').then( m => m.ItinerarioPage)
-  }
+  },
+  { // maneja rutas no reconocidas
+    path: '**',
+    redirectTo: ''
+  },
 ];

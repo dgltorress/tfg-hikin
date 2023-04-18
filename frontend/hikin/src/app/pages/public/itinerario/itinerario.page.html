@@ -11,9 +11,38 @@
   </div>
 
   <div *ngIf="(currentSegment === 'resenas')">
+    <form
+      [formGroup]="publicarResenaForm"
+      (ngSubmit)="publicarResena()">
+      <h2>Reseñas</h2>
+      <ion-label>Valoración</ion-label>
+      <ion-range
+          [formControl]="publicarResenaValoracionControl"
+          fill="outline"
+          aria-label="Valoración numérica del itinerario"
+          [min]="1"
+          [max]="5"
+          [snaps]="true"
+          [pin]="true">
+      </ion-range>
+      <ion-label>Observaciones</ion-label>
+      <ion-textarea
+        [formControl]="publicarResenaObservacionesControl"
+        enterkeyhint="send"
+        fill="outline"
+        [autoGrow]="true"
+        aria-label="Observaciones"
+        placeholder="Añade observaciones&mldr;">
+        </ion-textarea>
+      <ion-button type="submit" fill="solid">Enviar</ion-button>
+    </form>
+    
     <ion-list>
+      <ion-item *ngIf="resenaPropia">
+        <app-hikin-resena [resena]="resenaPropia" [itId]="itinerario.id" (eliminame)="eliminarResena($event)"></app-hikin-resena>
+      </ion-item>
       <ion-item *ngFor="let resena of resenas">
-        <app-hikin-resena [resena]="resena"></app-hikin-resena>
+        <app-hikin-resena [resena]="resena" [itId]="itinerario.id" (eliminame)="eliminarResena($event)"></app-hikin-resena>
       </ion-item>
     </ion-list>
   </div>

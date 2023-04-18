@@ -1,3 +1,15 @@
-app-hikin-itinerario,app-hikin-resenas{
+app-hikin-itinerario,app-hikin-resena{
     width: 100%;
+}
+ion-range{
+    padding-top: 0;
+}
+
+form{
+    padding: .5em 1.2em;
+}
+form>ion-button{
+    width: 100%;
+
+    margin-top: .75em;
 }

@@ -25,14 +25,29 @@ export class ItinerarioPage implements OnInit {
 
   public itinerario: any = null;
 
+  public resenaPropia: any = null;
   public resenas: any[] = [];
+
+  // Formularios y controles
+  publicarResenaForm: FormGroup;
+
+  publicarResenaValoracionControl: FormControl;
+  publicarResenaObservacionesControl: FormControl;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private api: ApiService,
     private alertService: AlertService,
     private userService: UserService,
-  ){}
+  ){
+    this.publicarResenaValoracionControl = new FormControl();
+    this.publicarResenaObservacionesControl = new FormControl();
+
+    this.publicarResenaForm = new FormGroup( {
+      valoracion: this.publicarResenaValoracionControl,
+      observaciones: this.publicarResenaObservacionesControl
+    } );
+  }
 
   ngOnInit(){
     this.activatedRoute.paramMap.subscribe( ( params ) => {
@@ -69,6 +84,52 @@ export class ItinerarioPage implements OnInit {
         this.alertService.errorToToast( errorResponse.error );
       }
     } );
+  }
+
+  publicarResena(): void {
+    try{
+      const formValues = this.publicarResenaForm.value;
+      if( formValues.valoracion ){
+        const requestBody: any = {
+          valoracion: formValues.valoracion
+        };
+
+        if( formValues.observaciones ){
+          requestBody.observaciones = formValues.observaciones;
+        }
+
+        this.api.subirItinerarioResenas( this.itinerario.id , {
+          body: requestBody,
+          successCallback: ( response: any ) => {
+            this.publicarResenaValoracionControl.reset();
+            this.publicarResenaObservacionesControl.reset();
+
+            const resenaPublicada = response.body;
+            resenaPublicada.autorimagen = this.userService.user.imagen;
+            resenaPublicada.autornombre = this.userService.user.usuario;
+
+            this.resenaPropia = resenaPublicada;
+          },
+          failedCallback: ( errorResponse: any ) => {
+            this.alertService.errorToToast( errorResponse.error );
+          }
+        } );
+      }
+    } catch( err ){
+      this.alertService.showToast( 'Ha habido un error' );
+      if( isDevMode() === true ){ console.error( 'ERROR al publicar el comentario: ' , err ) }
+    }
+  }
+
+  eliminarResena( ev: any ): void {
+    this.resenaPropia = null;
+
+    for( let i = 0 ; i < this.resenas.length ; ++i ){
+      if( this.resenas[ i ].usuario === ev ){
+        this.resenas.splice( i, 1 );
+        break;
+      }
+    }
   }
 
   setSegment( ev: any ): void {
