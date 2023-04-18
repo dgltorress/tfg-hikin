@@ -2,22 +2,22 @@ import { Component, OnInit, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 
 import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { UserService } from 'src/app/services/user.service';
 
 import { DetailsheaderComponent } from 'src/app/layouts/detailsheader/detailsheader.component';
-import { SalidaprevComponent } from 'src/app/components/salidaprev/salidaprev.component';
+import { SalidaComponent } from 'src/app/components/salida/salida.component';
 import { UsuarioprevComponent } from 'src/app/components/usuarioprev/usuarioprev.component';
 
 @Component({
-  selector: 'app-salida',
+  selector: 'app-hikin-salida-detalles',
   templateUrl: './salida.page.html',
-  styleUrls: ['./salida.page.scss'],
+  styleUrls: ['../commonStyle.scss','./salida.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule, DetailsheaderComponent, SalidaprevComponent, UsuarioprevComponent]
+  imports: [IonicModule, CommonModule, ReactiveFormsModule, RouterModule, DetailsheaderComponent, SalidaComponent, UsuarioprevComponent]
 })
 export class SalidaPage implements OnInit {
 
@@ -26,6 +26,12 @@ export class SalidaPage implements OnInit {
   public salida: any = null;
 
   public participantes: any[] = [];
+
+
+  public valoraciones: {
+    participante: any,
+    formulario: FormGroup
+  }[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -64,6 +70,52 @@ export class SalidaPage implements OnInit {
     this.api.getSalidaParticipantes( salId , {
       successCallback: ( response: any ) => {
         this.participantes = response.body;
+
+        for( let i = 0 ; i < this.participantes.length ; ++i ){
+          const actual = this.participantes[ i ];
+          if( this.userService.user.id !== actual.id ){
+            this.valoraciones.push( {
+              participante: actual,
+              formulario: new FormGroup( {
+                valorado: new FormControl( actual.id ),
+                acude: new FormControl(),
+                valoracion: new FormControl(),
+                observaciones: new FormControl()
+              } )
+            } );
+          }
+        }
+      },
+      failedCallback: ( errorResponse: any ) => {
+        this.alertService.errorToToast( errorResponse.error );
+      }
+    } );
+  }
+
+  subirValoraciones(): void {
+    const valoresFormularios: any[] = [];
+
+    for( let i = 0 ; i < this.valoraciones.length ; ++i ){
+      const valoresActuales = this.valoraciones[ i ].formulario.value;
+
+      Object.keys( valoresActuales ).forEach( ( key ) => {
+        const param = valoresActuales[ key ];
+  
+        if( ( param === null ) ||
+            ( param === '' ) ){
+          delete valoresActuales[ key ];
+        }
+      } );
+
+      valoresFormularios.push( valoresActuales );
+    }
+
+
+    this.api.valorarSalida( this.salida.id , {
+      body: valoresFormularios,
+      successCallback: ( response: any ) => {
+        this.alertService.showToast( 'Valoraciones subidas' );
+        this.currentSegment = 'detalles';
       },
       failedCallback: ( errorResponse: any ) => {
         this.alertService.errorToToast( errorResponse.error );

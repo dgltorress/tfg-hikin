@@ -1,0 +1,71 @@
+<article class="salida">
+  <header>
+    <h2>
+      <ion-icon *ngIf="salida && salida.privada" name="lock-closed"></ion-icon>
+      {{ salida.nombre }}
+    </h2>
+    <p>{{ salida.descripcion }}</p>
+  </header>
+  <hr>
+  <div>
+    <div style="cursor: pointer;">
+      <ion-icon name="trail-sign" title="Itinerario objetivo"></ion-icon>
+      <span [routerLink]="'/itinerarios/'+salida.itinerario" routerDirection="forward">{{ salida.itinerariodenominacion }}</span>
+    </div>
+    <div>
+      <ion-icon name="location" title="Ubicación"></ion-icon>
+      <span>{{ ( ( salida.nombrepro ) ? salida.nombrepro + ', ' : '' )  + salida.nombreauto }}</span>
+    </div>
+  </div>
+  <hr>
+  <div class="fechas">
+    <div>
+      <span>Fecha de inicio</span>
+      <span>{{ salida.fecha_inicio }}</span>
+    </div>
+    <div class="fechas">
+      <span>Fecha de finalización</span>
+      <span>{{ salida.fecha_fin }}</span>
+    </div>
+  </div>
+  <hr>
+  <div>
+    <table>
+      <tbody>
+        <tr>
+          <td>Organiza</td>
+          <td>
+            <div class="author" [routerLink]="'/usuarios/'+salida.organizador" routerDirection="forward">
+              <ion-img [src]="salida.organizadorimagen" [alt]="'Foto de perfil de '+salida.autornombre" (ionError)="setDefaultPfp($event)"></ion-img>
+              <span>{{ salida.organizadornombre }}</span>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="salida.club">
+          <td>Para el club</td>
+          <td>
+            <div class="author" [routerLink]="'/clubes/'+salida.club" routerDirection="forward">
+              <ion-icon name="people" title="Club asociado"></ion-icon>
+              <span>{{ salida.clubnombre }}</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="salida.cancelada" class="cancelada">CANCELADA</div>
+  </div>
+  <footer>
+    <ion-button *ngIf="( !salida.cancelada ) && ( userService.user && ( userService.user.id !== salida.organizador ) )"
+      [fill]="( salida.is_participante ) ? 'outline' : 'solid'" (click)="toggleInscripcion($event)">
+      {{ ( salida.is_participante ) ? salidaComponent.textoInscrito : salidaComponent.textoInscribirse }}
+    </ion-button>
+    <ion-button *ngIf="( !salida.cancelada ) && ( userService.user && ( userService.user.id === salida.organizador ) )"
+      fill="solid" [routerLink]="'/salidas/'+salida.id+'/editar'" routerDirection="forward">
+      Editar
+    </ion-button>
+    <ion-button *ngIf="( !salida.cancelada ) && ( userService.user && ( userService.user.id === salida.organizador ) )"
+      fill="solid" class="cancelar" (click)="cancelarSalida($event)">
+      Cancelar
+    </ion-button>
+  </footer>
+</article>

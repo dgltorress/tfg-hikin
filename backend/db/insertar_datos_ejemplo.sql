@@ -276,7 +276,7 @@ INSERT INTO salidas (
   privada, cancelada
 ) VALUES (
   1, "Excursión a Albarracín",
-  "El plan para esta salida es completar el itinerario de pequeño recorrido especificado a lo largo de la mañana para luego comemr en uno de los bares típicos del pueblo. Aunque el tiempo se ha vuelto un poco loco, recomiendo traer ropa de abrigo por si acaso.",
+  "El plan para esta salida es completar el itinerario de pequeño recorrido especificado a lo largo de la mañana para luego comer en uno de los bares típicos del pueblo. Aunque el tiempo se ha vuelto un poco loco, recomiendo traer ropa de abrigo por si acaso.",
   1, 1, 1,
   STR_TO_DATE( "2023-03-04 09:00" , "%Y-%m-%d %H:%i" ),
   STR_TO_DATE( "2023-03-04 13:30" , "%Y-%m-%d %H:%i" ),
@@ -300,13 +300,14 @@ INSERT INTO salidas (
 -- Participantes de salidas
 INSERT INTO participa_en( usuario , salida, pendiente ) VALUES
   ( 1 , 1 , false ),
+  ( 1 , 2 , false ),
   ( 1 , 3 , false ),
   ( 2 , 1 , false ),
   ( 2 , 3 , false ),
   ( 3 , 1 , false ),
-  ( 3 , 3 , true ),
+  ( 3 , 3 , false ),
   ( 4 , 1 , false ),
-  ( 5 , 1 , false );
+  ( 5 , 1 , true );
 
 -- Valoraciones
 INSERT INTO valoraciones (

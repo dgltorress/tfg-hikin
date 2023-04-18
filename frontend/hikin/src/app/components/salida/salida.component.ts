@@ -10,20 +10,20 @@ import { UserService } from 'src/app/services/user.service';
 import { commonMethods } from '../commonMethods';
 
 @Component({
-  selector: 'app-hikin-usuarioprev',
-  templateUrl: './usuarioprev.component.html',
-  styleUrls: ['../commonStyle.scss','./usuarioprev.component.scss'],
+  selector: 'app-hikin-salida',
+  templateUrl: './salida.component.html',
+  styleUrls: ['../commonStyle.scss','./salida.component.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule]
 })
-export class UsuarioprevComponent  implements OnInit {
+export class SalidaComponent implements OnInit {
 
-  @Input() usuario: any;
+  public static readonly textoInscribirse: string = 'Inscribirse';
+  public static readonly textoInscrito: string = 'Inscrito';
 
-  public static readonly textoSeguir: string = 'Seguir';
-  public static readonly textoSiguiendo: string = 'Siguiendo';
+  public salidaComponent: typeof SalidaComponent = SalidaComponent;
 
-  public UsuarioPrev: typeof UsuarioprevComponent = UsuarioprevComponent;
+  @Input() salida: any;
 
   constructor(
     private api: ApiService,
@@ -32,21 +32,28 @@ export class UsuarioprevComponent  implements OnInit {
   ){
   }
 
-  ngOnInit(){}
+  ngOnInit(){
+    if( !this.salida.changedDates ){
+      this.salida.fecha_inicio = commonMethods.fechaISOALegible( this.salida.fecha_inicio, 'es', 'long', 'short' );
+      this.salida.fecha_fin = commonMethods.fechaISOALegible( this.salida.fecha_fin, 'es', 'long', 'short' );
+
+      this.salida.changedDates = true;
+    }
+  }
 
   /**
-   * Sigue o deja de seguir a un usuario
+   * Se inscribe o se desinscribe de una salida.
    * 
    * @param ev 
    */
-  toggleSeguimiento( ev: any ): void {
+   toggleInscripcion( ev: any ): void {
     try{
-      // Está siguiendo: dejar de seguir
-      if( this.usuario.is_siguiendo ){
-        this.api.deseguirUsuario( this.usuario.id, {
+      // Está inscrito: desinscribirse
+      if( this.salida.is_participante ){
+        this.api.desinscribirseSalida( this.salida.id, {
           successCallback: ( response: any ) => {
-            this.usuario.is_siguiendo = 0;
-            --this.usuario.n_seguidores;
+            this.salida.is_participante = 0;
+            --this.salida.n_participantes;
 
             ev.target.fill = 'solid';
           },
@@ -54,12 +61,12 @@ export class UsuarioprevComponent  implements OnInit {
             this.alertService.errorToToast( errorResponse.error );
           }
         } );
-      // No está siguiendo: seguir
+      // No está inscrito: inscribirse
       } else{
-        this.api.seguirUsuario( this.usuario.id, {
+        this.api.inscribirseSalida( this.salida.id, {
           successCallback: ( response: any ) => {
-            this.usuario.is_siguiendo = 1;
-            ++this.usuario.n_seguidores;
+            this.salida.is_participante = 1;
+            ++this.salida.n_participantes;
 
             ev.target.fill = 'outline';
           },
@@ -74,6 +81,10 @@ export class UsuarioprevComponent  implements OnInit {
       }
       this.alertService.errorToToast( 'Ha habido un error' );
     }
+  }
+
+  cancelarSalida( ev: any ): void {
+
   }
 
   setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ); }

@@ -1,6 +1,9 @@
 <article class="salidaprev">
   <header>
-    <h2 [routerLink]="'/salidas/'+salida.id" routerDirection="forward">{{ salida.nombre }}</h2>
+    <h2 [routerLink]="'/salidas/'+salida.id" routerDirection="forward">
+      <ion-icon *ngIf="salida && salida.privada" name="lock-closed"></ion-icon>
+      {{ salida.nombre }}
+    </h2>
   </header>
   <div>
     <div style="cursor: pointer;">

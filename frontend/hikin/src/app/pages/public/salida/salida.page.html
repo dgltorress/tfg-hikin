@@ -4,18 +4,51 @@
   <ion-segment [scrollable]="true" [value]="currentSegment" (ionChange)="setSegment($event)">
     <ion-segment-button value="detalles">Detalles</ion-segment-button>
     <ion-segment-button value="participantes">Participantes</ion-segment-button>
-    <ion-segment-button value="valoraciones">Valoraciones</ion-segment-button>
+    <ion-segment-button *ngIf="salida && salida.is_participante" value="valoraciones">Valoraciones</ion-segment-button>
   </ion-segment>
 
   <div *ngIf="(currentSegment === 'detalles')">
-    <app-hikin-salidaprev *ngIf="salida" [salida]="salida"></app-hikin-salidaprev>
+    <app-hikin-salida *ngIf="salida" [salida]="salida"></app-hikin-salida>
   </div>
 
   <div *ngIf="(currentSegment === 'participantes')">
     <ion-list>
-      <ion-item *ngFor="let participante of participantes" role="article">
+      <ion-item *ngFor="let participante of participantes">
         <app-hikin-usuarioprev [usuario]="participante"></app-hikin-usuarioprev>
       </ion-item>
     </ion-list>
+  </div>
+
+  <div *ngIf="(currentSegment === 'valoraciones')">
+    <div *ngFor="let valoracion of valoraciones" class="valoracion">
+      <app-hikin-usuarioprev [usuario]="valoracion.participante"></app-hikin-usuarioprev>
+      <form
+        [formGroup]="valoracion.formulario">
+        <ion-checkbox
+          formControlName="acude"
+          labelPlacement="start">
+          ¿Acude?
+        </ion-checkbox>
+        <ion-label>Valoración</ion-label>
+        <ion-range
+          formControlName="valoracion"
+          fill="outline"
+          aria-label="Valoración numérica del usuario"
+          [min]="1"
+          [max]="5"
+          [snaps]="true"
+          [pin]="true">
+        </ion-range>
+        <ion-label>Observaciones</ion-label>
+        <ion-textarea
+          formControlName="observaciones"
+          fill="outline"
+          [autoGrow]="true"
+          aria-label="Observaciones del usuario"
+          placeholder="Valora su actitud&mldr;">
+        </ion-textarea>
+      </form>
+    </div>
+    <ion-button type="button" fill="solid" (click)="subirValoraciones()">Enviar</ion-button>
   </div>
 </ion-content>

@@ -205,7 +205,7 @@ const getSalida = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT s.id, s.nombre, s.organizador, u.usuario AS organizadornombre, u.imagen AS organizadorimagen,
+`SELECT s.id, s.nombre, s.descripcion, s.organizador, u.usuario AS organizadornombre, u.imagen AS organizadorimagen,
 s.itinerario, i.denominacion AS itinerariodenominacion,
 s.club, (SELECT nombre FROM clubes WHERE id = s.club) AS clubnombre,
 s.fecha_inicio, s.fecha_fin,
@@ -374,23 +374,39 @@ WHERE id = ?`,
                                 logRequest( req , 'createSalida' , HTTP.error_server.internal , 'Error al crear la salida' );
                             }
                         } else {
-                            // Construye un objeto usuario que devolver
-                            const insertedObject = {};
-                        
-                            insertedObject.id = result.insertId;
-                            insertedObject.nombre = nombre;
-                            insertedObject.descripcion = descripcion;
-                            insertedObject.organizador = idSolicitante;
-                            insertedObject.itinerario = itinerario;
-                            insertedObject.club = club;
-                            insertedObject.fecha_inicio = fecha_inicio;
-                            insertedObject.fecha_fin = fecha_fin;
-                            insertedObject.privada = privada;
-                            insertedObject.cancelada = false;
-                        
-                            // Responde con el objeto usuario, el token y su expiración
-                            res.status( HTTP.success.ok ).json( insertedObject );
-                            logRequest( req , 'createSalida', HTTP.success.ok );
+                            // Intenta hacer participar automáticamente al organizador
+                            adminConnection.query(
+`INSERT INTO participa_en ( usuario, salida, pendiente )
+VALUES ( ?, ?, 0 )` , [
+    idSolicitante, result.insertId
+] ,
+                                ( err , result2 ) => {
+                                    if( err ){
+                                        console.error( err );
+                                        res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
+                                        logRequest( req , 'createSalida' , HTTP.error_server.internal , 'Error al hacer participar al organizador' );
+                                    } else {
+                                        
+                                        // Construye un objeto usuario que devolver
+                                        const insertedObject = {};
+                                    
+                                        insertedObject.id = result2.insertId;
+                                        insertedObject.nombre = nombre;
+                                        insertedObject.descripcion = descripcion;
+                                        insertedObject.organizador = idSolicitante;
+                                        insertedObject.itinerario = itinerario;
+                                        insertedObject.club = club;
+                                        insertedObject.fecha_inicio = fecha_inicio;
+                                        insertedObject.fecha_fin = fecha_fin;
+                                        insertedObject.privada = privada;
+                                        insertedObject.cancelada = false;
+                                    
+                                        // Responde con el objeto usuario, el token y su expiración
+                                        res.status( HTTP.success.ok ).json( insertedObject );
+                                        logRequest( req , 'createSalida', HTTP.success.ok );
+                                    }
+                                }
+                            );
                         }
                     }
                 );

@@ -19,8 +19,12 @@ export class SalidaprevComponent implements OnInit {
   constructor(){}
 
   ngOnInit(){
-    this.salida.fecha_inicio = commonMethods.fechaISOALegible( this.salida.fecha_inicio, 'es', 'long', 'short' );
-    this.salida.fecha_fin = commonMethods.fechaISOALegible( this.salida.fecha_fin, 'es', 'long', 'short' );
+    if( !this.salida.changedDates ){
+      this.salida.fecha_inicio = commonMethods.fechaISOALegible( this.salida.fecha_inicio, 'es', 'long', 'short' );
+      this.salida.fecha_fin = commonMethods.fechaISOALegible( this.salida.fecha_fin, 'es', 'long', 'short' );
+
+      this.salida.changedDates = true;
+    }
   }
 
   setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ); }

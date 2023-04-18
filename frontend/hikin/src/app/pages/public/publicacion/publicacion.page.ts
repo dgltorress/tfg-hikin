@@ -96,6 +96,7 @@ export class PublicacionPage implements OnInit {
             comentarioPublicado.autornombre = this.userService.user.usuario;
 
             this.comentariosPropios.unshift( comentarioPublicado );
+            ++this.publicacion.n_comentarios;
           },
           failedCallback: ( errorResponse: any ) => {
             this.alertService.errorToToast( errorResponse.error );

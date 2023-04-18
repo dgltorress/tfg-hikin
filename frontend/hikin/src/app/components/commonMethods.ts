@@ -87,7 +87,7 @@ export const commonMethods = {
             dateStyle: dateStyle, timeStyle: timeStyle
           } ).format( new Date( fecha ) );
         } catch( err ){
-          if( isDevMode() === true ) console.warn( '[getFeed()] ERROR al traducir la fecha de la publicación: ', err );
+          if( isDevMode() === true ) console.warn( '[getFeed()] ERROR al traducir la fecha: ', err );
         }
       }
       
