@@ -1,14 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-embedmap',
+  selector: 'app-hikin-embedmap',
   templateUrl: './embedmap.component.html',
   styleUrls: ['./embedmap.component.scss'],
+  standalone: true,
+  imports: []
 })
 export class EmbedmapComponent  implements OnInit {
 
-  constructor() { }
+  @Input() source?: SafeResourceUrl;
 
-  ngOnInit() {}
+  constructor(){}
+
+  ngOnInit(){}
 
 }

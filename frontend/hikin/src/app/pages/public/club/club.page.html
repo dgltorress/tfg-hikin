@@ -1,0 +1,37 @@
+<app-hikin-clubheader [club]="club"></app-hikin-clubheader>
+  
+<ion-content [fullscreen]="true" role="feed">
+  <ion-segment [scrollable]="true" [value]="currentSegment" (ionChange)="setSegment($event)">
+    <ion-segment-button value="publicaciones">Publicaciones</ion-segment-button>
+    <ion-segment-button value="salidas">Salidas</ion-segment-button>
+    <ion-segment-button value="miembros">Miembros</ion-segment-button>
+  </ion-segment>
+
+  <div *ngIf="(currentSegment === 'publicaciones')">
+    <ion-list>
+      <ion-item *ngFor="let publicacion of publicaciones" role="article">
+        <app-hikin-publicacion [publicacion]="publicacion"></app-hikin-publicacion>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="(currentSegment === 'salidas')">
+    <ion-list>
+      <ion-item *ngFor="let salida of salidas" role="article">
+        <app-hikin-salidaprev [salida]="salida"></app-hikin-salidaprev>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="(currentSegment === 'miembros')">
+    <ion-list>
+      <ion-item *ngFor="let miembro of miembros" role="article">
+        <app-hikin-usuarioprev [usuario]="miembro"></app-hikin-usuarioprev>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+    <ion-infinite-scroll-content loadingSpinner="dots"></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

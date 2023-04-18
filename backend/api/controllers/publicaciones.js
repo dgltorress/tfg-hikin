@@ -119,7 +119,7 @@ const getPublicaciones = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT p.*, u.nombre AS autornombre, u.imagen AS autorimagen,
+`SELECT p.*, u.usuario AS autornombre, u.imagen AS autorimagen,
 (SELECT denominacion FROM itinerarios WHERE id = p.itinerario) AS itinerariodenominacion,
 (SELECT nombre FROM clubes WHERE id = p.club) AS clubnombre,
 (k.publicacion IS NOT NULL) AS is_kudos,
@@ -178,7 +178,7 @@ const getPublicacion = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT p.*, u.nombre AS autornombre, u.imagen AS autorimagen,
+`SELECT p.*, u.usuario AS autornombre, u.imagen AS autorimagen,
 (SELECT denominacion FROM itinerarios WHERE id = p.itinerario) AS itinerariodenominacion,
 (SELECT nombre FROM clubes WHERE id = p.club) AS clubnombre,
 (k.publicacion IS NOT NULL) AS is_kudos,

@@ -49,14 +49,14 @@ export class ItinerarioComponent implements OnInit {
         this.itinerario.circular = '-';
       }
   
-      if( this.itinerario.latitud && this.itinerario.longitud ){
+      /**if( this.itinerario.latitud && this.itinerario.longitud ){
         this.itinerario.openstreetmapSource = this.domSanitizer.bypassSecurityTrustResourceUrl( encodeURI(
           `https://www.openstreetmap.org/export/embed.html?bbox=${this.itinerario.longitud},${this.itinerario.latitud},${this.itinerario.longitud},${this.itinerario.latitud}&layer=mapnik`
         ) );
-        /** this.itinerario.googlemapsSource = this.domSanitizer.bypassSecurityTrustResourceUrl( encodeURI(
+         this.itinerario.googlemapsSource = this.domSanitizer.bypassSecurityTrustResourceUrl( encodeURI(
           `https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3037.8736815332227!2d${this.itinerario.latitud}!3d${this.itinerario.longitud}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNDDCsDI0JzQxLjkiTiAxwrAyNSc1Ni45Ilc!5e0!3m2!1ses!2ses!4v1681785922292!5m2!1ses!2ses`
-        ) ); **/
-      }
+        ) ); 
+      }**/
 
       this.itinerario.procesado = true;
     }

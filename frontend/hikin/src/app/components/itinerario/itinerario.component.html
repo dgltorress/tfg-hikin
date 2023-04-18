@@ -1,20 +1,5 @@
 <article class="itinerarioprev" [routerLink]="'/itinerarios/'+itinerario.id" routerDirection="forward">
-  <header *ngIf="itinerario.openstreetmapSource">
-    <!--<iframe
-      [src]="itinerario.openstreetmapSource"
-      frameborder="0"
-      scrolling="no"
-      marginheight="0"
-      marginwidth="0">
-    </iframe>-->
-    <!--<iframe
-      [src]="googlemapsSource"
-      allowfullscreen=""
-      loading="lazy"
-      referrerpolicy="no-referrer-when-downgrade">
-    </iframe>-->
-  </header>
-  <div>
+  <header>
     <ion-label text-wrap>
       <h2>
         <a *ngIf="itinerario.uri" [href]="itinerario.uri" target="_blank">{{ itinerario.denominacion }}</a>
@@ -27,7 +12,7 @@
       <span>{{ ( ( itinerario.provincia ) ? itinerario.provincia + ', ' : '' )  + itinerario.autonomia }}</span>
     </div>
     <p>{{ itinerario.descripcion }}</p>
-  </div>
+  </header>
   <hr>
   <div class="info">
     <div>

@@ -34,7 +34,7 @@ const elementosPorPagina = 10;
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
- const getSalidas = async( req , res ) => {
+const getSalidas = async( req , res ) => {
     // Construir filtro SQL
     let filter = '';
     const parameters = [];
@@ -79,15 +79,15 @@ const elementosPorPagina = 10;
         parameters.push( req.query.itinerario );
     }
 
-    if( req.query.itinerario ){
+    if( req.query.club ){
         if( firstQuery === true ){
             filter += 'WHERE ';
             firstQuery = false;
         } else {
             filter += ' AND ';
         }
-        filter += "s.itinerario = ?";
-        parameters.push( req.query.itinerario );
+        filter += "s.club = ?";
+        parameters.push( req.query.club );
     }
 
 

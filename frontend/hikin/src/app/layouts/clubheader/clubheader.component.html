@@ -1,0 +1,41 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button icon="arrow-back-outline" defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <main *ngIf="club">
+    <ion-avatar>
+      <img [src]="club.imagen" alt="Imagen del club" (error)="setDefaultClub($event)">
+    </ion-avatar>
+    <h2>
+      <ion-icon *ngIf="club.privado" name="lock-closed" title="Privado"></ion-icon>
+      <span>{{ club.nombre }}</span>
+    </h2>
+    <ul class="tags">
+      <li>
+        <ion-icon name="location" title="Ubicación"></ion-icon>
+        <span>{{ ( ( club.nombrepro ) ? club.nombrepro + ', ' : '' )  + club.nombreauto }}</span>
+      </li>
+      <li>
+        <ion-icon name="people" title="Miembros"></ion-icon>
+        <span>{{ club.n_miembros }}</span>
+      </li>
+    </ul>
+    <p>{{ club.descripcion }}</p>
+    <div class="botones">
+      <ion-button *ngIf="userService.user && ( userService.user.id !== club.propietario )"
+        [fill]="( club.is_miembro ) ? 'outline' : 'solid'" (click)="toggleInscripcion($event)">
+        {{ ( club.is_miembro ) ? clubheaderComponent.textoInscrito : clubheaderComponent.textoInscribirse }}
+      </ion-button>
+      <ion-button *ngIf="userService.user && ( userService.user.id === club.propietario )"
+        fill="solid" [routerLink]="'/club/'+club.id+'/editar'" routerDirection="forward">
+        Editar
+      </ion-button>
+      <ion-button *ngIf="userService.user && ( userService.user.id === club.propietario )"
+        fill="solid" class="cancelar" (click)="eliminarClub($event)">
+        Eliminar
+      </ion-button>
+    </div>
+  </main>
+</ion-header>

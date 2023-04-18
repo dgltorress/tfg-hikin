@@ -1,6 +1,8 @@
 <app-hikin-detailsheader titulo="Itinerario"></app-hikin-detailsheader>
 
 <ion-content [fullscreen]="true" class="clean">
+  <app-hikin-embedmap *ngIf="itinerario && itinerario.openstreetmapSource" [source]="itinerario.openstreetmapSource"></app-hikin-embedmap>
+
   <ion-segment [scrollable]="true" [value]="currentSegment" (ionChange)="setSegment($event)">
     <ion-segment-button value="detalles">Detalles</ion-segment-button>
     <ion-segment-button value="resenas">Reseñas</ion-segment-button>

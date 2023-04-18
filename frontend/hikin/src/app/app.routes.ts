@@ -38,7 +38,12 @@ export const routes: Routes = [
     canActivate: [ loggedInGuard ],
     loadComponent: () => import('./pages/public/itinerario/itinerario.page').then( m => m.ItinerarioPage)
   },
-  { // maneja rutas no reconocidas
+  {
+    path: 'clubes/:id',
+    canActivate: [ loggedInGuard ],
+    loadComponent: () => import('./pages/public/club/club.page').then( m => m.ClubPage)
+  },
+  { // Maneja rutas no reconocidas
     path: '**',
     redirectTo: ''
   },
