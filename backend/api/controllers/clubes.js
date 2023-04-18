@@ -174,7 +174,7 @@ INNER JOIN autonomias AS a ON l.codauto = a.cod
 LEFT JOIN provincias AS p ON l.cpro = p.cod
 LEFT JOIN miembro_de AS m ON m.club = c.id AND m.usuario = ?
 WHERE c.id = ?`,
-        [ idObjetivo, idSolicitante ],
+        [ idSolicitante, idObjetivo ],
         ( err , result ) => {
             if( err ){
                 console.error( err );

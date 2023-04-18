@@ -58,3 +58,8 @@ ion-button{
 ion-button.cancelar{
     --background: var(--hikin-error);
 }
+
+ion-button[fill=outline]{
+    --color: var(--hikin-texto-claro);
+    --border-color: var(--hikin-texto-claro);
+}

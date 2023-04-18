@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
@@ -12,7 +12,7 @@ import { commonMethods } from 'src/app/components/commonMethods';
 @Component({
   selector: 'app-hikin-clubheader',
   templateUrl: './clubheader.component.html',
-  styleUrls: ['./clubheader.component.scss'],
+  styleUrls: ['../../pages/public/commonStyle.scss','./clubheader.component.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule]
 })
@@ -29,12 +29,12 @@ export class ClubheaderComponent implements OnInit {
   constructor(
     private api: ApiService,
     private alertService: AlertService,
-    public userService: UserService
+    public userService: UserService,
+    private router: Router
   ){
   }
 
   ngOnInit(){
-    setTimeout( () => { console.log( this.club ) }, 1000 ); // ¿POR QUÉ SE RECIBE UN CLUB EQUIVOCADO?
   }
 
   /**
@@ -80,7 +80,22 @@ export class ClubheaderComponent implements OnInit {
   }
 
   eliminarClub( ev: any ): void {
-
+    try{
+      this.api.deleteClub( this.club.id, {
+        successCallback: ( response: any ) => {
+          this.alertService.showToast( `Club "${this.club.nombre}" eliminado` );
+          this.router.navigate( [ '/home/comunidad' ] );
+        },
+        failedCallback: ( errorResponse: any ) => {
+          this.alertService.errorToToast( errorResponse.error );
+        }
+      } );
+    } catch( err ){
+      if( isDevMode() === true ){
+        console.error( 'Ha habido un error local: ', err );
+      }
+      this.alertService.errorToToast( 'Ha habido un error' );
+    }
   }
 
   setDefaultClub( ev: any ) : void { commonMethods.setDefaultClub( ev ); }
