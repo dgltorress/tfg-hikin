@@ -49,7 +49,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"a@mail.com\",\r\n    \"contrasena\": \"JohnDoe\"\r\n}",
+							"raw": "{\r\n    \"email\": \"a@mail.com\",\r\n    \"contrasena\": \"JohnDoee\",\r\n    \"usuario\": \"JOHNLONG\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1185,6 +1185,31 @@
 					"response": []
 				},
 				{
+					"name": "clubes/:id/miembros",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/clubes/:id/miembros",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"clubes",
+								":id",
+								"miembros"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "clubes/:id/imagen",
 					"request": {
 						"method": "POST",
@@ -1540,6 +1565,31 @@
 					"response": []
 				},
 				{
+					"name": "salidas/:id/participantes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/salidas/:id/participantes",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"salidas",
+								":id",
+								"participantes"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "salidas/:id/inscripcion",
 					"request": {
 						"method": "POST",
@@ -1744,6 +1794,24 @@
 									"value": "1",
 									"disabled": true
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "distintivos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/info/distintivos",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"info",
+								"distintivos"
 							]
 						}
 					},

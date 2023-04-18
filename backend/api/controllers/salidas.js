@@ -257,7 +257,7 @@ WHERE s.id = ?`,
  * @param {*} req Petición del cliente.
  * @param {*} res Respuesta del servidor.
  */
- const getParticipantes = async( req , res ) => {
+const getParticipantes = async( req , res ) => {
     // Distingue los identificadores
     const idSolicitante = req.user.id;
     const idObjetivo = req.params.id;
@@ -286,7 +286,7 @@ WHERE p.salida = ? AND p.pendiente = 0` , [
                 res.status( HTTP.error_server.internal ).json( {
                     msg: 'Ha habido un error'
                 } );
-                logRequest( req , 'getUsuariosBasicos' , HTTP.error_server.internal , 'Error al obtener los usuarios' );
+                logRequest( req , 'getParticipantes' , HTTP.error_server.internal , 'Error al obtener los usuarios' );
             } else {
                 // Resolver URLs de fotos de perfil
                 for( let i = 0 ; i < result.length ; i++ ){
@@ -296,7 +296,7 @@ WHERE p.salida = ? AND p.pendiente = 0` , [
                 }
 
                 res.status( HTTP.success.ok ).json( result );
-                logRequest( req , 'getUsuariosBasicos', HTTP.success.ok );
+                logRequest( req , 'getParticipantes', HTTP.success.ok );
             }
         }
     );

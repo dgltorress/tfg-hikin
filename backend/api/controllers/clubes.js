@@ -12,7 +12,7 @@ const { adminConnection } = require( '../services/database.js' ); // Base de dat
 const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
 const { resolveURL, toUniversalPath } = require( '../helpers/metodos.js' ); // Metodos generales
 const { logRequest } = require( '../helpers/log.js' ); // Registro
-const { deleteClubImage, clubURL } = require( '../middleware/files.js' );
+const { deleteClubImage, clubURL, pfpURL } = require( '../middleware/files.js' );
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // ----------------
@@ -195,6 +195,57 @@ WHERE c.id = ?`,
 
                 res.status( HTTP.success.ok ).json( result[ 0 ] );
                 logRequest( req , 'getClub', HTTP.success.ok );
+            }
+        }
+    );
+}
+
+/**
+ * Obtiene los miembros de un club.
+ * 
+ * @param {*} req Petición del cliente.
+ * @param {*} res Respuesta del servidor.
+ */
+ const getMiembros = async( req , res ) => {
+    // Distingue los identificadores
+    const idSolicitante = req.user.id;
+    const idObjetivo = req.params.id;
+
+    // Query
+    adminConnection.query(
+`SELECT u.id, u.usuario, u.nombre, u.imagen, u.privado,
+(s.seguidor IS NOT NULL) AS is_siguiendo,
+(SELECT COUNT(*) FROM sigue_a WHERE seguido = u.id) AS n_seguidores
+
+FROM miembro_de AS m
+
+INNER JOIN usuarios AS u
+ON m.usuario = u.id
+
+LEFT JOIN sigue_a AS s
+ON u.id = s.seguido AND s.seguidor = ?
+
+WHERE m.club = ? AND m.pendiente = 0` , [
+    idSolicitante,
+    idObjetivo
+] ,
+        ( err , result ) => {
+            if( err ){
+                console.error( err );
+                res.status( HTTP.error_server.internal ).json( {
+                    msg: 'Ha habido un error'
+                } );
+                logRequest( req , 'getMiembros' , HTTP.error_server.internal , 'Error al obtener los usuarios' );
+            } else {
+                // Resolver URLs de fotos de perfil
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].imagen ){
+                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
+                    }
+                }
+
+                res.status( HTTP.success.ok ).json( result );
+                logRequest( req , 'getMiembros', HTTP.success.ok );
             }
         }
     );
@@ -947,7 +998,7 @@ const borrarImagen = async( req , res ) => {
 
 
 // Marcar los metodos para exportar
-module.exports = { getClubes, getClub,
+module.exports = { getClubes, getClub, getMiembros,
     createClub, updateClub, deleteClub,
     inscribirseClub, desinscribirseClub,
     invitarClub, desinvitarClub,

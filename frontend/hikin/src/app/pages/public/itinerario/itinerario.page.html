@@ -1,0 +1,20 @@
+<app-hikin-detailsheader titulo="Itinerario"></app-hikin-detailsheader>
+
+<ion-content [fullscreen]="true" class="clean">
+  <ion-segment [scrollable]="true" [value]="currentSegment" (ionChange)="setSegment($event)">
+    <ion-segment-button value="detalles">Detalles</ion-segment-button>
+    <ion-segment-button value="resenas">Reseñas</ion-segment-button>
+  </ion-segment>
+
+  <div *ngIf="(currentSegment === 'detalles')">
+    <app-hikin-itinerario *ngIf="itinerario" [itinerario]="itinerario"></app-hikin-itinerario>
+  </div>
+
+  <div *ngIf="(currentSegment === 'resenas')">
+    <ion-list>
+      <ion-item *ngFor="let resena of resenas">
+        <app-hikin-resena [resena]="resena"></app-hikin-resena>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

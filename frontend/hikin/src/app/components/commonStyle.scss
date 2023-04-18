@@ -40,3 +40,12 @@ ion-button[fill=outline]{
 article>header,article>section,article>footer{
     padding: .5em 1.2em;
 }
+
+hr{
+    width: 85%;
+    height: 1px;
+
+    background-color: var(--ion-color-step-100);
+
+    margin: 0 auto;
+}

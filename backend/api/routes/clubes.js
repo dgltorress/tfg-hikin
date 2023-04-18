@@ -13,7 +13,7 @@ const { query , param , body } = require( 'express-validator' ); // body de Expr
 const { validateJWT } = require( '../middleware/jwt.js' ); // Validador de JSON Web Token
 const { validateFields } = require( '../middleware/validateFields.js' ); // Validador de JSON Web Token
 const { uploadClubImage } = require( '../middleware/files' );
-const { getClubes, getClub,
+const { getClubes, getClub, getMiembros,
     createClub, updateClub, deleteClub,
     inscribirseClub, desinscribirseClub,
     invitarClub, desinvitarClub,
@@ -80,6 +80,14 @@ router.route( '/:id' )
         validateFields,
         deleteClub
     );
+
+router.route( '/:id/miembros' )
+    .get(
+        validateJWT,
+        param( 'id' , 'Número natural mayor que 0' ).exists().isInt( { min: 1 } ).toInt(),
+        validateFields,
+        getMiembros
+    )
 
 router.route( '/:id/imagen' )
     .post(

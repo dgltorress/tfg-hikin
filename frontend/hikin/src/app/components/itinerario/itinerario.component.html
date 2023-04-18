@@ -1,0 +1,88 @@
+<article class="itinerarioprev" [routerLink]="'/itinerarios/'+itinerario.id" routerDirection="forward">
+  <header *ngIf="itinerario.googlemapssrc">
+    <!--<iframe
+      width="425"
+      height="300"
+      frameborder="0"
+      scrolling="no"
+      marginheight="0"
+      marginwidth="0"
+      [src]="itinerario.openmapsrc">
+    </iframe> OPENMAP-->
+    <!--<iframe
+      [src]="itinerario.googlemapssrc"
+      width="600"
+      height="450"
+      style="border:0;"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>-->
+  </header>
+  <div>
+    <ion-label text-wrap>
+      <h2>
+        <a *ngIf="itinerario.uri" [href]="itinerario.uri" target="_blank">{{ itinerario.denominacion }}</a>
+        <span *ngIf="!itinerario.uri">{{ itinerario.denominacion }}</span>
+      </h2>
+      <p>{{ itinerario.cod }}</p>
+    </ion-label>
+    <div class="author">
+      <ion-icon name="location" title="Ubicación"></ion-icon>
+      <span>{{ ( ( itinerario.provincia ) ? itinerario.provincia + ', ' : '' )  + itinerario.autonomia }}</span>
+    </div>
+    <p>{{ itinerario.descripcion }}</p>
+  </div>
+  <hr>
+  <div class="info">
+    <div>
+      <ion-icon src="assets/svg/distance-svgrepo-com.svg" title="Distancia"></ion-icon>
+      <ion-label>
+        <h2>Distancia</h2>
+        <p [innerHTML]="itinerario.distanciakm"></p>
+      </ion-label>
+    </div>
+    <div>
+      <ion-icon src="assets/svg/altitude-svgrepo-com.svg" title="Desnivel"></ion-icon>
+      <ion-label>
+        <h2>Desnivel</h2>
+        <p [innerHTML]="itinerario.desnivelm"></p>
+      </ion-label>
+    </div>
+    <div>
+      <ion-icon src="assets/svg/levels-svgrepo-com.svg" title="Dificultad"></ion-icon>
+      <ion-label>
+        <h2>Dificultad</h2>
+        <p [innerHTML]="itinerario.dificultadnombre"></p>
+      </ion-label>
+    </div>
+    <div>
+      <ion-icon name="time-outline" title="Tiempo"></ion-icon>
+      <ion-label>
+        <h2>Tiempo</h2>
+        <p [innerHTML]="itinerario.tiempoh"></p>
+      </ion-label>
+    </div>
+    <div>
+      <ion-icon name="reload" title="Circular"></ion-icon>
+      <ion-label>
+        <h2>¿Circular?</h2>
+        <p [innerHTML]="itinerario.circular"></p>
+      </ion-label>
+    </div>
+  </div>
+  <footer>
+    <ion-buttons>
+      <ion-button type="button" fill="solid" text-wrap
+        [routerLink]="'/salida/crear?itinerario='+itinerario.id+'&itinerariodenominacion='+itinerario.denominacion" routerDirection="forward">
+        <ion-icon name="add"></ion-icon>
+        <span>Organizar salida</span>
+      </ion-button>
+      <ion-button type="button" fill="solid"
+        [routerLink]="'/publicacion/crear?itinerario='+itinerario.id+'&itinerariodenominacion='+itinerario.denominacion" routerDirection="forward">
+        <ion-icon name="add"></ion-icon>
+        <span>Crear publicación</span>
+      </ion-button>
+    </ion-buttons>
+  </footer>
+</article>

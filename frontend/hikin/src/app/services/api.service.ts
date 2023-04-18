@@ -372,6 +372,12 @@ export class ApiService {
     this.sendRequest( options );
   }
 
+  getClubMiembros( id: number, options: TRequestOptions = {} ) : void {
+    options.endpoint = `${ApiService.endpoints.clubes}/${id}/miembros`;
+    options.method = ApiService.methods.GET;
+    this.sendRequest( options );
+  }
+
   subirImagenClub( id: number, options: TRequestOptions = {} ) : void {
     options.endpoint = `${ApiService.endpoints.clubes}/${id}/imagen`;
     options.method = ApiService.methods.POST;

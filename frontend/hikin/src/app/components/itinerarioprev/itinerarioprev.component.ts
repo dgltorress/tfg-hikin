@@ -10,7 +10,7 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule]
 })
-export class ItinerarioprevComponent  implements OnInit {
+export class ItinerarioprevComponent implements OnInit {
 
   @Input() itinerario: any;
 
