@@ -43,8 +43,16 @@ export const routes: Routes = [
     canActivate: [ loggedInGuard ],
     loadComponent: () => import('./pages/public/perfil/perfil.page').then( m => m.PerfilPage)
   },
+  {
+    path: 'settings',
+    loadComponent: () => import('./pages/public/settings/settings.page').then( m => m.SettingsPage)
+  },
+  {
+    path: 'about',
+    loadComponent: () => import('./pages/public/about/about.page').then( m => m.AboutPage)
+  },
   { // Maneja rutas no reconocidas
     path: '**',
     redirectTo: ''
-  }
+  },
 ];
