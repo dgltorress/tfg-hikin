@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, isDevMode, Output, EventEmitter, } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { RouterModule, Router } from '@angular/router';
 
 import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
@@ -16,7 +15,7 @@ import { commonMethods } from 'src/app/components/commonMethods';
   templateUrl: './userheader.component.html',
   styleUrls: ['../../pages/public/commonStyle.scss','../headerSpecific.scss','./userheader.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, RouterModule, UsuarioformComponent]
+  imports: [IonicModule, CommonModule, UsuarioformComponent]
 })
 export class UserheaderComponent implements OnInit {
 
@@ -35,8 +34,7 @@ export class UserheaderComponent implements OnInit {
   constructor(
     private api: ApiService,
     private alertService: AlertService,
-    public userService: UserService,
-    private router: Router
+    public userService: UserService
   ){
   }
 

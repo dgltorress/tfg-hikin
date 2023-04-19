@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, 
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms'
 import { IonicModule  } from '@ionic/angular';
-import { RouterModule, Router } from '@angular/router';
 
 import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
@@ -12,7 +11,7 @@ import { AlertService } from 'src/app/services/alert.service';
   templateUrl: './usuarioform.component.html',
   styleUrls: ['../commonStyle.scss','./usuarioform.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule, RouterModule]
+  imports: [IonicModule, CommonModule, ReactiveFormsModule]
 })
 export class UsuarioformComponent  implements OnInit {
 
@@ -32,8 +31,7 @@ export class UsuarioformComponent  implements OnInit {
 
   constructor(
     private api: ApiService,
-    private alertService: AlertService,
-    private router: Router
+    private alertService: AlertService
   ){}
 
   ngOnInit(){
@@ -63,12 +61,7 @@ export class UsuarioformComponent  implements OnInit {
           // Notificar al componente superior
           this.creado.emit();
 
-          // Ir al recurso creado
-          const responseBody: any = response.body;
-
-          if( responseBody && responseBody.id ){
-            this.router.navigate( [ `/usuarios/${responseBody.id}` ] );
-          }
+          this.alertService.showToast( 'Usuario creado con éxito' );
         },
         failedCallback: ( errorResponse ) => {
           this.alertService.errorToToast( errorResponse.error );
@@ -90,6 +83,8 @@ export class UsuarioformComponent  implements OnInit {
         successCallback: ( response ) => {
           // Notificar al componente superior
           this.editado.emit();
+
+          this.alertService.showToast( 'Usuario editado con éxito' );
         },
         failedCallback: ( errorResponse ) => {
           this.alertService.errorToToast( errorResponse.error );

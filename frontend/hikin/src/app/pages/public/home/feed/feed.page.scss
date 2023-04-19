@@ -1,3 +1,7 @@
 app-hikin-publicacion{
     width: 100%;
 }
+
+ion-modal ion-toolbar{
+    --background: var(--hikin-primario);
+}

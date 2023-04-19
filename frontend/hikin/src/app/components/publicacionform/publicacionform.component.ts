@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, 
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms'
 import { IonicModule  } from '@ionic/angular';
-import { RouterModule, Router } from '@angular/router';
 
 import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
@@ -13,7 +12,7 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './publicacionform.component.html',
   styleUrls: ['../commonStyle.scss','./publicacionform.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule, RouterModule]
+  imports: [IonicModule, CommonModule, ReactiveFormsModule]
 })
 export class PublicacionformComponent  implements OnInit {
 
@@ -36,8 +35,7 @@ export class PublicacionformComponent  implements OnInit {
   constructor(
     private api: ApiService,
     private alertService: AlertService,
-    private userService: UserService,
-    private router: Router
+    private userService: UserService
   ){}
 
   ngOnInit(){
@@ -112,14 +110,9 @@ export class PublicacionformComponent  implements OnInit {
                 body: formData,
                 successCallback: ( response2 ) => {
                   // Notificar al componente superior
-                  this.creado.emit();
+                  this.creado.emit( responseBody.id );
 
-                  // Ir al recurso creado
-                  const responseBody2: any = response2.body;
-
-                  if( responseBody2 && responseBody2.id ){
-                    this.router.navigate( [ `/publicacion/${responseBody2.id}` ] );
-                  }
+                  this.alertService.showToast( 'Publicación creada con éxito' );
                 },
                 failedCallback: ( errorResponse ) => {
                   this.alertService.errorToToast( errorResponse.error );
@@ -127,14 +120,13 @@ export class PublicacionformComponent  implements OnInit {
               } );
             } else {
               // Notificar al componente superior
-              this.creado.emit();
-
-              // Ir al recurso creado
-              const responseBody: any = response.body;
-
               if( responseBody && responseBody.id ){
-                this.router.navigate( [ `/publicacion/${responseBody.id}` ] );
+                this.creado.emit( responseBody.id );
+              } else { 
+                this.creado.emit();
               }
+
+              this.alertService.showToast( 'Publicación creada con éxito' );
             }
           }
         },

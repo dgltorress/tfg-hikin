@@ -16,8 +16,8 @@ import { PublicacionformComponent } from 'src/app/components/publicacionform/pub
   templateUrl: 'feed.page.html',
   styleUrls: ['../../commonStyle.scss','../home.page.scss','feed.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, MainheaderComponent, PublicacionComponent,
-    PublicacionformComponent]
+  imports: [IonicModule, CommonModule, MainheaderComponent,
+    PublicacionComponent, PublicacionformComponent]
 })
 export class FeedPage implements OnInit {
 
@@ -68,6 +68,20 @@ export class FeedPage implements OnInit {
       } );
     } else {
       if( isDevMode() === true ) console.warn( '[getFeed()] No se ha podido extraer el identificador del usuario desde el servicio' );
+    }
+  }
+
+  redirigirNueva( id?: number ): void {
+    if( id ){
+      this.isCreateOpen = false;
+      
+      /**
+       * INTENTAR REDIRIGIR DA EL SIGUIENTE ERROR:
+       * 
+       * El consumo de memoria will-change es demasiado alto
+       * 
+       * this.router.navigate( [ `/publicaciones/${id}` ] ); 
+       * **/
     }
   }
 

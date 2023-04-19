@@ -32,7 +32,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <app-hikin-publicacionform [accion]="'crear'"
+      <app-hikin-publicacionform [accion]="'crear'" (creado)="redirigirNueva($event)"
         (creado)="toggleCrear(false)"></app-hikin-publicacionform>
     </ion-content>
   </ng-template>
