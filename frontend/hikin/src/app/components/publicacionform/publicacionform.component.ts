@@ -26,6 +26,7 @@ export class PublicacionformComponent  implements OnInit {
   @Output() nuevaImagen = new EventEmitter<any>();
 
   @ViewChild( 'imagenField' ) imagenField?: ElementRef;
+  @ViewChild( 'preview' ) preview?: ElementRef;
 
   public itinerarios: any[] = []; // Se llena sólo la primera página
   public clubesUsuario: any[] = [];
@@ -160,6 +161,24 @@ export class PublicacionformComponent  implements OnInit {
           console.warn( 'ERROR: acción no reconocida: ' , this.accion );
         }
       break;
+    }
+  }
+
+  showPreview( inputEvent: any ): void {
+    const inputElement = inputEvent.target;
+
+    if( inputElement &&
+        inputElement.files &&
+        inputElement.files[0] ) {
+      const fileReader = new FileReader();
+
+      fileReader.onload = ( ev ) => {
+        if( ev.target && this.preview ){
+          this.preview.nativeElement.src = ev.target.result;
+        }
+      };
+
+      fileReader.readAsDataURL( inputElement.files[ 0 ] );
     }
   }
 

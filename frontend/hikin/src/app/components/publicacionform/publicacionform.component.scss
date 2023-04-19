@@ -39,5 +39,11 @@ form{
     margin-bottom: 1em;
 }
 input[type=file]{
-    margin-top: .5em;
+    display: none;
+}
+
+img.preview{
+    width: 100%;
+
+    border-radius: 4px;
 }

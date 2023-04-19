@@ -67,20 +67,24 @@
   </ion-modal>
 </form>
 
-<form
+<form *ngIf="accion === 'editar'"
   [formGroup]="imagenForm"
   enctype="multipart/form-data"
   (ngSubmit)="subirImagen()">
   <ion-list>
     <ion-item>
       <div>
-        <label for="imagenInput">Foto de perfil (máx. 2MB)</label>
+        <label for="imagenInput">
+          <p>Foto de perfil (máx. 2MB)</p>
+          <img #preview src="assets/img/user-default.png" alt="Previsualización" class="preview">
+        </label>
         <input
           #imagenField
           id="imagenInput"
           formControlName="imagen"
           type="file"
-          accept="image/png, image/jpeg">
+          accept="image/png, image/jpeg"
+          (change)="showPreview($event)">
       </div>
     </ion-item>
   </ion-list>

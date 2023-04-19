@@ -46,13 +46,17 @@
     </ion-item>
     <ion-item>
       <div>
-        <label for="imagenInput">Imagen (máx. 2MB)</label>
+        <label for="imagenInput">
+          <p>Imagen (máx. 2MB)</p>
+          <img #preview src="assets/img/user-default.png" alt="Previsualización" class="preview">
+        </label>
         <input
           #imagenField
           id="imagenInput"
           formControlName="imagen"
           type="file"
-          accept="image/png, image/jpeg">
+          accept="image/png, image/jpeg"
+          (change)="showPreview($event)">
       </div>
     </ion-item>
   </ion-list>

@@ -25,6 +25,7 @@ export class UsuarioformComponent  implements OnInit {
   @Output() nuevaImagen = new EventEmitter<any>();
 
   @ViewChild( 'imagenField' ) imagenField?: ElementRef;
+  @ViewChild( 'preview' ) preview?: ElementRef;
 
   public recursoForm: FormGroup = new FormGroup({});
   public imagenForm: FormGroup = new FormGroup({});
@@ -158,6 +159,24 @@ export class UsuarioformComponent  implements OnInit {
           console.warn( 'ERROR: acción no reconocida: ' , this.accion );
         }
       break;
+    }
+  }
+
+  showPreview( inputEvent: any ): void {
+    const inputElement = inputEvent.target;
+
+    if( inputElement &&
+        inputElement.files &&
+        inputElement.files[0] ) {
+      const fileReader = new FileReader();
+
+      fileReader.onload = ( ev ) => {
+        if( ev.target && this.preview ){
+          this.preview.nativeElement.src = ev.target.result;
+        }
+      };
+
+      fileReader.readAsDataURL( inputElement.files[ 0 ] );
     }
   }
 
