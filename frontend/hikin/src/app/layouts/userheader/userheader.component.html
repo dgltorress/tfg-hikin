@@ -1,0 +1,49 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button icon="arrow-back-outline" defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <main *ngIf="usuario">
+    <ion-avatar>
+      <img [src]="usuario.imagen" alt="Foto de perfil" (error)="setDefaultClub($event)">
+    </ion-avatar>
+    <header>
+      <ion-label>
+        <h3><ion-icon *ngIf="usuario.privado" name="lock-closed" title="Privado"></ion-icon>{{ usuario.usuario }}</h3>
+        <p>{{ usuario.nombre }}</p>
+      </ion-label>
+    </header>
+    <ul class="tags">
+      <li>
+        <ion-icon name="time" title="Edad"></ion-icon>
+        <span>{{ usuario.fecha_nac }}</span>
+      </li>
+      <li>
+        <ion-icon name="male-female" title="Sexo"></ion-icon>
+        <span>{{ usuario.sexo }}</span>
+      </li>
+      <li>
+        <ion-icon name="people" title="Seguidores"></ion-icon>
+        <span>{{ usuario.n_seguidores }}</span>
+      </li>
+    </ul>
+    <span>Miembro desde el:</span>
+    <span>{{ usuario.fecha_reg }}</span>
+    <p>{{ usuario.bio }}</p>
+    <div class="botones">
+      <ion-button *ngIf="userService.user && ( userService.user.id !== usuario.id )"
+        [fill]="( usuario.is_siguiendo ) ? 'outline' : 'solid'" (click)="toggleSeguimiento($event)">
+        {{ ( usuario.is_siguiendo ) ? userheaderComponent.textoSiguiendo : userheaderComponent.textoSeguir }}
+      </ion-button>
+      <ion-button *ngIf="userService.user && ( userService.user.id === usuario.id )"
+        fill="solid" [routerLink]="'/usuarios/'+usuario.id+'/editar'" routerDirection="forward">
+        Editar
+      </ion-button>
+      <!--<ion-button *ngIf="userService.user && ( userService.user.id === usuario.id )"
+        fill="solid" class="cancelar" (click)="eliminarUsuario($event)">
+        Eliminar
+      </ion-button>-->
+    </div>
+  </main>
+</ion-header>

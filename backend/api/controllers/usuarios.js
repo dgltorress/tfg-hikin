@@ -15,7 +15,7 @@ const { HTTP } = require( '../helpers/constantes.js' ); // Constantes
 const { resolveURL, keepFields, toUniversalPath } = require( '../helpers/metodos.js' ); // Metodos generales
 const { logRequest } = require( '../helpers/log.js' ); // Registro
 const { generateJWT , JWTExpireMilliseconds } = require( '../helpers/jwt' ); // Generador de JSON Web Token
-const { deletePfp, pfpURL, postURL } = require( '../middleware/files.js' );
+const { deletePfp, pfpURL, postURL, clubURL } = require( '../middleware/files.js' );
 const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 
 // ----------------
@@ -419,6 +419,13 @@ WHERE m.usuario = ? AND m.pendiente = 0`, [
                 } );
                 logRequest( req , 'getClubes' , HTTP.error_server.internal , 'Error al obtener los recursos' );
             } else {
+                // Resolver URLs de imágenes de club
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].imagen ){
+                        result[ i ].imagen = resolveURL( result[ i ].imagen , `${RUTAMASKFULL}${clubURL}` , -4 );
+                    }
+                }
+
                 res.status( HTTP.success.ok ).json( result );
                 logRequest( req , 'getClubes' , HTTP.success.ok );
             }
@@ -438,9 +445,19 @@ const getSalidas = async( req , res ) => {
 
     // Query
     adminConnection.query(
-`SELECT s.* FROM salidas AS s
-INNER JOIN participa_en AS p ON s.id = p.salida
-WHERE p.usuario = ?
+`SELECT s.id, s.nombre, s.organizador, u.usuario AS organizadornombre, u.imagen AS organizadorimagen,
+s.itinerario, i.denominacion AS itinerariodenominacion,
+s.club, (SELECT nombre FROM clubes WHERE id = s.club) AS clubnombre,
+s.fecha_inicio, s.fecha_fin,
+s.privada, s.cancelada,
+l.codauto, l.cpro,
+a.nombre AS nombreauto, pro.nombre AS nombrepro
+FROM salidas AS s
+INNER JOIN usuarios AS u ON s.organizador = u.id
+INNER JOIN itinerarios AS i ON s.itinerario = i.id
+INNER JOIN localidades AS l ON i.localidad = l.id
+INNER JOIN autonomias AS a ON l.codauto = a.cod
+LEFT JOIN provincias AS pro ON l.cpro = pro.cod
 ORDER BY fecha_inicio DESC`, [
     idObjetivo
 ],
@@ -452,6 +469,13 @@ ORDER BY fecha_inicio DESC`, [
                 } );
                 logRequest( req , 'getSalidas' , HTTP.error_server.internal , 'Error al obtener los recursos' );
             } else {
+                // Resolver URLs de fotos de perfil
+                for( let i = 0 ; i < result.length ; i++ ){
+                    if( result[ i ].organizadorimagen ){
+                        result[ i ].organizadorimagen = resolveURL( result[ i ].organizadorimagen , `${RUTAMASKFULL}${pfpURL}` , -4 );
+                    }
+                }
+
                 res.status( HTTP.success.ok ).json( result );
                 logRequest( req , 'getSalidas' , HTTP.success.ok );
             }
@@ -475,7 +499,7 @@ const getResenas = async( req , res ) => {
 
 FROM resenas AS r
 INNER JOIN usuarios AS u ON r.usuario = u.id
-WHERE itinerario = ?
+WHERE u.id = ?
 ORDER BY fecha DESC`, [
     idObjetivo
 ],

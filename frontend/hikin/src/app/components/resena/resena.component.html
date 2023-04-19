@@ -17,7 +17,7 @@
     </div>
     <p>{{ resena.observaciones }}</p>
   </div>
-  <footer *ngIf="userService.user.id === resena.usuario">
+  <footer *ngIf="itId && ( userService.user.id === resena.usuario )">
     <ion-button type="button" fill="none" (click)="eliminarResena()">
       <ion-icon name="trash-outline" title="Eliminar"></ion-icon>
     </ion-button>

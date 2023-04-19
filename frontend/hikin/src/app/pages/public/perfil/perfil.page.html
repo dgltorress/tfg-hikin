@@ -1,0 +1,64 @@
+<app-hikin-userheader *ngIf="usuario" [usuario]="usuario"></app-hikin-userheader>
+  
+<ion-content [fullscreen]="true" role="feed">
+  <ion-segment [scrollable]="true" [value]="currentSegment" (ionChange)="setSegment($event)">
+    <ion-segment-button value="publicaciones">Publicaciones</ion-segment-button>
+    <ion-segment-button value="salidas">Salidas</ion-segment-button>
+    <ion-segment-button value="clubes">Clubes</ion-segment-button>
+    <ion-segment-button value="resenas">Reseñas</ion-segment-button>
+    <ion-segment-button value="distintivos">Distintivos</ion-segment-button>
+    <ion-segment-button value="valoraciones">Valoraciones</ion-segment-button>
+  </ion-segment>
+
+  <div *ngIf="(currentSegment === 'publicaciones')">
+    <ion-list>
+      <ion-item *ngFor="let publicacion of publicaciones" role="article">
+        <app-hikin-publicacion [publicacion]="publicacion"></app-hikin-publicacion>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="(currentSegment === 'salidas')">
+    <ion-list>
+      <ion-item *ngFor="let salida of salidas" role="article">
+        <app-hikin-salidaprev [salida]="salida"></app-hikin-salidaprev>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="(currentSegment === 'clubes')">
+    <ion-list>
+      <ion-item *ngFor="let club of clubes" role="article">
+        <app-hikin-clubprev [club]="club"></app-hikin-clubprev>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="(currentSegment === 'resenas')">
+    <ion-list>
+      <ion-item *ngFor="let resena of resenas" role="article">
+        <app-hikin-resena [resena]="resena"></app-hikin-resena>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="(currentSegment === 'distintivos')">
+    <ion-list>
+      <ion-item *ngFor="let distintivo of distintivos" role="article">
+        <app-hikin-distintivo [distintivo]="distintivo" [bloqueado]="distintivo.bloqueado"></app-hikin-distintivo>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <div *ngIf="(currentSegment === 'valoraciones')">
+    <ion-list>
+      <ion-item *ngFor="let valoracion of valoraciones" role="article">
+        <app-hikin-valoracion [valoracionUsuario]="valoracion"></app-hikin-valoracion>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+    <ion-infinite-scroll-content loadingSpinner="dots"></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>

@@ -129,8 +129,6 @@ export class ClubPage implements OnInit {
   }
 
   getMiembros( id: number ): void {
-    this.paramsSalidas.p = this.paginaActualSalidas;
-
     this.api.getClubMiembros( id, {
       successCallback: ( response: any ) => {
         const responseBody: any = response.body;

@@ -10,21 +10,20 @@ import { UserService } from 'src/app/services/user.service';
 import { commonMethods } from 'src/app/components/commonMethods';
 
 @Component({
-  selector: 'app-hikin-clubheader',
-  templateUrl: './clubheader.component.html',
-  styleUrls: ['../../pages/public/commonStyle.scss','../headerSpecific.scss','./clubheader.component.scss'],
+  selector: 'app-hikin-userheader',
+  templateUrl: './userheader.component.html',
+  styleUrls: ['../../pages/public/commonStyle.scss','../headerSpecific.scss','./userheader.component.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule]
 })
-export class ClubheaderComponent implements OnInit {
+export class UserheaderComponent implements OnInit {
+  @Input() titulo: string = 'Perfil';
+  @Input() usuario: any;
 
-  @Input() titulo: string = 'Club';
-  @Input() club: any;
+  public static readonly textoSeguir: string = 'Seguir';
+  public static readonly textoSiguiendo: string = 'Siguiendo';
 
-  public static readonly textoInscribirse: string = 'Inscribirse';
-  public static readonly textoInscrito: string = 'Inscrito';
-
-  public clubheaderComponent: typeof ClubheaderComponent = ClubheaderComponent;
+  public userheaderComponent: typeof UserheaderComponent = UserheaderComponent;
 
   constructor(
     private api: ApiService,
@@ -42,14 +41,14 @@ export class ClubheaderComponent implements OnInit {
    * 
    * @param ev 
    */
-  toggleInscripcion( ev: any ): void {
+  toggleSeguimiento( ev: any ): void {
     try{
-      // Es miembro: desinscribirse
-      if( this.club.is_miembro ){
-        this.api.desinscribirseClub( this.club.id, {
+      // Sigue: dejar de seguir
+      if( this.usuario.is_siguiendo ){
+        this.api.deseguirUsuario( this.usuario.id, {
           successCallback: ( response: any ) => {
-            this.club.is_miembro = 0;
-            --this.club.n_miembros;
+            this.usuario.is_siguiendo = 0;
+            --this.usuario.n_seguidores;
 
             ev.target.fill = 'solid';
           },
@@ -57,12 +56,12 @@ export class ClubheaderComponent implements OnInit {
             this.alertService.errorToToast( errorResponse.error );
           }
         } );
-      // No es miembro: inscribirse
+      // No sigue: seguir
       } else{
-        this.api.inscribirseClub( this.club.id, {
+        this.api.seguirUsuario( this.usuario.id, {
           successCallback: ( response: any ) => {
-            this.club.is_miembro = 1;
-            ++this.club.n_miembros;
+            this.usuario.is_siguiendo = 1;
+            ++this.usuario.n_seguidores;
 
             ev.target.fill = 'outline';
           },
@@ -71,25 +70,6 @@ export class ClubheaderComponent implements OnInit {
           }
         } );
       }
-    } catch( err ){
-      if( isDevMode() === true ){
-        console.error( 'Ha habido un error local: ', err );
-      }
-      this.alertService.errorToToast( 'Ha habido un error' );
-    }
-  }
-
-  eliminarClub( ev: any ): void {
-    try{
-      this.api.deleteClub( this.club.id, {
-        successCallback: ( response: any ) => {
-          this.alertService.showToast( `Club "${this.club.nombre}" eliminado` );
-          this.router.navigate( [ '/home/comunidad' ] );
-        },
-        failedCallback: ( errorResponse: any ) => {
-          this.alertService.errorToToast( errorResponse.error );
-        }
-      } );
     } catch( err ){
       if( isDevMode() === true ){
         console.error( 'Ha habido un error local: ', err );

@@ -9,11 +9,6 @@ export const routes: Routes = [
     loadChildren: () => import('./pages/public/home/home.routes').then((m) => m.routes),
   },
   {
-    path: 'ejemplo',
-    canActivate: [ loggedInGuard ],
-    loadComponent: () => import('./pages/public/ejemplo/ejemplo.page').then((m) => m.EjemploPage),
-  },
-  {
     path: 'login',
     canActivate: [ loggedOutGuard ],
     loadComponent: () => import('./pages/public/login/login.page').then( m => m.LoginPage)
@@ -43,8 +38,17 @@ export const routes: Routes = [
     canActivate: [ loggedInGuard ],
     loadComponent: () => import('./pages/public/club/club.page').then( m => m.ClubPage)
   },
+  {
+    path: 'usuarios/:id',
+    loadComponent: () => import('./pages/public/perfil/perfil.page').then( m => m.PerfilPage)
+  },
+  {
+    path: 'ejemplo',
+    canActivate: [ loggedInGuard ],
+    loadComponent: () => import('./pages/public/ejemplo/ejemplo.page').then((m) => m.EjemploPage),
+  },
   { // Maneja rutas no reconocidas
     path: '**',
     redirectTo: ''
-  },
+  }
 ];
