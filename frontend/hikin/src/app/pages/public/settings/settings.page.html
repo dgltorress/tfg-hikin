@@ -2,15 +2,22 @@
 
 <ion-content [fullscreen]="true">
   <main>
-    <ion-toggle>Modo noche</ion-toggle>
+    <ion-toggle
+      [checked]="nightModeEnabled"
+      (ionChange)="toggleNightMode()">
+      <ion-icon name="moon"></ion-icon>
+      Modo noche
+    </ion-toggle>
     <ion-input
       type="text"
       inputmode="text"
       fill="outline"
       label="URI de la API"
       label-placement="floating"
-      helperText="Dirección habilitada en el servidor para atender llamadas"
-      placeholder="XXXXX.com/api | XXX.XXX.XXX.XXX:XXXX/api">
+      helperText="Dirección habilitada en un servidor para atender llamadas"
+      placeholder="XXXXX.com/api | XXX.XXX.XXX.XXX:XXXX/api"
+      [value]="apiBaseUrl"
+      (focusout)="updateApiBaseUrl($event)">
     </ion-input>
   </main>
 </ion-content>

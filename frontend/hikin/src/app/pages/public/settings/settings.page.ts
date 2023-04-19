@@ -8,7 +8,6 @@ import { AlertService } from 'src/app/services/alert.service';
 import { DetailsheaderComponent } from 'src/app/layouts/detailsheader/detailsheader.component';
 
 import { environment } from 'src/environments/environment';
-import { environment as environmentProd } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-hikin-settings',
@@ -25,36 +24,32 @@ export class SettingsPage implements OnInit {
   constructor(
     private alertService: AlertService
   ){
-    if( isDevMode() === true ){
-      this.apiBaseUrl = environment.apiBaseUrl;
-      this.nightModeEnabled = environment.nightModeEnabled;
-    } else {
-      this.apiBaseUrl = environmentProd.apiBaseUrl;
-      this.nightModeEnabled = environmentProd.nightModeEnabled;
-    }
   }
 
   ngOnInit(){
+    this.apiBaseUrl = environment.apiBaseUrl;
+    this.nightModeEnabled = window.matchMedia( '(prefers-color-scheme: dark)' ).matches;
   }
 
-  updateApiBaseUrl( nuevaUrl: string ): void {
-    this.apiBaseUrl = nuevaUrl;
-
-    if( isDevMode() === true ){
-      environment.apiBaseUrl = this.apiBaseUrl;
+  updateApiBaseUrl( nuevaUrl: any ): void {
+    if( nuevaUrl &&
+        nuevaUrl.target &&
+        nuevaUrl.target.value ){
+        this.apiBaseUrl = nuevaUrl.target.value;
+        environment.apiBaseUrl = this.apiBaseUrl;
+        
+        console.log('cambiada a ', this.apiBaseUrl,environment.apiBaseUrl);
     } else {
-      environmentProd.apiBaseUrl = this.apiBaseUrl;
+      if( isDevMode() === true ){
+        console.warn( 'No se ha podido cambiar la URL de la API' );
+      }
     }
   }
 
-  toggleNightMode( isEnabled: boolean ){
-    this.nightModeEnabled = isEnabled;
+  toggleNightMode(): void {
+    this.nightModeEnabled = !this.nightModeEnabled;
 
-    if( isDevMode() === true ){
-      environment.nightModeEnabled = this.nightModeEnabled;
-    } else {
-      environmentProd.nightModeEnabled = this.nightModeEnabled;
-    }
+    document.body.classList.toggle( 'dark', this.nightModeEnabled );
   }
 
 }
