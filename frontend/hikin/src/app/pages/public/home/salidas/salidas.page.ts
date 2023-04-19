@@ -7,18 +7,21 @@ import { AlertService } from 'src/app/services/alert.service';
 
 import { MainheaderComponent, SearchBars } from 'src/app/layouts/mainheader/mainheader.component';
 import { SalidaprevComponent } from 'src/app/components/salidaprev/salidaprev.component';
+import { SalidaformComponent } from 'src/app/components/salidaform/salidaform.component';
 
 @Component({
   selector: 'app-salidas',
   templateUrl: 'salidas.page.html',
   styleUrls: ['../../commonStyle.scss','../home.page.scss','salidas.page.scss',],
   standalone: true,
-  imports: [IonicModule, CommonModule, MainheaderComponent, SalidaprevComponent]
+  imports: [IonicModule, CommonModule, MainheaderComponent, SalidaprevComponent, SalidaformComponent]
 })
 export class SalidasPage implements OnInit {
 
   public salidas: any[] | null = null;
   private paginaActual: number = 0;
+
+  public isCreateOpen: boolean = false;
 
   private params: any = {};
 
@@ -81,9 +84,28 @@ export class SalidasPage implements OnInit {
     this.getSalidas();
   }
 
+  redirigirNueva( id?: number ): void {
+    if( id ){
+      this.isCreateOpen = false;
+      
+      /**
+       * INTENTAR REDIRIGIR DA EL SIGUIENTE ERROR:
+       * 
+       * El consumo de memoria will-change es demasiado alto
+       * 
+       * this.router.navigate( [ `/salidas/${id}` ] ); 
+       * **/
+    }
+  }
+
+  toggleCrear( opened: boolean ): void {
+    this.isCreateOpen = opened;
+  }
+
   onIonInfinite( ev: any ) {
     this.getSalidas();
 
     ( ev as InfiniteScrollCustomEvent ).target.complete();
   }
+
 }

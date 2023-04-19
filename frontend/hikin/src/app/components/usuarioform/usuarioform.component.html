@@ -45,8 +45,10 @@
       </ion-select>
     </ion-item>
     <ion-item>
-      <ion-label text-wrap>Fecha de nacimiento</ion-label>
-      <ion-datetime-button datetime="fecha_nac"></ion-datetime-button>
+      <div class="dtcontainer">
+        <ion-label text-wrap>Fecha de nacimiento</ion-label>
+        <ion-datetime-button datetime="fecha_nac"></ion-datetime-button>
+      </div>
     </ion-item>
     <ion-item>
       <ion-checkbox
@@ -56,7 +58,7 @@
       </ion-checkbox>
     </ion-item>
   </ion-list>
-  <ion-button type="submit" fill="solid">Enviar</ion-button>
+  <ion-button type="submit" fill="solid">{{ accion }}</ion-button>
   <ion-modal [keepContentsMounted]="true">
     <ng-template>
       <ion-datetime

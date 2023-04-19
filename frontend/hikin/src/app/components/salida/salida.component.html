@@ -21,11 +21,11 @@
   <div class="fechas">
     <div>
       <span>Fecha de inicio</span>
-      <span>{{ salida.fecha_inicio }}</span>
+      <span>{{ salida.fecha_inicio_legible }}</span>
     </div>
     <div class="fechas">
       <span>Fecha de finalización</span>
-      <span>{{ salida.fecha_fin }}</span>
+      <span>{{ salida.fecha_fin_legible }}</span>
     </div>
   </div>
   <hr>
@@ -60,12 +60,29 @@
       {{ ( salida.is_participante ) ? salidaComponent.textoInscrito : salidaComponent.textoInscribirse }}
     </ion-button>
     <ion-button *ngIf="( !salida.cancelada ) && ( userService.user && ( userService.user.id === salida.organizador ) )"
-      fill="solid" [routerLink]="'/salidas/'+salida.id+'/editar'" routerDirection="forward">
+      fill="solid" (click)="toggleEditar(true)">
       Editar
     </ion-button>
-    <ion-button *ngIf="( !salida.cancelada ) && ( userService.user && ( userService.user.id === salida.organizador ) )"
+    <!--<ion-button *ngIf="( !salida.cancelada ) && ( userService.user && ( userService.user.id === salida.organizador ) )"
       fill="solid" class="cancelar" (click)="cancelarSalida($event)">
       Cancelar
-    </ion-button>
+    </ion-button>-->
   </footer>
 </article>
+
+<ion-modal [isOpen]="isEditOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Editar salida</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="toggleEditar(false)" [strong]="true">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <app-hikin-salidaform [accion]="'editar'" [salida]="salida" (editado)="emitirNuevaSalida()"
+        (creado)="toggleEditar(false)"></app-hikin-salidaform>
+    </ion-content>
+  </ng-template>
+</ion-modal>

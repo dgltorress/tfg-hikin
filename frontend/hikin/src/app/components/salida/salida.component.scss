@@ -77,3 +77,7 @@ ion-button{
 ion-button.cancelar{
     --background: var(--hikin-error);
 }
+
+ion-modal ion-toolbar{
+    --background: var(--hikin-primario);
+}

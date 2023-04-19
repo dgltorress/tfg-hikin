@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, isDevMode } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
@@ -7,6 +7,8 @@ import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { UserService } from 'src/app/services/user.service';
 
+import { SalidaformComponent } from '../salidaform/salidaform.component';
+
 import { commonMethods } from '../commonMethods';
 
 @Component({
@@ -14,7 +16,7 @@ import { commonMethods } from '../commonMethods';
   templateUrl: './salida.component.html',
   styleUrls: ['../commonStyle.scss','./salida.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, RouterModule]
+  imports: [IonicModule, CommonModule, RouterModule, SalidaformComponent]
 })
 export class SalidaComponent implements OnInit {
 
@@ -23,7 +25,11 @@ export class SalidaComponent implements OnInit {
 
   public salidaComponent: typeof SalidaComponent = SalidaComponent;
 
+  public isEditOpen: boolean = false;
+
   @Input() salida: any;
+
+  @Output() nuevaSalida = new EventEmitter<any>();
 
   constructor(
     private api: ApiService,
@@ -33,11 +39,11 @@ export class SalidaComponent implements OnInit {
   }
 
   ngOnInit(){
-    if( !this.salida.changedDates ){
-      this.salida.fecha_inicio = commonMethods.fechaISOALegible( this.salida.fecha_inicio, 'es', 'long', 'short' );
-      this.salida.fecha_fin = commonMethods.fechaISOALegible( this.salida.fecha_fin, 'es', 'long', 'short' );
+    if( !this.salida.parsedDates ){
+      this.salida.fecha_inicio_legible = commonMethods.fechaISOALegible( this.salida.fecha_inicio, 'es', 'long', 'short' );
+      this.salida.fecha_fin_legible = commonMethods.fechaISOALegible( this.salida.fecha_fin, 'es', 'long', 'short' );
 
-      this.salida.changedDates = true;
+      this.salida.parsedDates = true;
     }
   }
 
@@ -85,6 +91,16 @@ export class SalidaComponent implements OnInit {
 
   cancelarSalida( ev: any ): void {
 
+  }
+
+  toggleEditar( opened: boolean ): void {
+    this.isEditOpen = opened;
+  }
+
+  emitirNuevaSalida(): void {
+    this.isEditOpen = false;
+
+    this.nuevaSalida.emit();
   }
 
   setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ); }

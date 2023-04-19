@@ -8,7 +8,7 @@
   </ion-segment>
 
   <div *ngIf="(currentSegment === 'detalles')">
-    <app-hikin-salida *ngIf="salida" [salida]="salida"></app-hikin-salida>
+    <app-hikin-salida *ngIf="salida" [salida]="salida" (nuevaSalida)="getSalida(salida.id)"></app-hikin-salida>
   </div>
 
   <div *ngIf="(currentSegment === 'participantes')">
@@ -49,6 +49,9 @@
         </ion-textarea>
       </form>
     </div>
-    <ion-button type="button" fill="solid" (click)="subirValoraciones()">Enviar</ion-button>
+    <ion-button *ngIf="valoraciones && valoraciones.length > 0"
+      type="button" fill="solid" (click)="subirValoraciones()">Enviar</ion-button>
+    <p *ngIf="valoraciones && valoraciones.length === 0"
+     style="margin: 1em; text-align: center;">Parece que no hay nadie a quien valorar</p>
   </div>
 </ion-content>

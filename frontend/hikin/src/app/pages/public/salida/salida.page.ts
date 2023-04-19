@@ -17,7 +17,8 @@ import { UsuarioprevComponent } from 'src/app/components/usuarioprev/usuarioprev
   templateUrl: './salida.page.html',
   styleUrls: ['../commonStyle.scss','./salida.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule, RouterModule, DetailsheaderComponent, SalidaComponent, UsuarioprevComponent]
+  imports: [IonicModule, CommonModule, ReactiveFormsModule, RouterModule,
+    DetailsheaderComponent, SalidaComponent, UsuarioprevComponent]
 })
 export class SalidaPage implements OnInit {
 
@@ -26,7 +27,6 @@ export class SalidaPage implements OnInit {
   public salida: any = null;
 
   public participantes: any[] = [];
-
 
   public valoraciones: {
     participante: any,

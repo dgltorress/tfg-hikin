@@ -1,15 +1,14 @@
 <form
   [formGroup]="recursoForm"
-  enctype="multipart/form-data"
   (ngSubmit)="handleSubmit()">
   <ion-list>
     <ion-item>
       <ion-input
-        formControlName="titulo"
+        formControlName="nombre"
         type="text"
         inputmode="text"
         fill="outline"
-        label="Título"
+        label="Nombre"
         label-placement="floating">
       </ion-input>
     </ion-item>
@@ -41,24 +40,44 @@
         fill="outline"
         cancelText="Cancelar">
         <ion-select-option [value]="null">-</ion-select-option>
-        <ion-select-option *ngFor="let club of clubesUsuario" [value]="club.id">{{ club.nombre }}</ion-select-option>
+        <ion-select-option *ngFor="let club of clubes" [value]="club.id">{{ club.nombre }}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-item>
-      <div>
-        <label for="imagenInput">
-          <p>Imagen (máx. 2MB)</p>
-          <img #preview src="assets/img/bg-default.png" alt="Previsualización" class="preview">
-        </label>
-        <input
-          #imagenField
-          id="imagenInput"
-          formControlName="imagen"
-          type="file"
-          accept="image/png, image/jpeg"
-          (change)="showPreview($event)">
+      <div class="dtcontainer">
+        <ion-label text-wrap>Fecha de inicio</ion-label>
+        <ion-datetime-button datetime="fecha_inicio"></ion-datetime-button>
       </div>
+    </ion-item>
+    <ion-item>
+      <div class="dtcontainer">
+        <ion-label text-wrap>Fecha de finalización</ion-label>
+        <ion-datetime-button datetime="fecha_fin"></ion-datetime-button>
+      </div>
+    </ion-item>
+    <ion-item>
+      <ion-checkbox
+        formControlName="privada"
+        labelPlacement="start">
+        Privada
+      </ion-checkbox>
     </ion-item>
   </ion-list>
   <ion-button type="submit" fill="solid">{{ accion }}</ion-button>
+  <ion-modal [keepContentsMounted]="true">
+    <ng-template>
+      <ion-datetime
+        formControlName="fecha_inicio"
+        id="fecha_inicio">
+      </ion-datetime>
+    </ng-template>
+  </ion-modal>
+  <ion-modal [keepContentsMounted]="true">
+    <ng-template>
+      <ion-datetime
+        formControlName="fecha_fin"
+        id="fecha_fin">
+      </ion-datetime>
+    </ng-template>
+  </ion-modal>
 </form>
