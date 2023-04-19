@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, IonModal } from '@ionic/angular';
-import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
@@ -26,13 +26,12 @@ export class PublicacionComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private alertService: AlertService,
-    private router: Router
+    private alertService: AlertService
   ){
   }
 
   ngOnInit(){
-    this.href = window.location.href;
+    this.href = `${window.location.host}/publicaciones/${this.publicacion.id}`;
     this.publicacion.fecha = commonMethods.fechaISOALegible( this.publicacion.fecha );
   }
 

@@ -973,7 +973,7 @@ const updateUsuario = async( req , res ) => {
         );
     } else {
         res.status( HTTP.success.no_content ).send();
-        logRequest( req , 'updateClub', HTTP.success.no_content );
+        logRequest( req , 'updateUsuario', HTTP.success.no_content );
     }
 }
 

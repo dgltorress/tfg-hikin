@@ -1,4 +1,4 @@
-<app-hikin-userheader *ngIf="usuario" [usuario]="usuario"></app-hikin-userheader>
+<app-hikin-userheader *ngIf="usuario" [usuario]="usuario" (nuevoUsuario)="getUsuario(usuario.id)"></app-hikin-userheader>
   
 <ion-content [fullscreen]="true" role="feed">
   <ion-segment [scrollable]="true" [value]="currentSegment" (ionChange)="setSegment($event)">

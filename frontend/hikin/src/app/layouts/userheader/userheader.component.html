@@ -17,11 +17,11 @@
     <ul class="tags">
       <li>
         <ion-icon name="time" title="Edad"></ion-icon>
-        <span>{{ usuario.fecha_nac }}</span>
+        <span>{{ usuario.edad }}</span>
       </li>
       <li>
         <ion-icon name="male-female" title="Sexo"></ion-icon>
-        <span>{{ usuario.sexo }}</span>
+        <span>{{ usuario.sexolegible }}</span>
       </li>
       <li>
         <ion-icon name="people" title="Seguidores"></ion-icon>
@@ -37,7 +37,7 @@
         {{ ( usuario.is_siguiendo ) ? userheaderComponent.textoSiguiendo : userheaderComponent.textoSeguir }}
       </ion-button>
       <ion-button *ngIf="userService.user && ( userService.user.id === usuario.id )"
-        fill="solid" [routerLink]="'/usuarios/'+usuario.id+'/editar'" routerDirection="forward">
+        fill="solid" (click)="toggleEditar(true)">
         Editar
       </ion-button>
       <!--<ion-button *ngIf="userService.user && ( userService.user.id === usuario.id )"
@@ -47,3 +47,19 @@
     </div>
   </main>
 </ion-header>
+
+<ion-modal [isOpen]="isEditOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Editar perfil</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="toggleEditar(false)" [strong]="true">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <app-hikin-usuarioform [usuario]="usuario" [accion]="'editar'" (nuevoUsuario)="emitirNuevoUsuario()"></app-hikin-usuarioform>
+    </ion-content>
+  </ng-template>
+</ion-modal>

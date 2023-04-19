@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, InfiniteScrollCustomEvent } from '@ionic/angular';
+import { IonicModule, InfiniteScrollCustomEvent, IonModal } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from 'src/app/services/api.service';
@@ -22,7 +22,8 @@ import { commonMethods } from 'src/app/components/commonMethods';
   styleUrls: ['../commonStyle.scss','./perfil.page.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, UserheaderComponent, PublicacionComponent,
-    SalidaprevComponent, ClubprevComponent, ResenaComponent, DistintivoComponent, ValoracionComponent]
+    SalidaprevComponent, ClubprevComponent, ResenaComponent, DistintivoComponent,
+    ValoracionComponent]
 })
 export class PerfilPage implements OnInit {
 
@@ -76,11 +77,11 @@ export class PerfilPage implements OnInit {
         this.usuario = response.body;
 
         switch( this.usuario.sexo ){
-          case 1: this.usuario.sexo = 'Varón'; break;
-          case 2: this.usuario.sexo = 'Mujer'; break;
-          case 9: this.usuario.sexo = 'No aplicable'; break;
+          case 1: this.usuario.sexolegible = 'Varón'; break;
+          case 2: this.usuario.sexolegible = 'Mujer'; break;
+          case 9: this.usuario.sexolegible = 'No aplicable'; break;
       
-          default: this.usuario.sexo = 'Desconocido'; break;
+          default: this.usuario.sexolegible = 'Desconocido'; break;
         }
       
         if( this.usuario.fecha_nac ){
@@ -88,7 +89,7 @@ export class PerfilPage implements OnInit {
             const fechaNac = new Date( this.usuario.fecha_nac ).getFullYear();
             const ahora = new Date().getFullYear();
       
-            this.usuario.fecha_nac = `${( ahora - fechaNac )} años`; // Edad inexacta (redondeando a años)
+            this.usuario.edad = `${( ahora - fechaNac )} años`; // Edad inexacta (redondeando a años)
           } catch( err ){
             if( isDevMode() === true ){
               console.warn( 'ERROR: No se ha podido convertir la diferencia de fechas en años', err );

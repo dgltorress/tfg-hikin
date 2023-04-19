@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, isDevMode } from '@angular/core';
+import { Component, OnInit, Input, isDevMode, Output, EventEmitter, } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Router } from '@angular/router';
@@ -7,6 +7,8 @@ import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { UserService } from 'src/app/services/user.service';
 
+import { UsuarioformComponent } from 'src/app/components/usuarioform/usuarioform.component';
+
 import { commonMethods } from 'src/app/components/commonMethods';
 
 @Component({
@@ -14,11 +16,16 @@ import { commonMethods } from 'src/app/components/commonMethods';
   templateUrl: './userheader.component.html',
   styleUrls: ['../../pages/public/commonStyle.scss','../headerSpecific.scss','./userheader.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, RouterModule]
+  imports: [IonicModule, CommonModule, RouterModule, UsuarioformComponent]
 })
 export class UserheaderComponent implements OnInit {
+
   @Input() titulo: string = 'Perfil';
   @Input() usuario: any;
+
+  @Output() nuevoUsuario = new EventEmitter<any>();
+
+  public isEditOpen: boolean = false;
 
   public static readonly textoSeguir: string = 'Seguir';
   public static readonly textoSiguiendo: string = 'Siguiendo';
@@ -76,6 +83,16 @@ export class UserheaderComponent implements OnInit {
       }
       this.alertService.errorToToast( 'Ha habido un error' );
     }
+  }
+
+  toggleEditar( opened: boolean ): void {
+    this.isEditOpen = opened;
+  }
+
+  emitirNuevoUsuario(){
+    this.isEditOpen = false;
+
+    this.nuevoUsuario.emit();
   }
 
   setDefaultClub( ev: any ) : void { commonMethods.setDefaultClub( ev ); }

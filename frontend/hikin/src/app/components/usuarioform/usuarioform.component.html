@@ -1,0 +1,68 @@
+<form
+  [formGroup]="usuarioForm"
+  (ngSubmit)="handleSubmit()">
+  <ion-list>
+    <ion-item>
+      <ion-input
+        formControlName="usuario"
+        type="text"
+        inputmode="text"
+        fill="outline"
+        label="Nombre de usuario"
+        label-placement="floating">
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input
+        formControlName="nombre"
+        type="text"
+        inputmode="text"
+        fill="outline"
+        label="Nombre real"
+        label-placement="floating">
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-textarea
+        formControlName="bio"
+        fill="outline"
+        [autoGrow]="true"
+        label="Biografía"
+        label-placement="floating">
+      </ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-select
+        formControlName="sexo"
+        label="Sexo"
+        label-placement="floating"
+        fill="outline"
+        cancelText="Cancelar">
+        <ion-select-option [value]="0">-</ion-select-option>
+        <ion-select-option [value]="1">Varón</ion-select-option>
+        <ion-select-option [value]="2">Mujer</ion-select-option>
+        <ion-select-option [value]="9">No aplicable</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label text-wrap>Fecha de nacimiento</ion-label>
+      <ion-datetime-button datetime="fecha_nac"></ion-datetime-button>
+    </ion-item>
+    <ion-item>
+      <ion-checkbox
+        formControlName="privado"
+        labelPlacement="start">
+        Privado
+      </ion-checkbox>
+    </ion-item>
+  </ion-list>
+  <ion-button type="submit" fill="solid">Enviar</ion-button>
+  <ion-modal [keepContentsMounted]="true">
+    <ng-template>
+      <ion-datetime
+        formControlName="fecha_nac"
+        id="fecha_nac">
+      </ion-datetime>
+    </ng-template>
+  </ion-modal>
+</form>
