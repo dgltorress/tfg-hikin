@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, isDevMode } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms'
 import { IonicModule  } from '@ionic/angular';
@@ -19,9 +19,14 @@ export class UsuarioformComponent  implements OnInit {
   @Input() usuario: any;
   @Input() accion: 'crear' | 'editar' = 'crear';
 
-  @Output() nuevoUsuario = new EventEmitter<any>();
+  @Output() creado = new EventEmitter<any>();
+  @Output() editado = new EventEmitter<any>();
 
-  public usuarioForm: FormGroup = new FormGroup({});
+  @Output() nuevaImagen = new EventEmitter<any>();
+
+  @ViewChild( 'imagenField' ) imagenField?: ElementRef;
+
+  public recursoForm: FormGroup = new FormGroup({});
   public imagenForm: FormGroup = new FormGroup({});
 
   constructor(
@@ -31,7 +36,7 @@ export class UsuarioformComponent  implements OnInit {
   ){}
 
   ngOnInit(){
-    this.usuarioForm = new FormGroup( {
+    this.recursoForm = new FormGroup( {
       usuario: new FormControl( this.usuario.usuario ),
       nombre: new FormControl( this.usuario.nombre ),
       bio: new FormControl( this.usuario.bio ),
@@ -45,10 +50,108 @@ export class UsuarioformComponent  implements OnInit {
     } );
   }
 
+  crear(): void {
+    try{
+      // Procesar campos de formulario
+      const formValues = this.parseFormValue( this.recursoForm );
+
+      // Hacer petición
+      this.api.createUsuario( {
+        body: formValues,
+        successCallback: ( response ) => {
+          // Notificar al componente superior
+          this.creado.emit();
+
+          // Ir al recurso creado
+          const responseBody: any = response.body;
+
+          if( responseBody && responseBody.id ){
+            this.router.navigate( [ `/usuarios/${responseBody.id}` ] );
+          }
+        },
+        failedCallback: ( errorResponse ) => {
+          this.alertService.errorToToast( errorResponse.error );
+        }
+      } );
+    } catch( err ){
+      if( isDevMode() === true ) console.error( err );
+    }
+  }
+
+  editar(): void {
+    try{
+      // Procesar campos de formulario
+      const formValues = this.parseFormValue( this.recursoForm );
+
+      // Hacer petición
+      this.api.updateUsuario( this.usuario.id, {
+        body: formValues,
+        successCallback: ( response ) => {
+          // Notificar al componente superior
+          this.editado.emit();
+        },
+        failedCallback: ( errorResponse ) => {
+          this.alertService.errorToToast( errorResponse.error );
+        }
+      } );
+    } catch( err ){
+      if( isDevMode() === true ) console.error( err );
+    }
+  }
+
+  subirImagen(): void {
+    try{
+      if( this.imagenField ){
+        // Procesar campos de formulario
+        const formData = new FormData();
+        formData.append( 'imagen' , this.imagenField.nativeElement.files[ 0 ] );
+
+        // Hacer petición
+        this.api.subirPfp( this.usuario.id, {
+          body: formData,
+          successCallback: ( response ) => {
+            const responseBody: any = response.body;
+            if( responseBody && responseBody.imagen ){
+              // Enviar la URL de la nueva imagen
+              this.editado.emit( responseBody.imagen );
+            }
+
+            this.alertService.showToast( 'Foto de perfil actualizada' );
+          },
+          failedCallback: ( errorResponse ) => {
+            this.alertService.errorToToast( errorResponse.error );
+          }
+        } );
+      }
+      
+    } catch( err ){
+      if( isDevMode() === true ) console.error( err );
+    }
+  }
+
+  eliminarImagen(): void {
+    try{
+      // Hacer petición
+      this.api.eliminarPfp( this.usuario.id, {
+        successCallback: ( response ) => {
+          // Enviar la URL vacía
+          this.editado.emit( '' );
+
+          this.alertService.showToast( 'Foto de perfil eliminada' );
+        },
+        failedCallback: ( errorResponse ) => {
+          this.alertService.errorToToast( errorResponse.error );
+        }
+      } );
+    } catch( err ){
+      if( isDevMode() === true ) console.error( err );
+    }
+  }
+
   handleSubmit(): void {
     switch( this.accion ){
-      case 'crear': this.crearUsuario(); break;
-      case 'editar': this.editarUsuario(); break;
+      case 'crear': this.crear(); break;
+      case 'editar': this.editar(); break;
 
       default:
         if( isDevMode() === true ){
@@ -58,40 +161,19 @@ export class UsuarioformComponent  implements OnInit {
     }
   }
 
-  crearUsuario(): void {
+  parseFormValue( formGroup: FormGroup ): void {
+    const formValues = formGroup.value;
 
-  }
-
-  editarUsuario(): void {
-    try{
-      // Procesar campos de formulario
-      const formValues = this.usuarioForm.value;
-
-      Object.keys( formValues ).forEach( ( key ) => {
-        const param = formValues[ key ];
+    Object.keys( formValues ).forEach( ( key ) => {
+      const param = formValues[ key ];
   
-        if( ( param === null ) ||
-            ( param === '' ) ){
-          delete formValues[ key ];
-        }
-      } );
+      if( ( param === null ) ||
+          ( param === '' ) ){
+        delete formValues[ key ];
+      }
+    } );
 
-      // Hacer petición
-      this.api.updateUsuario( this.usuario.id, {
-        body: formValues,
-        successCallback: ( response ) => {
-          this.nuevoUsuario.emit();
-
-          // Salir
-          // this.router.navigate( [ '' ] );
-        },
-        failedCallback: ( errorResponse ) => {
-          this.alertService.errorToToast( errorResponse.error );
-        }
-      } );
-    } catch( err ){
-      if( isDevMode() === true ) console.error( err );
-    }
+    return formValues;
   }
 
 }

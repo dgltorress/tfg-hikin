@@ -89,10 +89,14 @@ export class UserheaderComponent implements OnInit {
     this.isEditOpen = opened;
   }
 
-  emitirNuevoUsuario(){
+  emitirNuevoUsuario(): void {
     this.isEditOpen = false;
 
     this.nuevoUsuario.emit();
+  }
+
+  setImagen( ev: any ): void {
+    this.usuario.imagen = ev;
   }
 
   setDefaultClub( ev: any ) : void { commonMethods.setDefaultClub( ev ); }

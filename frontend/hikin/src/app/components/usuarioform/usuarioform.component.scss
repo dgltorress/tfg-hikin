@@ -31,3 +31,13 @@ ion-button{
 
     margin-top: 1.5em;
 }
+ion-button.eliminar{
+    --background: var(--hikin-error);
+}
+
+form{
+    margin-bottom: 1em;
+}
+input[type=file]{
+    margin-top: .5em;
+}

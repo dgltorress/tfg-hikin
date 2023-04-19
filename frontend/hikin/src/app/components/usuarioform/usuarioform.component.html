@@ -1,5 +1,5 @@
 <form
-  [formGroup]="usuarioForm"
+  [formGroup]="recursoForm"
   (ngSubmit)="handleSubmit()">
   <ion-list>
     <ion-item>
@@ -65,4 +65,25 @@
       </ion-datetime>
     </ng-template>
   </ion-modal>
+</form>
+
+<form
+  [formGroup]="imagenForm"
+  enctype="multipart/form-data"
+  (ngSubmit)="subirImagen()">
+  <ion-list>
+    <ion-item>
+      <div>
+        <label for="imagenInput">Foto de perfil (máx. 2MB)</label>
+        <input
+          #imagenField
+          id="imagenInput"
+          formControlName="imagen"
+          type="file"
+          accept="image/png, image/jpeg">
+      </div>
+    </ion-item>
+  </ion-list>
+  <ion-button type="submit" fill="solid">Subir</ion-button>
+  <ion-button type="button" fill="solid" class="eliminar" (click)="eliminarImagen()">Eliminar</ion-button>
 </form>
