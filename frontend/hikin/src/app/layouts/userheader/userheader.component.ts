@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, isDevMode, Output, EventEmitter, } from '@angular/core';
+import { Component, OnInit, Input, isDevMode, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
@@ -97,5 +97,5 @@ export class UserheaderComponent implements OnInit {
     this.usuario.imagen = ev;
   }
 
-  setDefaultClub( ev: any ) : void { commonMethods.setDefaultClub( ev ); }
+  setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ); }
 }

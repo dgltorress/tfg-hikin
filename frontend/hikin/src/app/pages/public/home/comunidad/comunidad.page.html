@@ -29,3 +29,30 @@
     </ion-infinite-scroll>
   </ion-content>
 </div>
+
+<ion-modal [isOpen]="isCreateOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Crear club</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="toggleCrear(false)" [strong]="true">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <app-hikin-clubform [accion]="'crear'" (creado)="redirigirNueva($event)"
+        (creado)="toggleCrear(false)"></app-hikin-clubform>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
+<ion-fab
+  slot="fixed"
+  vertical="bottom"
+  horizontal="end"
+  [edge]="false">
+  <ion-fab-button (click)="toggleCrear(true)">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

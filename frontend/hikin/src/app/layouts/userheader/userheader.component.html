@@ -6,7 +6,7 @@
   </ion-toolbar>
   <main *ngIf="usuario">
     <ion-avatar>
-      <img [src]="usuario.imagen" alt="Foto de perfil" (error)="setDefaultClub($event)">
+      <img [src]="usuario.imagen" alt="Foto de perfil" (error)="setDefaultPfp($event)">
     </ion-avatar>
     <header>
       <ion-label>

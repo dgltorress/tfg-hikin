@@ -1,3 +1,81 @@
-<p>
-  clubform works!
-</p>
+<form
+  [formGroup]="recursoForm"
+  (ngSubmit)="handleSubmit()">
+  <ion-list>
+    <ion-item>
+      <ion-input
+        formControlName="nombre"
+        type="text"
+        inputmode="text"
+        fill="outline"
+        label="Nombre"
+        label-placement="floating">
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-textarea
+        formControlName="descripcion"
+        fill="outline"
+        [autoGrow]="true"
+        label="Descripción"
+        label-placement="floating">
+      </ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-select
+        formControlName="codauto"
+        label="Comunidad autónoma"
+        label-placement="floating"
+        fill="outline"
+        cancelText="Cancelar"
+        (ionChange)="manejarAutonomia($event)">
+        <ion-select-option [value]="null">-</ion-select-option>
+        <ion-select-option *ngFor="let autonomia of autonomias" [value]="autonomia.cod">{{ autonomia.nombre }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-select
+        formControlName="cpro"
+        label="Provincia"
+        label-placement="floating"
+        fill="outline"
+        cancelText="Cancelar">
+        <ion-select-option [value]="null">-</ion-select-option>
+        <ion-select-option *ngFor="let provincia of provincias" [value]="provincia.cod">{{ provincia.nombre }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-checkbox
+        formControlName="privado"
+        labelPlacement="start">
+        Privado
+      </ion-checkbox>
+    </ion-item>
+  </ion-list>
+  <ion-button type="submit" fill="solid">{{ accion }}</ion-button>
+</form>
+
+<form *ngIf="accion === 'editar'"
+  [formGroup]="imagenForm"
+  enctype="multipart/form-data"
+  (ngSubmit)="subirImagen()">
+  <ion-list>
+    <ion-item>
+      <div>
+        <label for="imagenInput">
+          <p>Imagen de club (máx. 2MB)</p>
+          <img #preview [src]="( club.imagen ) ? club.imagen : 'assets/img/bg-default.png'" alt="Previsualización" class="preview">
+        </label>
+        <input
+          #imagenField
+          id="imagenInput"
+          formControlName="imagen"
+          type="file"
+          accept="image/png, image/jpeg"
+          (change)="showPreview($event)">
+      </div>
+    </ion-item>
+  </ion-list>
+  <ion-button type="submit" fill="solid">Subir</ion-button>
+  <ion-button type="button" fill="solid" class="eliminar" (click)="eliminarImagen()">Eliminar</ion-button>
+</form>

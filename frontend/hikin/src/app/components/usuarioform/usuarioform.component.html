@@ -78,7 +78,7 @@
       <div>
         <label for="imagenInput">
           <p>Foto de perfil (máx. 2MB)</p>
-          <img #preview src="assets/img/user-default.png" alt="Previsualización" class="preview">
+          <img #preview [src]="( usuario.imagen ) ? usuario.imagen : 'assets/img/user-default.png'" alt="Previsualización" class="preview">
         </label>
         <input
           #imagenField

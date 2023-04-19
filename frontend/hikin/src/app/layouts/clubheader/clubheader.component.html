@@ -29,7 +29,7 @@
         {{ ( club.is_miembro ) ? clubheaderComponent.textoInscrito : clubheaderComponent.textoInscribirse }}
       </ion-button>
       <ion-button *ngIf="userService.user && ( userService.user.id === club.propietario )"
-        fill="solid" [routerLink]="'/club/'+club.id+'/editar'" routerDirection="forward">
+        fill="solid" (click)="toggleEditar(true)">
         Editar
       </ion-button>
       <ion-button *ngIf="userService.user && ( userService.user.id === club.propietario )"
@@ -39,3 +39,20 @@
     </div>
   </main>
 </ion-header>
+
+<ion-modal [isOpen]="isEditOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Editar club</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="toggleEditar(false)" [strong]="true">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <app-hikin-clubform [club]="club" [accion]="'editar'"
+        (editado)="emitirNuevoClub()" (nuevaImagen)="setImagen($event)"></app-hikin-clubform>
+    </ion-content>
+  </ng-template>
+</ion-modal>

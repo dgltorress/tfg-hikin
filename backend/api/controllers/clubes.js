@@ -502,7 +502,7 @@ const cambiarImagen = async( req , res , next ) => {
     // Query
     adminConnection.query(
         'SELECT propietario FROM clubes WHERE propietario = ?' ,
-        [ idObjetivo ],
+        [ idSolicitante ],
         ( err , result ) => {
             if( err ){
                 console.error( err );

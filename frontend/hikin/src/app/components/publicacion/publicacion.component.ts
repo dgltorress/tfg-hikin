@@ -32,7 +32,12 @@ export class PublicacionComponent implements OnInit {
 
   ngOnInit(){
     this.href = `${window.location.host}/publicaciones/${this.publicacion.id}`;
-    this.publicacion.fecha = commonMethods.fechaISOALegible( this.publicacion.fecha );
+
+    if( !this.publicacion.parsedDate ){
+      this.publicacion.fecha = commonMethods.fechaISOALegible( this.publicacion.fecha );
+
+      this.publicacion.parsedDate = true;
+    }
   }
 
   /**

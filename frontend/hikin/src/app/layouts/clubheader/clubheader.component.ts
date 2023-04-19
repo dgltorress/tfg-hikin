@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, isDevMode } from '@angular/core';
+import { Component, OnInit, Input, isDevMode, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule, Router } from '@angular/router';
@@ -7,6 +7,8 @@ import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
 import { UserService } from 'src/app/services/user.service';
 
+import { ClubformComponent } from 'src/app/components/clubform/clubform.component';
+
 import { commonMethods } from 'src/app/components/commonMethods';
 
 @Component({
@@ -14,12 +16,16 @@ import { commonMethods } from 'src/app/components/commonMethods';
   templateUrl: './clubheader.component.html',
   styleUrls: ['../../pages/public/commonStyle.scss','../headerSpecific.scss','./clubheader.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, RouterModule]
+  imports: [IonicModule, CommonModule, RouterModule, ClubformComponent]
 })
 export class ClubheaderComponent implements OnInit {
 
   @Input() titulo: string = 'Club';
   @Input() club: any;
+
+  @Output() nuevoClub = new EventEmitter<any>();
+
+  public isEditOpen: boolean = false;
 
   public static readonly textoInscribirse: string = 'Inscribirse';
   public static readonly textoInscrito: string = 'Inscrito';
@@ -96,6 +102,20 @@ export class ClubheaderComponent implements OnInit {
       }
       this.alertService.errorToToast( 'Ha habido un error' );
     }
+  }
+
+  toggleEditar( opened: boolean ): void {
+    this.isEditOpen = opened;
+  }
+
+  emitirNuevoClub(): void {
+    this.isEditOpen = false;
+
+    this.nuevoClub.emit();
+  }
+
+  setImagen( ev: any ): void {
+    this.club.imagen = ev;
   }
 
   setDefaultClub( ev: any ) : void { commonMethods.setDefaultClub( ev ); }

@@ -8,13 +8,15 @@ import { AlertService } from 'src/app/services/alert.service';
 import { MainheaderComponent, SearchBars } from 'src/app/layouts/mainheader/mainheader.component';
 import { UsuarioprevComponent } from 'src/app/components/usuarioprev/usuarioprev.component';
 import { ClubprevComponent } from 'src/app/components/clubprev/clubprev.component';
+import { ClubformComponent } from 'src/app/components/clubform/clubform.component';
 
 @Component({
   selector: 'app-comunidad',
   templateUrl: 'comunidad.page.html',
   styleUrls: ['../../commonStyle.scss','../home.page.scss','comunidad.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, MainheaderComponent, UsuarioprevComponent, ClubprevComponent]
+  imports: [IonicModule, CommonModule, MainheaderComponent, UsuarioprevComponent,
+    ClubprevComponent, ClubformComponent]
 })
 export class ComunidadPage implements OnInit {
 
@@ -28,6 +30,8 @@ export class ComunidadPage implements OnInit {
 
   private paramsUsuarios: any = {};
   private paramsClubes: any = {};
+
+  public isCreateOpen: boolean = false;
 
   public searchBars = SearchBars;
 
@@ -142,6 +146,24 @@ export class ComunidadPage implements OnInit {
     }
 
     ( ev as InfiniteScrollCustomEvent ).target.complete();
+  }
+
+  redirigirNueva( id?: number ): void {
+    if( id ){
+      this.isCreateOpen = false;
+      
+      /**
+       * INTENTAR REDIRIGIR DA EL SIGUIENTE ERROR:
+       * 
+       * El consumo de memoria will-change es demasiado alto
+       * 
+       * this.router.navigate( [ `/clubes/${id}` ] ); 
+       * **/
+    }
+  }
+
+  toggleCrear( opened: boolean ): void {
+    this.isCreateOpen = opened;
   }
 
   setSegment( ev: any ): void {

@@ -1,4 +1,4 @@
-<app-hikin-clubheader *ngIf="club" [club]="club"></app-hikin-clubheader>
+<app-hikin-clubheader *ngIf="club" [club]="club" (nuevoClub)="getClub(club.id)"></app-hikin-clubheader>
   
 <ion-content [fullscreen]="true" role="feed">
   <ion-segment [scrollable]="true" [value]="currentSegment" (ionChange)="setSegment($event)">
