@@ -1,7 +1,7 @@
-import { Component, OnInit, Input, isDevMode } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
-import { RouterModule } from '@angular/router';
+import { IonicModule, IonModal } from '@ionic/angular';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 
 import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
@@ -19,13 +19,20 @@ export class PublicacionComponent implements OnInit {
 
   @Input() publicacion: any;
 
+  @ViewChild( IonModal ) socialShareModal?: IonModal;
+
+  public href: string = "";
+  public isSocialShareOpen: boolean = false;
+
   constructor(
     private api: ApiService,
     private alertService: AlertService,
+    private router: Router
   ){
   }
 
   ngOnInit(){
+    this.href = window.location.href;
     this.publicacion.fecha = commonMethods.fechaISOALegible( this.publicacion.fecha );
   }
 
@@ -69,6 +76,10 @@ export class PublicacionComponent implements OnInit {
       }
       this.alertService.errorToToast( 'Ha habido un error' );
     }
+  }
+
+  toggleCompartir( open: boolean ): void {
+    this.isSocialShareOpen = open;
   }
 
   setDefaultImage( ev: any ) : void { commonMethods.setDefaultImage( ev ); }

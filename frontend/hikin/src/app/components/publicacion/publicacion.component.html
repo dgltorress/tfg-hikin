@@ -30,12 +30,28 @@
       <ion-icon name="chatbox-outline" title="Comentarios"></ion-icon>
       <span>{{ publicacion.n_comentarios }}</span>
     </div>
-    <div>
-      <ion-icon [name]="( publicacion.is_kudos ) ? 'thumbs-up' : 'thumbs-up-outline'" (click)="toggleKudos($event)" title="Kudos"></ion-icon>
+    <div (click)="toggleKudos($event)">
+      <ion-icon [name]="( publicacion.is_kudos ) ? 'thumbs-up' : 'thumbs-up-outline'" title="Kudos"></ion-icon>
       <span>{{ publicacion.n_kudos }}</span>
     </div>
-    <div>
+    <div (click)="toggleCompartir(true)">
       <ion-icon name="share-social-outline" title="Compartir"></ion-icon>
     </div>
   </footer>
 </article>
+
+<ion-modal [isOpen]="isSocialShareOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Compartir</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="toggleCompartir(false)" [strong]="true">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <p>{{ href }}</p>
+    </ion-content>
+  </ng-template>
+</ion-modal>
