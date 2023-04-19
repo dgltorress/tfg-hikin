@@ -4,6 +4,9 @@ import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { AuthService } from 'src/app/services/auth.service';
+import { UserService } from 'src/app/services/user.service';
+
+import { commonMethods } from 'src/app/components/commonMethods';
 
 @Component({
   selector: 'app-sidemenu-left',
@@ -16,25 +19,38 @@ export class SidemenuLeftComponent implements OnInit {
   public folder!: string;
   private activatedRoute = inject(ActivatedRoute);
 
-  public sidemenuLeftPages = [
-    { title: 'Perfil', url: '/home/feed', icon: 'person-circle' },
-    { title: 'Opciones', url: '/home/salidas', icon: 'cog' },
-    { title: 'COMUNIDAD', url: '/home/comunidad', icon: 'log-in' }
-  ];
-  public sidemenuLeftPages2 = [
-    { title: 'Acerca', url: '/home/itinerarios', icon: 'information-circle' },
-    { title: 'Desarrollador', url: '/login', icon: 'code' }
-  ];
+  public sidemenuLeftPages = [ {
+    title: 'Opciones',
+    url: '/settings',
+    icon: 'cog'
+  } ];
+
+  public sidemenuLeftPages2 = [ {
+    title: 'Acerca',
+    url: '/about',
+    icon: 'information-circle'
+  } ];
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    public userService: UserService
   ){}
 
   ngOnInit() {
-    this.folder = this.activatedRoute.snapshot.paramMap.get('id') as string;
+    this.folder = this.activatedRoute.snapshot.paramMap.get( 'id' ) as string;
+
+    if( this.userService.user ){
+      this.sidemenuLeftPages.unshift( {
+        title: 'Perfil',
+        url: `/usuarios/${this.userService.user.id}`,
+        icon: 'person-circle'
+      } );
+    }
   }
 
   logout(){
     this.authService.logout();
   }
+
+  setDefaultPfp( ev: any ) : void { commonMethods.setDefaultPfp( ev ); }
 }

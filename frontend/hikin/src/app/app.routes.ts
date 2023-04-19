@@ -40,12 +40,8 @@ export const routes: Routes = [
   },
   {
     path: 'usuarios/:id',
-    loadComponent: () => import('./pages/public/perfil/perfil.page').then( m => m.PerfilPage)
-  },
-  {
-    path: 'ejemplo',
     canActivate: [ loggedInGuard ],
-    loadComponent: () => import('./pages/public/ejemplo/ejemplo.page').then((m) => m.EjemploPage),
+    loadComponent: () => import('./pages/public/perfil/perfil.page').then( m => m.PerfilPage)
   },
   { // Maneja rutas no reconocidas
     path: '**',

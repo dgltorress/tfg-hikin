@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { ApiService } from 'src/app/services/api.service';
 import { AlertService } from 'src/app/services/alert.service';
+import { UserService } from 'src/app/services/user.service';
 
 import { UserheaderComponent } from 'src/app/layouts/userheader/userheader.component';
 import { PublicacionComponent } from 'src/app/components/publicacion/publicacion.component';
@@ -46,6 +47,7 @@ export class PerfilPage implements OnInit {
   constructor(
     private api: ApiService,
     private alertService: AlertService,
+    private userService: UserService,
     private activatedRoute: ActivatedRoute
   ){}
 
@@ -71,10 +73,14 @@ export class PerfilPage implements OnInit {
     } );
   }
 
-  getUsuario( id: number ): void {
+  getUsuario( id: number, update: boolean = false ): void {
     this.api.getUsuario( id , {
       successCallback: ( response: any ) => {
         this.usuario = response.body;
+
+        if( update === true ){
+          this.userService.updateUserData( this.usuario );
+        }
 
         switch( this.usuario.sexo ){
           case 1: this.usuario.sexolegible = 'Varón'; break;

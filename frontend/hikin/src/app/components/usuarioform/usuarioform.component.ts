@@ -16,7 +16,7 @@ import { AlertService } from 'src/app/services/alert.service';
 })
 export class UsuarioformComponent  implements OnInit {
 
-  @Input() usuario: any;
+  @Input() usuario: any = {};
   @Input() accion: 'crear' | 'editar' = 'crear';
 
   @Output() creado = new EventEmitter<any>();

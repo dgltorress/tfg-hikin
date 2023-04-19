@@ -96,3 +96,30 @@ ion-note {
 ion-item.selected {
   --color: var(--ion-color-primary);
 }
+
+ion-avatar{
+  object-fit: cover;
+  width: 100px;
+  height: 100px;
+}
+ion-avatar>img{
+  border-radius: 100%;
+}
+
+ion-header{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 1em !important;
+}
+ion-header>ion-label{
+  text-align: center;
+
+  margin-top: .5em;
+}
+
+ion-list{
+  padding: 0;
+}

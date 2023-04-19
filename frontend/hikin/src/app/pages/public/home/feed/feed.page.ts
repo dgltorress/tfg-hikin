@@ -7,20 +7,24 @@ import { UserService } from 'src/app/services/user.service';
 import { AlertService } from 'src/app/services/alert.service';
 
 import { MainheaderComponent } from 'src/app/layouts/mainheader/mainheader.component';
-
 import { PublicacionComponent } from 'src/app/components/publicacion/publicacion.component';
+
+import { PublicacionformComponent } from 'src/app/components/publicacionform/publicacionform.component';
 
 @Component({
   selector: 'app-feed',
   templateUrl: 'feed.page.html',
   styleUrls: ['../../commonStyle.scss','../home.page.scss','feed.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, MainheaderComponent, PublicacionComponent]
+  imports: [IonicModule, CommonModule, MainheaderComponent, PublicacionComponent,
+    PublicacionformComponent]
 })
 export class FeedPage implements OnInit {
 
   public publicaciones: any[] | null = null;
   private paginaActual: number = 0;
+
+  public isCreateOpen: boolean = false;
 
   constructor(
     private api: ApiService,
@@ -71,5 +75,9 @@ export class FeedPage implements OnInit {
     this.getFeed();
 
     ( ev as InfiniteScrollCustomEvent ).target.complete();
+  }
+
+  toggleCrear( opened: boolean ): void {
+    this.isCreateOpen = opened;
   }
 }

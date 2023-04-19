@@ -1,0 +1,43 @@
+ion-list,ion-item{
+    display: flex;
+    flex-direction: column;
+}
+ion-list{
+    border-radius: 4px;
+
+    padding: .5em 1.2em;
+    margin: 0;
+}
+ion-item{
+    margin-block: .75em;
+}
+
+ion-input,
+ion-textarea,
+ion-select,
+ion-checkbox,
+ion-datetime-button{
+    --padding-start: 1em !important;
+    margin-top: .5em;
+}
+ion-textarea{
+    --padding-bottom: 1em !important;
+}
+ion-datetime-button{
+    margin: 0 auto;
+}
+ion-button{
+    width: 100%;
+
+    margin-top: 1.5em;
+}
+ion-button.eliminar{
+    --background: var(--hikin-error);
+}
+
+form{
+    margin-bottom: 1em;
+}
+input[type=file]{
+    margin-top: .5em;
+}

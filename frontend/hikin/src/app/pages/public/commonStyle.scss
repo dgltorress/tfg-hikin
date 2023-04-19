@@ -51,6 +51,10 @@ ion-segment-button{
     --border-color-checked: var(--hikin-texto-claro);
 }
 
+ion-fab-button{
+    --background: var(--hikin-secundario);
+}
+
 hr{
     width: 85%;
     height: 1px;
