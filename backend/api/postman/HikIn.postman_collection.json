@@ -1963,8 +1963,8 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"pm.test( 'Status code is OK' , () => {",
-					"    pm.expect( pm.response.code ).to.be.below( 400 );",
+					"pm.test( 'Status code is successful' , () => {",
+					"    pm.response.to.be.success;",
 					"} );",
 					"",
 					"pm.test( 'Response time is less than 200 ms' , () => {",
