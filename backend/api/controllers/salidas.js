@@ -451,7 +451,7 @@ WHERE p.usuario = ? AND p.salida = ?` ,
 
                 // No encontrado
                 if( result.length === 0 ){
-                    res.status( HTTP.error_client.not_found ).json( { msg: 'No has participado en esta salida' } );
+                    res.status( HTTP.error_client.forbidden ).json( { msg: 'No has participado en esta salida' } );
                     logRequest( req, 'createValoraciones', HTTP.error_client.not_found, 'No ha participado' );
                     return;
                 }
