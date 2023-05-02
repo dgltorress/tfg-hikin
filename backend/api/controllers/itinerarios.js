@@ -333,7 +333,10 @@ const createResena = async( req , res ) => {
             if( err ){
                 if( err.errno === 1062 ){
                     res.status( HTTP.error_client.bad_request ).json( { msg: 'Ya has reseñado este itinerario' } );
-                    logRequest( req , 'createUsuario' , HTTP.error_client.bad_request , 'Ya has reseñado este itinerario' );
+                    logRequest( req , 'createResena' , HTTP.error_client.bad_request , 'Ya has reseñado este itinerario' );
+                } else if( err.errno === 1452 ) {
+                    res.status( HTTP.error_client.not_found ).send();
+                    logRequest( req , 'createResena' , HTTP.error_client.not_found );
                 } else {
                     console.error( err );
                     res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
