@@ -517,6 +517,9 @@ WHERE p.usuario = ? AND p.salida = ?` ,
                             if( err.errno === 1062 ){
                                 res.status( HTTP.error_client.bad_request ).json( { msg: 'Al menos una de las valoraciones ya existe' } );
                                 logRequest( req , 'createValoraciones' , HTTP.error_client.bad_request , 'Al menos una valoración ya existe' );
+                            } else if( err.errno === 1452 ){
+                                res.status( HTTP.error_client.bad_request ).json( { msg: 'Al menos uno de los valorados no ha participado' } );
+                                logRequest( req , 'createValoraciones' , HTTP.error_client.bad_request , 'Al menos uno no ha participado' );
                             } else {
                                 console.error( err );
                                 res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
