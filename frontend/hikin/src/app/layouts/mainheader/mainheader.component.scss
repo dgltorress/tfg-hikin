@@ -12,6 +12,9 @@ ion-buttons{
     align-self: flex-start;
     margin-top: .3em;
 }
+ion-menu-button {
+  color: var(--hikin-texto-claro);
+}
 ion-img{
     height: 40px;
 }

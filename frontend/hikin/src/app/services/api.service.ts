@@ -45,13 +45,44 @@ export class ApiService {
 
   // Timeout en milisegundos
   public static readonly timeoutMilliseconds: number = 10000;
+
+  // Ruta de la API
+  public static readonly apiBaseUrlCookieName: string = 'apiBaseUrl';
+  public static readonly defaultApiBaseUrl: string = 'http://localhost:3000/api';
+
+  private apiBaseUrl: string;
  
   constructor(
     private httpClient: HttpClient,
     private userService: UserService,
     private authService: AuthService,
     private alertService: AlertService
-  ) {
+  ){
+    const apiBaseUrlCookie: string | null = localStorage.getItem( ApiService.apiBaseUrlCookieName );
+    this.apiBaseUrl = ( apiBaseUrlCookie !== null ) ? apiBaseUrlCookie : ApiService.defaultApiBaseUrl;
+  }
+
+  /**
+   * Devuelve la URL de la API
+   */
+   public getApiBaseUrl(): string {
+    return this.apiBaseUrl;
+  }
+
+  /**
+   * Establece una nueva URL para la API
+   */
+  public setApiBaseUrl( newApiBaseUrl: string ): void {
+    this.apiBaseUrl = newApiBaseUrl;
+    localStorage.setItem( ApiService.apiBaseUrlCookieName, this.apiBaseUrl );
+  }
+
+  /**
+   * Reestablece una nueva URL para la API
+   */
+  public resetApiBaseUrl(): void {
+    this.apiBaseUrl = ApiService.defaultApiBaseUrl;
+    localStorage.removeItem( ApiService.apiBaseUrlCookieName );
   }
  
   /**
@@ -90,7 +121,7 @@ export class ApiService {
     }
  
     // Construye la URL.
-    const url = `${environment.apiBaseUrl}/${options.endpoint}`;
+    const url = `${this.apiBaseUrl}/${options.endpoint}`;
 
     if( isDevMode() === true ) console.log( `[ApiService] ${options.method} ${url}` );
  

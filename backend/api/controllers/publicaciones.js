@@ -734,10 +734,10 @@ WHERE usuario = ? AND publicacion = ?` , [
             if( err ){
                 console.error( err );
                 res.status( HTTP.error_server.internal ).json( { msg: 'Ha habido un error' } );
-                logRequest( req , 'deseguirUsuario' , HTTP.error_server.internal , 'Error al eliminar el recurso' );
+                logRequest( req , 'quitarKudos' , HTTP.error_server.internal , 'Error al eliminar el recurso' );
             } else {
                 res.status( HTTP.success.no_content ).json();
-                logRequest( req , 'deseguirUsuario' , HTTP.success.no_content );
+                logRequest( req , 'quitarKudos' , HTTP.success.no_content );
             }
         }
     );

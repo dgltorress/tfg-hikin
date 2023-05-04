@@ -46,8 +46,7 @@ export class AuthService {
     this.userService.updateUserData();
     this.userService.updateTokenData();
 
-    this.router.navigateByUrl( 'home' , { skipLocationChange: true } ).then( () =>
-    this.router.navigate( [ 'home' ] ) ); // Fuerza la recarga para actualizar información
+    this.router.navigate( [ 'home' ] );
   }
 
   /**
@@ -63,7 +62,8 @@ export class AuthService {
     this.userService.updateUserData();
     this.userService.updateTokenData();
 
-    this.router.navigate( [ 'login' ] );
+    this.router.navigate( [ '' ] ); // Fuerza la recarga para actualizar información
+    window.location.reload();
   }
 
   /**

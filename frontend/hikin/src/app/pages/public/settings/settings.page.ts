@@ -3,11 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
-import { AlertService } from 'src/app/services/alert.service';
+import { ApiService } from 'src/app/services/api.service';
 
 import { DetailsheaderComponent } from 'src/app/layouts/detailsheader/detailsheader.component';
-
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-hikin-settings',
@@ -22,12 +20,12 @@ export class SettingsPage implements OnInit {
   public nightModeEnabled: boolean = false;
 
   constructor(
-    private alertService: AlertService
+    private apiService: ApiService
   ){
   }
 
   ngOnInit(){
-    this.apiBaseUrl = environment.apiBaseUrl;
+    this.apiBaseUrl = this.apiService.getApiBaseUrl();
     this.nightModeEnabled = window.matchMedia( '(prefers-color-scheme: dark)' ).matches;
   }
 
@@ -36,9 +34,7 @@ export class SettingsPage implements OnInit {
         nuevaUrl.target &&
         nuevaUrl.target.value ){
         this.apiBaseUrl = nuevaUrl.target.value;
-        environment.apiBaseUrl = this.apiBaseUrl;
-        
-        console.log('cambiada a ', this.apiBaseUrl,environment.apiBaseUrl);
+        this.apiService.setApiBaseUrl( this.apiBaseUrl );
     } else {
       if( isDevMode() === true ){
         console.warn( 'No se ha podido cambiar la URL de la API' );

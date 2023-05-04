@@ -85,7 +85,7 @@ export class LoginPage implements OnInit {
           }
         },
         failedCallback: ( errorResponse ) => {
-          this.alertService.showToast( 'Email o contraseña incorrectos' ); // Credenciales erróneas
+          this.alertService.errorToToast( errorResponse.error ); // Credenciales erróneas u otro error
         }
       };
 

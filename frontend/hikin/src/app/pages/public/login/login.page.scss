@@ -1,3 +1,7 @@
+*{
+  color: var(--hikin-texto-claro);
+}
+
 ion-content::part(background){ /* Fondo del Shadow DOM */
   background-color: var(--hikin-primario);
 }
