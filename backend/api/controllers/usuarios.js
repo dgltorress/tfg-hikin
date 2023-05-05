@@ -24,6 +24,7 @@ const { RUTAMASKFULL } = require( '../helpers/rutas.js' ); // Rutas
 // === INICIALIZAR
 
 const elementosPorPagina = 20;
+const elementosPorFeed = 2;
 
 // --------------------------------
 
@@ -241,10 +242,10 @@ const getFeed = async( req , res ) => {
     // Paginación
     let pagFilter = '';
     if( req.query.p ){ // Se espera validado y procesado como entero
-        pagFilter += ` ORDER BY fecha DESC LIMIT ?, ${elementosPorPagina}`;
-        parameters.push( req.query.p * elementosPorPagina );
+        pagFilter += ` ORDER BY fecha DESC LIMIT ?, ${elementosPorFeed}`;
+        parameters.push( req.query.p * elementosPorFeed );
     } else {
-        pagFilter += ` ORDER BY fecha DESC LIMIT 0, ${elementosPorPagina}`;
+        pagFilter += ` ORDER BY fecha DESC LIMIT 0, ${elementosPorFeed}`;
     }
 
     // Query

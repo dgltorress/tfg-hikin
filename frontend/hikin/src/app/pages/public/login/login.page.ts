@@ -85,7 +85,7 @@ export class LoginPage implements OnInit {
           }
         },
         failedCallback: ( errorResponse ) => {
-          this.alertService.errorToToast( errorResponse.error ); // Credenciales erróneas u otro error
+          this.alertService.showToast( 'No se ha podido conectar con la API. Introduce una URL donde se esté sirviendo en el menú de ajustes.' , 5500 ); // Credenciales erróneas u otro error
         }
       };
 

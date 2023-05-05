@@ -36,7 +36,7 @@ export class FeedPage implements OnInit {
     this.getFeed();
   }
 
-  getFeed(): void {
+  getFeed( ev?: any ): void {
     if( this.userService.user &&
         this.userService.user.id ){
       this.api.getUsuarioFeed( this.userService.user.id, {
@@ -61,13 +61,21 @@ export class FeedPage implements OnInit {
           } else {
             this.alertService.showToast( 'Ha habido un error. Inténtalo de nuevo más tarde.' ); // Información errónea del servidor
           }
+
+          ev?.target.complete();
         },
         failedCallback: ( errorResponse: any ) => {
           this.alertService.errorToToast( errorResponse.error );
+
+          ev?.target.complete();
         }
       } );
     } else {
-      if( isDevMode() === true ) console.warn( '[getFeed()] No se ha podido extraer el identificador del usuario desde el servicio' );
+      if( isDevMode() === true ){
+        console.warn( '[getFeed()] No se ha podido extraer el identificador del usuario desde el servicio' );
+      }
+
+      ev?.target.complete();
     }
   }
 
@@ -86,12 +94,17 @@ export class FeedPage implements OnInit {
   }
 
   onIonInfinite( ev: any ) {
-    this.getFeed();
-
-    ( ev as InfiniteScrollCustomEvent ).target.complete();
+    this.getFeed( ev );
   }
 
   toggleCrear( opened: boolean ): void {
     this.isCreateOpen = opened;
+  }
+
+  refresh( ev: any ): void {
+    this.publicaciones = [];
+    this.paginaActual = 0;
+
+    this.getFeed( ev );
   }
 }
