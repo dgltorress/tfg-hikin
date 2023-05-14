@@ -82,3 +82,9 @@ ion-icon{
 ion-checkbox{
     font-size: 12px;
 }
+
+ion-accordion ion-list{
+    overflow-y: scroll;
+
+    max-height: 250px;
+}
