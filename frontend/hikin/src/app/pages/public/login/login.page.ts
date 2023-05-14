@@ -81,11 +81,19 @@ export class LoginPage implements OnInit {
               responseBody[ UserService.tokenField ] ){
             this.authService.login( responseBody, true );
           } else {
-            this.alertService.showToast( 'Ha habido un error. Inténtalo de nuevo más tarde.' ); // Información errónea del servidor
+            this.alertService.showToast( 'Ha habido un error en el servidor. Inténtalo de nuevo más tarde.' ); // Información errónea del servidor
           }
         },
         failedCallback: ( errorResponse ) => {
-          this.alertService.showToast( 'No se ha podido conectar con la API. Introduce una URL donde se esté sirviendo en el menú de ajustes.' , 5500 ); // Credenciales erróneas u otro error
+          switch( errorResponse.status ){
+            case 404: { // Error de conexión
+              this.alertService.showToast( 'No se ha podido conectar con la API. Introduce una URL donde se esté sirviendo en el menú de ajustes.' , 5500 );
+            } break;
+
+            default: { // Credenciales erróneas u otro error
+              this.alertService.errorToToast( errorResponse.error ); 
+            } break;
+          }
         }
       };
 
